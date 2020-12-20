@@ -1,0 +1,295 @@
+﻿@using System.Data
+@using sCommerce.Helper
+@using sCommerce.Models
+@{
+    int kategoriTipiParametreID = ViewBag.kategoriTipiParametreID;
+
+    DataRow dr_kategori_tipi_parametre_id = SQL.get("SELECT * FROM parametreler WHERE parametreID =" + kategoriTipiParametreID).Rows[0];
+
+    ViewBag.Title = "Kategoriler / " + dr_kategori_tipi_parametre_id["deger"];
+    DataTable dt_kategoriler = SQL.get("SELECT * FROM kategoriler WHERE silindi = 0 AND ustKategoriID = 0 AND kategoriTipiParametreID = " + kategoriTipiParametreID);
+    DataTable dt_kategoriler_all = SQL.get("SELECT * FROM kategoriler WHERE silindi = 0 AND kategoriTipiParametreID = " + kategoriTipiParametreID);
+}
+@section style{
+    <link rel="stylesheet" href="~/Content/vendor/dropify/css/dropify.min.css">
+    <style>
+        .liss * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .liss ul li {
+            margin-left: 15px;
+            position: relative;
+            padding-left: 5px;
+        }
+
+            .liss ul li::before {
+                content: " ";
+                position: absolute;
+                width: 1px;
+                background-color: #000;
+                top: 5px;
+                bottom: -12px;
+                left: -10px;
+            }
+
+        .liss body > ul > li:first-child::before {
+            top: 12px;
+        }
+
+        .liss ul li:not(:first-child):last-child::before {
+            display: none;
+        }
+
+        .liss ul li:only-child::before {
+            display: list-item;
+            content: " ";
+            position: absolute;
+            width: 1px;
+            background-color: #000;
+            top: 5px;
+            bottom: 7px;
+            height: 7px;
+            left: -10px;
+        }
+
+        .liss ul li::after {
+            content: " ";
+            position: absolute;
+            left: -10px;
+            width: 10px;
+            height: 1px;
+            background-color: #000;
+            top: 12px;
+        }
+    </style>
+}
+@section script {
+    <script src="~/Content/vendor/dropify/js/dropify.min.js"></script>
+    <script>
+        function kategoriSil(kategoriID) {
+            swal({
+                title: "Silmek istediğinizden emin misiniz?",
+                text: "Silinen kategori geri getirilemez!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: "Evet, sil!",
+                cancelButtonText: "Hayır",
+                closeOnConfirm: false
+            },
+                function () {
+                    window.location = "/Admin/kategoriSil?kategoriID=" + kategoriID + "&kategoriTipiParametreID=" + @kategoriTipiParametreID;
+                });
+        }
+        $('.dropify').dropify({
+            messages: {
+                'default': 'Sürükle bırak veya seçmek için tıkla',
+                'replace': 'Sürükle bırak veya değiştirmek için tıkla',
+                'remove': 'Kaldır',
+                'error': 'Hata oluştu!'
+            },
+            error: {
+                'fileSize': 'Görsel boyutu çok büyük ({{ value }} max).',
+                'minWidth': 'Görsel genişliği çok küçük ({{ value }}}px min).',
+                'maxWidth': 'Görsel genişliği çok büyük ({{ value }}}px max).',
+                'minHeight': 'Görsel yüksekliği çok küçük ({{ value }}}px min).',
+                'maxHeight': 'Görsel yüksekliği çok büyük ({{ value }}px max).',
+                'imageFormat': 'Seçtiğiniz formata izin verilmiyor (sadece {{ value }}).'
+            }
+        });
+    </script>
+}
+
+<div class="row clearfix">
+    @{ if (Request.Params["hata"] != null)
+        {<div class="alert alert-danger col-md-12" role="alert">@Request.Params["hata"]</div>} }
+    @{ if (Request.Params["tepki"] != null)
+        {
+            if (Request.Params["tepki"].ToString() == "1")
+            { <div class="alert alert-success col-md-12" role="alert">Tebrikler, yeni kategori eklendi...</div> }
+            if (Request.Params["tepki"].ToString() == "2")
+            { <div class="alert alert-success col-md-12" role="alert">Tebrikler, kategori güncellendi...</div> }
+            if (Request.Params["tepki"].ToString() == "3")
+            { <div class="alert alert-info col-md-12" role="alert">Kategori silindi...</div> }
+
+        }
+    }
+    <div class="col-md-12">
+        <div class="card">
+            <div class="header">
+                <div class="pull-right"><a href="javascript:void(0);" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#kategori_ekle"><i class="fa fa-plus"></i> Yeni Kategori</a></div>
+            </div>
+            <div class="body">
+                KATEGORİLER
+                <ul class="liss">
+                    @foreach (DataRow item1 in dt_kategoriler.Rows)
+                    {
+                        <li>
+                            @item1["kategori"]
+                            <a href="javascript:void(0);" data-toggle="modal" data-target="#kategori_duzenle_@item1["kategoriID"]"><i class="fa fa-edit"></i></a>
+                            <ul>
+                                @foreach (DataRow item2 in SQL.get("SELECT * FROM kategoriler WHERE silindi = 0 AND ustKategoriID = " + item1["kategoriID"]).Rows)
+                                {
+                                    <li>
+                                        @item2["kategori"]
+                                        <a href="javascript:void(0);" data-toggle="modal" data-target="#kategori_duzenle_@item2["kategoriID"]"><i class="fa fa-edit"></i></a>
+                                        <ul>
+                                            @foreach (DataRow item3 in SQL.get("SELECT * FROM kategoriler WHERE silindi = 0 AND ustKategoriID = " + item2["kategoriID"]).Rows)
+                                            {
+                                                <li>
+                                                    @item3["kategori"]
+                                                    <a href="javascript:void(0);" data-toggle="modal" data-target="#kategori_duzenle_@item3["kategoriID"]"><i class="fa fa-edit"></i></a>
+                                                    <ul>
+                                                        @foreach (DataRow item4 in SQL.get("SELECT * FROM kategoriler WHERE silindi = 0 AND ustKategoriID = " + item3["kategoriID"]).Rows)
+                                                        {
+                                                            <li>
+                                                                @item4["kategori"]
+                                                                <a href="javascript:void(0);" data-toggle="modal" data-target="#kategori_duzenle_@item4["kategoriID"]"><i class="fa fa-edit"></i></a>
+                                                                <ul>
+                                                                    @foreach (DataRow item5 in SQL.get("SELECT * FROM kategoriler WHERE silindi = 0 AND ustKategoriID = " + item4["kategoriID"]).Rows)
+                                                                    {
+                                                                        <li>
+                                                                            @item5["kategori"]
+                                                                            <a href="javascript:void(0);" data-toggle="modal" data-target="#kategori_duzenle_@item5["kategoriID"]"><i class="fa fa-edit"></i></a>
+                                                                            <ul>
+                                                                                @foreach (DataRow item6 in SQL.get("SELECT * FROM kategoriler WHERE silindi = 0 AND ustKategoriID = " + item5["kategoriID"]).Rows)
+                                                                                {
+                                                                                    <li>
+                                                                                        @item5["kategori"]
+                                                                                        <a href="javascript:void(0);" data-toggle="modal" data-target="#kategori_duzenle_@item6["kategoriID"]"><i class="fa fa-edit"></i></a>
+                                                                                        <ul></ul>
+                                                                                    </li>
+                                                                                }
+                                                                            </ul>
+                                                                        </li>
+                                                                    }
+                                                                </ul>
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </li>
+                                }
+                            </ul>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="kategori_ekle" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="post" action="/Admin/kategoriEkle" enctype="multipart/form-data">
+                <input type="hidden" name="kategoriTipiParametreID" value="@kategoriTipiParametreID" />
+                <div class="modal-header">
+                    <h6 class="title" id="defaultModalLabel">Kategori Ekle</h6>
+                </div>
+                <div class="modal-body">
+                    <div class="row clearfix">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label class="control-label">Kategori</label>
+                                @Html.TextBox("kategori", null, new { @type = "text", @class = "form-control", @placeholder = "Ad", @autocomplete = "off" })
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Üst Kategori</label>
+                                <select name="ustKategoriID" class="form-control">
+                                    <option value="0">Ana Kategori</option>
+                                    @foreach (DataRow dr in dt_kategoriler_all.Rows)
+                                    {
+                                        <option value="@dr["kategoriID"]">@dr["kategori"]</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">İkon</label>
+                                @Html.TextBox("ikon", null, new { @type = "text", @class = "form-control", @placeholder = "İkon", @autocomplete = "off" })
+                                <label><a href="https://portotheme.com/shopify/wokiee/icons/" target="_blank">İkon listesi</a></label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label class="control-label">Resim</label>
+                                <input name="resim" id="site_logosu" type="file" class="dropify" data-max-file-size="1M" data-allowed-file-extensions="jpg png" data-default-file="" />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Açıklama</label>
+                                @Html.TextArea("aciklama", null, new { @type = "text", @class = "form-control", @placeholder = "Açıklama", @autocomplete = "off" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Ekle</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@foreach (DataRow item in dt_kategoriler_all.Rows)
+{
+    <div class="modal fade" id="kategori_duzenle_@item["kategoriID"]" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="post" action="/Admin/kategoriDuzenle" enctype="multipart/form-data">
+                    <input type="hidden" name="kategoriID" value="@item["kategoriID"]" />
+                    <input type="hidden" name="kategoriTipiParametreID" value="@kategoriTipiParametreID" />
+                    <div class="modal-header">
+                        <h6 class="title" id="defaultModalLabel">Kategori Düzenle</h6>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row clearfix">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label class="control-label">Kategori</label>
+                                    @Html.TextBox("kategori", item["kategori"], new { @type = "text", @class = "form-control", @placeholder = "Ad", @autocomplete = "off" })
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Üst Kategori</label>
+                                    <select name="ustKategoriID" class="form-control">
+                                        <option value="0" @{if (Convert.ToInt32(item["ustKategoriID"]) == 0) { @("selected")  } }>Ana Kategori</option>
+                                        @foreach (DataRow dr in SQL.get("SELECT * FROM kategoriler WHERE silindi = 0 AND kategoriID != " + item["kategoriID"]).Rows)
+                                        {
+                                            <option value="@dr["kategoriID"]" @{if (Convert.ToInt32(item["ustKategoriID"]) == Convert.ToInt32(dr["kategoriID"])) { @("selected")  } }>@dr["kategori"]</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">İkon</label>
+                                    @Html.TextBox("ikon", item["ikon"], new { @type = "text", @class = "form-control", @placeholder = "İkon", @autocomplete = "off" })
+                                    <label><a href="https://portotheme.com/shopify/wokiee/icons/" target="_blank">İkon listesi</a></label>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label class="control-label">Resim</label>
+                                    <input name="resim" id="site_logosu" type="file" class="dropify" data-max-file-size="1M" data-allowed-file-extensions="jpg png" data-default-file="/Content/icerik/kategori/@item["resim"]" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Açıklama</label>
+                                    @Html.TextArea("aciklama", item["aciklama"].ToString(), new { @type = "text", @class = "form-control", @placeholder = "Açıklama", @autocomplete = "off" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Düzenle</button>
+                        <button onclick="kategoriSil(@item["kategoriID"])" type="button" class="btn btn-danger">Sil</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+

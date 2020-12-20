@@ -1,0 +1,107 @@
+﻿@using System.Data
+@using sCommerce.Helper
+@{
+    ViewBag.Title = "Ürün";
+
+    int sayfa_no = ViewBag.sayfa_no;
+    int cnt_blog = Convert.ToInt32(SQL.get("SELECT cnt = COUNT(*) FROM urunler u INNER JOIN kullanicilar k ON k.kullaniciID = u.kaydedenKullaniciID WHERE u.silindi = 0").Rows[0]["cnt"]);
+    int sayfa_sayisi = Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(cnt_blog) / 10));
+
+    DataTable dt_blog = SQL.get("SELECT u.*, k.ad, k.soyad FROM urunler u INNER JOIN kullanicilar k ON k.kullaniciID = u.kaydedenKullaniciID WHERE u.silindi = 0 ORDER by u.urunID DESC OFFSET " + (sayfa_no * 10) + " ROWS FETCH NEXT 10 ROWS ONLY");
+}
+@section style
+{
+    <link rel="stylesheet" href="~/Content/vendor/dropify/css/dropify.min.css">
+    <script src="~/Content/vendor/ckeditor/ckeditor.js"></script>
+}
+@section script
+{
+    <script src="~/Content/assets/js/pages/ui/dialogs.js"></script>
+    <script src="~/Content/vendor/dropify/js/dropify.min.js"></script>
+    <script>
+        function urun_sil(urunID) {
+            swal({
+                title: "Silmek istediğinizden emin misiniz?",
+                text: "Silinen ürün geri getirilemez!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: "Evet, sil!",
+                cancelButtonText: "Hayır",
+                closeOnConfirm: false
+            },
+                function () {
+                    window.location = "/Admin/urunSil?urunID=" + urunID;
+                });
+        }
+    </script>
+}
+
+<div class="row clearfix">
+    @{ if (Request.Params["hata"] != null)
+        {<div class="alert alert-danger col-md-12" role="alert">@Request.Params["hata"]</div>} }
+    @{ if (Request.Params["tepki"] != null)
+        {
+            if (Request.Params["tepki"].ToString() == "1")
+            { <div class="alert alert-success col-md-12" role="alert">Tebrikler, yeni ürün eklendi...</div> }
+            if (Request.Params["tepki"].ToString() == "2")
+            { <div class="alert alert-success col-md-12" role="alert">Tebrikler, ürün güncellendi...</div> }
+            if (Request.Params["tepki"].ToString() == "3")
+            { <div class="alert alert-info col-md-12" role="alert">Ürün silindi...</div> }
+
+        }
+    }
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="header">
+                <ul class="header-dropdown dropdown dropdown-animated scale-left">
+                    <li><a href="javascript:void(0);" class="full-screen"><i class="icon-size-fullscreen"></i></a></li>
+                    <li><a href="@Url.Action("UrunDetay", "Admin", new { id = 0 })" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Yeni Ürün</a></li>
+                </ul>
+            </div>
+            <div class="body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Kullanıcı</th>
+                                <th>Ürün</th>
+                                <th>Tarih</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>Kullanıcı</th>
+                                <th>Ürün</th>
+                                <th>Tarih</th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            @foreach (DataRow dr_item in dt_blog.Rows)
+                            {
+                                <tr>
+                                    <td>@dr_item["ad"] @dr_item["soyad"]</td>
+                                    <td>@dr_item["urunAdi"]</td>
+                                    <td>@dr_item["kayitTarihi"]</td>
+                                    <td>
+                                        <a href="@Url.Action("UrunDetay", "Admin", new { id = dr_item["urunID"] })" class="btn btn-sm btn-default"><i class="fa fa-edit"></i></a>
+                                        <button onclick="urun_sil(@dr_item["urunID"])" class="btn btn-danger" title="Delete" type="button"><i class="fa fa-trash-o"></i></button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <ul class="pagination">
+                    @for (int i = 0; i < sayfa_sayisi; i++)
+                    {
+                        <li class="page-item @(i == sayfa_no ? "active" : "")"><a class="page-link" href="@Url.Action("Urun", new { id = i })">@(i + 1)</a></li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

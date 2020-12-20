@@ -1,0 +1,261 @@
+﻿@using System.Data
+@using sCommerce.Helper
+@using sCommerce.Models
+@{
+    ViewBag.Title = "Site Bilgileri";
+}
+@section style
+{
+    <link rel="stylesheet" href="~/Content/vendor/dropify/css/dropify.min.css">
+    <link rel="stylesheet" href="~/Content/vendor/bootstrap-tagsinput/bootstrap-tagsinput.css">
+    <script src="~/Content/vendor/ckeditor/ckeditor.js"></script>
+}
+@section script
+{
+    <script src="~/Content/assets/js/pages/ui/dialogs.js"></script>
+    <script src="~/Content/vendor/dropify/js/dropify.min.js"></script>
+    <script src="~/Content/vendor/bootstrap-tagsinput/bootstrap-tagsinput.js"></script><!-- Bootstrap Tags Input Plugin Js -->
+    <script>
+        $('.dropify').dropify({
+            messages: {
+                'default': 'Sürükle bırak veya seçmek için tıkla',
+                'replace': 'Sürükle bırak veya değiştirmek için tıkla',
+                'remove': 'Kaldır',
+                'error': 'Hata oluştu!'
+            },
+            error: {
+                'fileSize': 'Görsel boyutu çok büyük ({{ value }} max).',
+                'minWidth': 'Görsel genişliği çok küçük ({{ value }}}px min).',
+                'maxWidth': 'Görsel genişliği çok büyük ({{ value }}}px max).',
+                'minHeight': 'Görsel yüksekliği çok küçük ({{ value }}}px min).',
+                'maxHeight': 'Görsel yüksekliği çok büyük ({{ value }}px max).',
+                'imageFormat': 'Seçtiğiniz formata izin verilmiyor (sadece {{ value }}).'
+            }
+        });
+    </script>
+}
+<div class="row clearfix">
+    @{ if (Request.Params["hata"] != null)
+        {<div class="alert alert-danger col-md-12" role="alert">@Request.Params["hata"]</div>} }
+    @{ if (Request.Params["tepki"] != null)
+        {
+            if (Request.Params["tepki"].ToString() == "1")
+            { <div class="alert alert-success col-md-12" role="alert">Tebrikler, yeni site bilgileri eklendi...</div> }
+            if (Request.Params["tepki"].ToString() == "2")
+            { <div class="alert alert-success col-md-12" role="alert">Tebrikler, site bilgileri güncellendi...</div> }
+            if (Request.Params["tepki"].ToString() == "3")
+            { <div class="alert alert-info col-md-12" role="alert">Site bilgileri silindi...</div> }
+
+        }
+    }
+    <div class="col-md-12">
+        <div class="card">
+            <form method="post" action="/Admin/siteBilgiGuncelle" enctype="multipart/form-data">
+                <div class="header">
+                    <div class="pull-right">
+                        <button type="submit" class="btn btn-primary">Kaydet</button>
+                    </div>
+                </div>
+                <div class="body">
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item"><a class="nav-link active show" data-toggle="tab" href="#GenelAyarlar">Genel Ayarlar</a></li>
+                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Iletisim">İletişim</a></li>
+                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#SEO">SEO</a></li>
+                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Banka">Banka</a></li>
+                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#UyelikSozlesmesi">Üyelik Sözleşmesi</a></li>
+                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#KullanimSartlari">Kullanım Şartları</a></li>
+                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Mesafeli">Mesafeli Satış Sözleşmesi</a></li>
+                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Gizlilik">Gizlilik Politikası</a></li>
+                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#SikSorulan">Sık Sorulan Sorular</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane show active" id="GenelAyarlar">
+                            <h6>Genel Ayarlar</h6>
+                            <div class="row clearfix">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Site Logosu</label>
+                                        <input name="logo" id="site_logosu" type="file" class="dropify" data-max-file-size="1M" data-allowed-file-extensions="jpg png" data-default-file="/Content/icerik/site_logo/@Site.siteBilgileri.logo" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Site Adı</label>
+                                        <input name="siteAdi" type="text" class="form-control" placeholder="Site Adı" autocomplete="off" value="@Site.siteBilgileri.siteAdi" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Slogan</label>
+                                        <input name="slogan" type="text" class="form-control" placeholder="Slogan" autocomplete="off" value="@Site.siteBilgileri.slogan" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Hakkımızda</label>
+                                        <textarea name="hakkimizda" class="form-control" placeholder="Hakkımızda" rows="6">@Site.siteBilgileri.hakkimizda</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="Iletisim">
+                            <h6>İletişim</h6>
+                            <div class="row clearfix">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Adres</label>
+                                        <textarea name="adres" class="form-control" placeholder="Adres" rows="5">@Site.siteBilgileri.adres</textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Telefon</label>
+                                        <input name="tel" type="tel" class="form-control" placeholder="Telefon" autocomplete="off" value="@Site.siteBilgileri.tel" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">GSM</label>
+                                        <input name="gsm" type="tel" class="form-control" placeholder="Telefon" autocomplete="off" value="@Site.siteBilgileri.gsm" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Fax</label>
+                                        <input name="fax" type="tel" class="form-control" placeholder="Telefon" autocomplete="off" value="@Site.siteBilgileri.fax" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">WhatsApp</label>
+                                        <input name="whatsapp" type="tel" class="form-control" placeholder="Telefon" autocomplete="off" value="@Site.siteBilgileri.whatsapp" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">EMail</label>
+                                        <input name="eMail" type="email" class="form-control" placeholder="E-Mail" autocomplete="off" value="@Site.siteBilgileri.eMail" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Çalışma Saatleri</label>
+                                        <input name="calismaSaatleri" type="text" class="form-control" placeholder="Çalışma Saatleri" autocomplete="off" value="@Site.siteBilgileri.calismaSaatleri" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Facebook</label>
+                                        <input name="facebook" type="text" class="form-control" placeholder="FaceBook" autocomplete="off" value="@Site.siteBilgileri.facebook" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Twitter</label>
+                                        <input name="twitter" type="text" class="form-control" placeholder="Twitter" autocomplete="off" value="@Site.siteBilgileri.twitter" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Instagram</label>
+                                        <input name="instagram" type="text" class="form-control" placeholder="Instagram" autocomplete="off" value="@Site.siteBilgileri.instagram" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">YouTube</label>
+                                        <input name="youtube" type="text" class="form-control" placeholder="YouTube" autocomplete="off" value="@Site.siteBilgileri.youtube" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">LinkedIn</label>
+                                        <input name="linkedin" type="text" class="form-control" placeholder="LinkedIn" autocomplete="off" value="@Site.siteBilgileri.linkedin" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Pinterest</label>
+                                        <input name="pinterest" type="text" class="form-control" placeholder="Pinterest" autocomplete="off" value="@Site.siteBilgileri.pinterest" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="SEO">
+                            <h6>SEO</h6>
+                            <div class="row clearfix">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Açıklama</label>
+                                        <textarea name="seoAciklama" class="form-control" placeholder="Description" rows="5">@Site.siteBilgileri.seoAciklama</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Keywords</label>
+                                        <input name="seoKeywords" type="text" class="form-control" data-role="tagsinput" value="@Site.siteBilgileri.seoKeywords">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="Banka" class="tab-pane">
+                            <h6>Banka</h6>
+                            <div class="row clearfix">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <lable class="control-label">Banka</lable>
+                                        <input name="banka" type="text" class="form-control" placeholder="Banka" autocomplete="off" value="@Site.siteBilgileri.banka" />
+                                    </div>
+                                    <div class="form-group">
+                                        <lable class="control-label">Hesap No</lable>
+                                        <input name="hesapNo" type="text" class="form-control" placeholder="Hesap No" autocomplete="off" value="@Site.siteBilgileri.hesapNo" />
+                                    </div>
+                                    <div class="form-group">
+                                        <lable class="control-label">Şube</lable>
+                                        <input name="sube" type="text" class="form-control" placeholder="Şube" autocomplete="off" value="@Site.siteBilgileri.sube" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <lable class="control-label">IBAN</lable>
+                                        <input name="iban" type="text" class="form-control" placeholder="IBAN" autocomplete="off" value="@Site.siteBilgileri.iban" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="UyelikSozlesmesi">
+                            <h6>Üyelik Sözleşmesi</h6>
+                            <div class="row clearfix">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <textarea name="uyelikSozlesmesi" id="ckeditor_0">@Site.siteBilgileri.uyelikSozlesmesi</textarea>
+                                        <script>CKEDITOR.replace('ckeditor_0');</script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="KullanimSartlari">
+                            <h6>Kullanım Şartları</h6>
+                            <div class="row clearfix">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <textarea name="kullanimSartlari" id="ckeditor_1">@Site.siteBilgileri.kullanimSartlari</textarea>
+                                        <script>CKEDITOR.replace('ckeditor_1');</script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="Mesafeli">
+                            <h6>Mesafeli Satış Sözleşmesi</h6>
+                            <div class="row clearfix">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <textarea name="mesafeliSatisSozlesmesi" id="ckeditor_2">@Site.siteBilgileri.mesafeliSatisSozlesmesi</textarea>
+                                        <script>CKEDITOR.replace('ckeditor_2');</script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="Gizlilik">
+                            <h6>Gizlilik Politikası</h6>
+                            <div class="row clearfix">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <textarea name="gizlilikPolitikasi" id="ckeditor_3">@Site.siteBilgileri.gizlilikPolitikasi</textarea>
+                                        <script>CKEDITOR.replace('ckeditor_3');</script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="SikSorulan">
+                            <h6>Sık Sorulan Sorular</h6>
+                            <div class="row clearfix">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <textarea name="sikSorulanSorular" id="ckeditor_4">@Site.siteBilgileri.sikSorulanSorular</textarea>
+                                        <script>CKEDITOR.replace('ckeditor_4');</script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
