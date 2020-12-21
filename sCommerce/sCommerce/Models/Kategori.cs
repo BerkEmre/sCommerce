@@ -20,7 +20,7 @@ namespace sCommerce.Models
         public string resim;
         public string aciklama;
 
-        public List<Kategori> altKategori;
+        public List<Kategori> altKategori = new List<Kategori>();
 
         public List<Kategori> loadKategoriler(int kategoriTipiParametreID)
         {
@@ -29,7 +29,7 @@ namespace sCommerce.Models
             DataTable dt = SQL.get("SELECT * FROM kategoriler WHERE silindi = 0 AND ustKategoriID = 0 AND kategoriTipiParametreID = " + kategoriTipiParametreID);
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-                DataRow dr = dt.Rows[0];
+                DataRow dr = dt.Rows[i];
 
                 Kategori k = new Kategori();
                 k.kategoriID = Convert.ToInt32(dr["kategoriID"]);
@@ -56,10 +56,10 @@ namespace sCommerce.Models
         {
             List<Kategori> altKategori = new List<Kategori>();
             
-            DataTable dt = SQL.get("SELECT * FROM kategoriler WHERE silindi = 0 AND ustKategoriID = 0 AND ustKategoriID = " + this.kategoriID);
+            DataTable dt = SQL.get("SELECT * FROM kategoriler WHERE silindi = 0 AND ustKategoriID = " + this.kategoriID);
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-                DataRow dr = dt.Rows[0];
+                DataRow dr = dt.Rows[i];
 
                 Kategori k = new Kategori();
                 k.kategoriID = Convert.ToInt32(dr["kategoriID"]);
@@ -78,6 +78,7 @@ namespace sCommerce.Models
 
                 altKategori.Add(k);
             }
+            this.altKategori = altKategori;
         }
     }
 }

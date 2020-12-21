@@ -128,37 +128,37 @@
                     @foreach (DataRow item1 in dt_kategoriler.Rows)
                     {
                         <li>
-                            @item1["kategori"]
+                            [@item1["kategoriID"]]@item1["kategori"]
                             <a href="javascript:void(0);" data-toggle="modal" data-target="#kategori_duzenle_@item1["kategoriID"]"><i class="fa fa-edit"></i></a>
                             <ul>
                                 @foreach (DataRow item2 in SQL.get("SELECT * FROM kategoriler WHERE silindi = 0 AND ustKategoriID = " + item1["kategoriID"]).Rows)
                                 {
                                     <li>
-                                        @item2["kategori"]
+                                        [@item2["kategoriID"]]@item2["kategori"]
                                         <a href="javascript:void(0);" data-toggle="modal" data-target="#kategori_duzenle_@item2["kategoriID"]"><i class="fa fa-edit"></i></a>
                                         <ul>
                                             @foreach (DataRow item3 in SQL.get("SELECT * FROM kategoriler WHERE silindi = 0 AND ustKategoriID = " + item2["kategoriID"]).Rows)
                                             {
                                                 <li>
-                                                    @item3["kategori"]
+                                                    [@item3["kategoriID"]]@item3["kategori"]
                                                     <a href="javascript:void(0);" data-toggle="modal" data-target="#kategori_duzenle_@item3["kategoriID"]"><i class="fa fa-edit"></i></a>
                                                     <ul>
                                                         @foreach (DataRow item4 in SQL.get("SELECT * FROM kategoriler WHERE silindi = 0 AND ustKategoriID = " + item3["kategoriID"]).Rows)
                                                         {
                                                             <li>
-                                                                @item4["kategori"]
+                                                                [@item4["kategoriID"]]@item4["kategori"]
                                                                 <a href="javascript:void(0);" data-toggle="modal" data-target="#kategori_duzenle_@item4["kategoriID"]"><i class="fa fa-edit"></i></a>
                                                                 <ul>
                                                                     @foreach (DataRow item5 in SQL.get("SELECT * FROM kategoriler WHERE silindi = 0 AND ustKategoriID = " + item4["kategoriID"]).Rows)
                                                                     {
                                                                         <li>
-                                                                            @item5["kategori"]
+                                                                            [@item5["kategoriID"]]@item5["kategori"]
                                                                             <a href="javascript:void(0);" data-toggle="modal" data-target="#kategori_duzenle_@item5["kategoriID"]"><i class="fa fa-edit"></i></a>
                                                                             <ul>
                                                                                 @foreach (DataRow item6 in SQL.get("SELECT * FROM kategoriler WHERE silindi = 0 AND ustKategoriID = " + item5["kategoriID"]).Rows)
                                                                                 {
                                                                                     <li>
-                                                                                        @item5["kategori"]
+                                                                                        [@item6["kategoriID"]]@item6["kategori"]
                                                                                         <a href="javascript:void(0);" data-toggle="modal" data-target="#kategori_duzenle_@item6["kategoriID"]"><i class="fa fa-edit"></i></a>
                                                                                         <ul></ul>
                                                                                     </li>

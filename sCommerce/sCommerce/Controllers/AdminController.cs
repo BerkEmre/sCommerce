@@ -17,6 +17,12 @@ namespace sCommerce.Controllers
                 return RedirectToAction("Login");
             return View();
         }
+
+        public ActionResult ComingSoon()
+        {
+            return RedirectToAction("Index");
+        }
+
         #region Login
         public ActionResult Login()
         {
@@ -128,7 +134,7 @@ namespace sCommerce.Controllers
                 WebImage img = new WebImage(logo.InputStream);
                 var path = Path.Combine("~/Content/icerik/site_logo/orjinal/", result);
                 img.Save(path);
-                img.Resize(150, 75, true, false).Crop(1, 1, 1, 1);
+                img.Resize(300, 150, true, false).Crop(1, 1, 1, 1);
                 path = Path.Combine("~/Content/icerik/site_logo/", result);
                 img.Save(path);
                 result += Path.GetExtension(logo.FileName);

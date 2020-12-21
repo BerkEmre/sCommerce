@@ -1,0 +1,59 @@
+﻿@using sCommerce.Models
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Sizin İçin Hazırlanıyoruz</title>
+    <meta name="keywords" content="@Site.siteBilgileri.seoKeywords">
+    <meta name="description" content="@Site.siteBilgileri.seoAciklama">
+    <meta name="author" content="sotecmedia.com, Berk Emre ALTAN">
+    <link rel="shortcut icon" href="favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="~/Content/css/style.css">
+    <link rel="stylesheet" href="/Content/css/theme-08.css">
+</head>
+<body>
+    <div id="tt-pageContent">
+        <div class="tt-coming-soon">
+            <div class="container">
+                <div class="row	justify-content-center">
+                    <div class="col-md-8 tt-coming-soon-content">
+                        <a><img src="~/Content/icerik/site_logo/@Site.siteBilgileri.logo" alt="@Site.siteBilgileri.siteAdi"></a>
+                        <h1 class="tt-title">Sizin İçin Yenileniyoruz...</h1>
+                        <h3>@Site.siteBilgileri.siteAdi</h3>
+                        <h5>Bizi sosyal medyadan takip etmeyi unutmayın!</h5>
+                        <div class="description align-center">
+
+                                @(MvcHtmlString.Create(Site.siteBilgileri.facebook.ToString().Length <= 0 ? "" : "<a class='icon-g-64' target='_blank' href='" + Site.siteBilgileri.facebook + "'></a>"))
+                                @(MvcHtmlString.Create(Site.siteBilgileri.twitter.ToString().Length <= 0 ? "" : "<a class='icon-h-58' target='_blank' href='" + Site.siteBilgileri.twitter + "'></a>"))
+                                @(MvcHtmlString.Create(Site.siteBilgileri.instagram.ToString().Length <= 0 ? "" : "<a class='icon-g-67' target='_blank' href='" + Site.siteBilgileri.instagram + "'></a>"))
+                                @(MvcHtmlString.Create(Site.siteBilgileri.youtube.ToString().Length <= 0 ? "" : "<a class='icon-g-76' target='_blank' href='" + Site.siteBilgileri.youtube + "'></a>"))
+                                @(MvcHtmlString.Create(Site.siteBilgileri.linkedin.ToString().Length <= 0 ? "" : "<a class='icon-g-68' target='_blank' href='" + Site.siteBilgileri.linkedin + "'></a>"))
+                                @(MvcHtmlString.Create(Site.siteBilgileri.pinterest.ToString().Length <= 0 ? "" : "<a class='icon-g-68' target='_blank' href='" + Site.siteBilgileri.pinterest + "'></a>"))
+                            <address>
+                                @MvcHtmlString.Create((Site.siteBilgileri.adres.Length <= 0 ? "" : "<p><span>Adres: </span>" + Site.siteBilgileri.adres + "</p>"))
+                                @MvcHtmlString.Create((Site.siteBilgileri.tel.ToString().Length <= 0 ? "" : "<p><span>Telefon: </span>" + Site.siteBilgileri.tel + "</p>"))
+                                @MvcHtmlString.Create((Site.siteBilgileri.gsm.ToString().Length <= 0 ? "" : "<p><span>GSM: </span>" + Site.siteBilgileri.gsm + "</p>"))
+                                @MvcHtmlString.Create((Site.siteBilgileri.fax.ToString().Length <= 0 ? "" : "<p><span>Fax: </span>" + Site.siteBilgileri.fax + "</p>"))
+                                @MvcHtmlString.Create((Site.siteBilgileri.whatsapp.ToString().Length <= 0 ? "" : "<p><span>Whatsapp: </span>" + Site.siteBilgileri.whatsapp + "</p>"))
+                                @MvcHtmlString.Create((Site.siteBilgileri.calismaSaatleri.ToString().Length <= 0 ? "" : "<p><span>Ç.Saatleri: </span>" + Site.siteBilgileri.calismaSaatleri + "</p>"))
+                                @MvcHtmlString.Create((Site.siteBilgileri.eMail.ToString().Length <= 0 ? "" : "<p><span>E-Mail: </span> <a href='mailto: " + Site.siteBilgileri.eMail + "'>" + Site.siteBilgileri.eMail + "</a></p>"))
+                            </address>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="coming-soon-bottom">
+                <p>
+                    &copy; @Site.siteBilgileri.siteAdi @DateTime.Now.Year. Tüm Hakları Saklıdır | Developed by <a href="https://linkedin.com/in/berkemrealtan" target="_blank">Berk Emre ALTAN</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    <script src="~/Content/external/jquery/jquery.min.js"></script>
+    <script src="~/Content/external/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/Content/external/lazyLoad/lazyload.min.js"></script>
+    <script src="~/Content/js/main.js"></script>
+</body>
+</html>
+

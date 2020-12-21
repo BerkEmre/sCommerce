@@ -8,5 +8,24 @@ namespace sCommerce.Controllers
         {
             return View();
         }
+        public ActionResult ComingSoon()
+        {
+            return View();
+        }
+
+        public ActionResult Shop()
+        {
+            return View();
+        }
+
+        public ActionResult Product()
+        {
+            return View();
+        }
+
+        public ActionResult ProductDetail()
+        {
+            return View();
+        }
     }
 }
