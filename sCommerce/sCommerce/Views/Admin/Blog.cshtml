@@ -3,8 +3,6 @@
 @{
     ViewBag.Title = "Blog";
 
-    bool first = true;
-    DataTable dt_diller_vs;
     DataTable dt_blog_kategori = SQL.get("SELECT * FROM kategoriler WHERE silindi = 0 AND kategoriTipiParametreID = 3");
     DataTable dt_blog = SQL.get("SELECT b.*, k.ad, k.soyad, bk.kategori FROM bloglar b INNER JOIN kullanicilar k ON k.kullaniciID = b.kaydedenKullaniciID INNER JOIN kategoriler bk ON bk.kategoriID = b.kategoriID WHERE b.silindi = 0");
 }

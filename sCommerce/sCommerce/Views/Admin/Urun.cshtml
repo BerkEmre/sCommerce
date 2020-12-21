@@ -7,7 +7,7 @@
     int cnt_blog = Convert.ToInt32(SQL.get("SELECT cnt = COUNT(*) FROM urunler u INNER JOIN kullanicilar k ON k.kullaniciID = u.kaydedenKullaniciID WHERE u.silindi = 0").Rows[0]["cnt"]);
     int sayfa_sayisi = Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(cnt_blog) / 10));
 
-    DataTable dt_blog = SQL.get("SELECT u.*, k.ad, k.soyad FROM urunler u INNER JOIN kullanicilar k ON k.kullaniciID = u.kaydedenKullaniciID WHERE u.silindi = 0 ORDER by u.urunID DESC OFFSET " + (sayfa_no * 10) + " ROWS FETCH NEXT 10 ROWS ONLY");
+    DataTable dt_blog = SQL.get("SELECT u.*, k.ad, k.soyad FROM urunler u INNER JOIN kullanicilar k ON k.kullaniciID = u.kaydedenKullaniciID WHERE u.silindi = 0 ORDER by u.urunAdi DESC OFFSET " + (sayfa_no * 10) + " ROWS FETCH NEXT 10 ROWS ONLY");
 }
 @section style
 {
@@ -86,7 +86,8 @@
                                     <td>@dr_item["urunAdi"]</td>
                                     <td>@dr_item["kayitTarihi"]</td>
                                     <td>
-                                        <a href="@Url.Action("UrunDetay", "Admin", new { id = dr_item["urunID"] })" class="btn btn-sm btn-default"><i class="fa fa-edit"></i></a>
+                                        <a href="@Url.Action("UrunDetay", "Admin", new { id = dr_item["urunID"], turet = 0 })" class="btn btn-sm btn-default"><i class="fa fa-edit"></i></a>
+                                        <a href="@Url.Action("UrunDetay", "Admin", new { id = dr_item["urunID"], turet = 1 })" class="btn btn-sm btn-success"><i class="fa fa-clone"></i></a>
                                         <button onclick="urun_sil(@dr_item["urunID"])" class="btn btn-danger" title="Delete" type="button"><i class="fa fa-trash-o"></i></button>
                                     </td>
                                 </tr>

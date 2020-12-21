@@ -413,15 +413,15 @@ namespace sCommerce.Controllers
 
         [ValidateInput(false)]
         [HttpPost]
-        public ActionResult urunEkle(int[] kategoriID, int[] ozellikID, string[] resimPath, int[] resimID, int[] resimSira, string urunAdi = "", int urunDurumuParametreID = 0, int oneCikanlar = 0, string urunAciklamasi = "", string seoAciklama = "", string seoKeywords = "", int urunEtiketiParametreID = 0, string modelKodu = "", string barkod = "", string stokKodu = "", string depoLokasyonu = "",
+        public ActionResult urunEkle(int[] kategoriID, int[] ozellikID, string[] resimPath, int[] resimID, int[] resimSira, string urunAdi = "", int urunDurumuParametreID = 0, int oneCikanlar = 0, string urunAciklamasi = "", string seoAciklama = "", string seoKeywords = "", int urunEtiketiParametreID = 0, int modelGrubuID = 0, string barkod = "", string stokKodu = "", string depoLokasyonu = "",
             string eskiFiyat = "0", string fiyat = "0", int vergiParametreID = 0, int vergiDahilSatis = 0, int miktar = 0, int minimumMiktar = 0, int stokBitinceParametreID = 0, string agirlik = "0", int kargoSuresi = 0)
         {
             string result = "";
             int yeni_urun_id;
             yeni_urun_id = Convert.ToInt32(SQL.get(
-                "INSERT INTO urunler (kaydedenKullaniciID, urunAdi, urunAciklamasi, seoAciklama, seoKeywords, urunEtiketiParametreID, modelKodu, barkod, stokKodu, depoLokasyonu, eskiFiyat, fiyat, vergiParametreID, " + 
+                "INSERT INTO urunler (kaydedenKullaniciID, urunAdi, urunAciklamasi, seoAciklama, seoKeywords, urunEtiketiParametreID, modelGrubuID, barkod, stokKodu, depoLokasyonu, eskiFiyat, fiyat, vergiParametreID, " + 
                 " vergiDahilSatis, miktar, minimumMiktar, stokBitinceParametreID, agirlik, kargoSuresi, urunDurumuParametreID, oneCikanlar) " + 
-                " VALUES (" + Session["kullaniciID"] + ", '" + urunAdi + "', '" + urunAciklamasi + "', '" + seoAciklama + "', '" + seoKeywords + "', " + urunEtiketiParametreID + ", '" + modelKodu + "', '" + barkod + "'," + 
+                " VALUES (" + Session["kullaniciID"] + ", '" + urunAdi + "', '" + urunAciklamasi + "', '" + seoAciklama + "', '" + seoKeywords + "', " + urunEtiketiParametreID + ", " + modelGrubuID + ", '" + barkod + "'," + 
                 " '" + stokKodu + "', '" + depoLokasyonu + "', " + eskiFiyat.ToString().Replace(',', '.') + ", " + fiyat.ToString().Replace(',', '.') + ", " + vergiParametreID + ", " + vergiDahilSatis + "," + 
                 " " + miktar + ", " + minimumMiktar + ", " + stokBitinceParametreID + "," + agirlik.ToString().Replace(',', '.') + ", " + kargoSuresi + ", " + urunDurumuParametreID + ", " + oneCikanlar + "); SELECT SCOPE_IDENTITY();").Rows[0][0]);
 
@@ -469,14 +469,14 @@ namespace sCommerce.Controllers
 
         [ValidateInput(false)]
         [HttpPost]
-        public ActionResult urunDuzenle(int urunID, int[] kategoriID, int[] ozellikID, string[] resimPath, int[] resimID, int[] resimSira, string urunAdi = "", string urunAciklamasi = "", string seoAciklama = "", string seoKeywords = "", int urunEtiketiParametreID = 0, string modelKodu = "", string barkod = "", string stokKodu = "", 
+        public ActionResult urunDuzenle(int urunID, int[] kategoriID, int[] ozellikID, string[] resimPath, int[] resimID, int[] resimSira, string urunAdi = "", string urunAciklamasi = "", string seoAciklama = "", string seoKeywords = "", int urunEtiketiParametreID = 0, int modelGrubuID = 0, string barkod = "", string stokKodu = "", 
             string depoLokasyonu = "", string eskiFiyat = "0", string fiyat = "0", int vergiParametreID = 0, int vergiDahilSatis = 0, int miktar = 0, int minimumMiktar = 0, int stokBitinceParametreID = 0, string agirlik = "0", int kargoSuresi = 0, int urunDurumuParametreID = 0, 
             int oneCikanlar = 0)
         {
             string result = "";
             string resim_ids = "";
             SQL.set("UPDATE urunler SET guncelleyenKullaniciID = " + Session["kullaniciID"] + ", guncellemeTarihi = GETDATE(), urunAdi = '" + urunAdi + "', urunAciklamasi = '" + urunAciklamasi + "', " + 
-                " seoAciklama = '" + seoAciklama + "', seoKeywords = '" + seoKeywords + "', urunEtiketiParametreID = " + urunEtiketiParametreID + ", modelKodu = '" + modelKodu + "', barkod = '" + barkod + "', " + 
+                " seoAciklama = '" + seoAciklama + "', seoKeywords = '" + seoKeywords + "', urunEtiketiParametreID = " + urunEtiketiParametreID + ", modelGrubuID = " + modelGrubuID + ", barkod = '" + barkod + "', " + 
                 " stokKodu = '" + stokKodu + "', depoLokasyonu = '" + depoLokasyonu + "', eskiFiyat = " + eskiFiyat.ToString().Replace(',', '.') + ", fiyat = " + fiyat.ToString().Replace(',', '.') + ", " + 
                 " vergiParametreID = " + vergiParametreID + ", vergiDahilSatis = " + vergiDahilSatis + ", miktar = " + miktar + ", minimumMiktar = " + minimumMiktar + ", " + 
                 " stokBitinceParametreID = " + stokBitinceParametreID + ", agirlik = " + agirlik.ToString().Replace(',', '.') + ", kargoSuresi = " + kargoSuresi + ", urunDurumuParametreID = " + urunDurumuParametreID + ", " + 
@@ -547,14 +547,57 @@ namespace sCommerce.Controllers
             return RedirectToAction("Urun", new { tepki = 3 });
         }
 
-        public ActionResult UrunDetay(int id = 0)
+        public ActionResult UrunDetay(int id = 0, int turet = 0)
         {
             if (Session["kullaniciID"] == null)
                 return RedirectToAction("Login");
 
             ViewBag.urunID = id;
+            ViewBag.turet = turet;
 
             return View();
+        }
+        #endregion
+        #region Model Grubu
+        public ActionResult ModelGrubu()
+        {
+            if (Session["kullaniciID"] == null)
+                return RedirectToAction("Login");
+            return View();
+        }
+
+        [ValidateInput(false)]
+        [HttpPost]
+        public ActionResult modelGrubuEkle(string modelGrubu)
+        {
+            if (modelGrubu.Length <= 0)
+                return RedirectToAction("ModelGrubu", new { hata = "Eksik bilgi girdiniz!" });
+
+            SQL.set("INSERT INTO modelGrubu (kaydedenKullaniciID, modelGrubu) VALUES (" + Session["kullaniciID"] + ", '" + modelGrubu + "')");
+
+            return RedirectToAction("ModelGrubu", new { tepki = 1 });
+        }
+
+        [ValidateInput(false)]
+        [HttpPost]
+        public ActionResult blogDuzenle(int modelGrubuID, string modelGrubu)
+        {
+            if (modelGrubu.Length <= 0)
+                return RedirectToAction("ModelGrubu", new { hata = "Eksik bilgi girdiniz!" });
+
+            SQL.set("UPDATE modelGrubu SET guncelleyenKullaniciID = " + Session["kullaniciID"] + ", guncellemeTarihi = GETDATE(), modelGrubu = '" + modelGrubu + "' WHERE modelGrubuID = " + modelGrubuID);
+
+            return RedirectToAction("ModelGrubu", new { tepki = 1 });
+        }
+
+        public ActionResult modelGrubuSil(int modelGrubuID)
+        {
+            DataTable dt = SQL.get("SELECT * FROM urunler WHERE silindi = 0 AND modelGrubuID = " + modelGrubuID);
+            if(dt.Rows.Count > 0)
+                return RedirectToAction("ModelGrubu", new { hata = "Model grubuna dahil ürünler bulunmakta model grubu silinemez" });
+
+            SQL.set("UPDATE modelGrubu SET guncelleyenKullaniciID = " + Session["kullaniciID"] + ", guncellemeTarihi = GETDATE(), silindi = 1 WHERE modelGrubuID = " + modelGrubuID);
+            return RedirectToAction("ModelGrubu", new { tepki = 3 });
         }
         #endregion
     }
