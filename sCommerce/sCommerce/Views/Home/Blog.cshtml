@@ -1,0 +1,74 @@
+﻿@using sCommerce.Models;
+@{
+    ViewBag.Title = "Blog";
+
+    int sayfaNo = ViewBag.id;
+    if (sayfaNo < 1)
+    {
+        sayfaNo = 1;
+    }
+    int blogCount = new Blog().BlogCount();
+    int sayfaCount = 10;
+    int sayfaAdedi = Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(blogCount) / sayfaCount));
+
+    List<Blog> blogs = new Blog().GetBlogs(sayfaNo, sayfaCount);
+}
+<br />
+<div class="tt-breadcrumb">
+    <div class="container">
+        <ul>
+            <li><a href="@Url.Action("Index")">Ana Sayfa</a></li>
+            <li>Blog</li>
+        </ul>
+    </div>
+</div>
+<div id="tt-pageContent">
+    <div class="container-indent">
+        <div class="container container-fluid-custom-mobile-padding">
+            <h1 class="tt-title-subpages noborder">BLOG</h1>
+            <div class="row">
+                <div class="col-12">
+                    <div class="tt-listing-post tt-half">
+                        @foreach (Blog blog in blogs)
+                        {
+                            <div class="tt-post">
+                                <div class="tt-post-img">
+                                    <a href="@Url.Action("BlogDetail", new { id = blog.blogID })"><img src="/Content/images/loader.svg" data-src="/Content/icerik/blog/kucuk/@blog.gorsel" alt="@blog.baslik"></a>
+                                </div>
+                                <div class="tt-post-content">
+                                    <div class="tt-tag"><a href="@Url.Action("BlogDetail", new { id = blog.blogID })">@blog.kategori.kategori</a></div>
+                                    <h2 class="tt-title"><a href="@Url.Action("BlogDetail", new { id = blog.blogID })">@blog.baslik</a></h2>
+                                    <div class="tt-description">@MvcHtmlString.Create(Site.StripHTML(blog.yazi.Substring(0, blog.yazi.Length < 250 ? blog.yazi.Length : 250)))...</div>
+                                    <div class="tt-meta">
+                                        <div class="tt-autor">
+                                            by <span>@blog.kaydedenKullanici.adSoyad()</span> on @blog.kayitTarihi.ToString("dd.MM.yyyy")
+                                        </div>
+                                    </div>
+                                    <div class="tt-btn">
+                                        <a href="@Url.Action("BlogDetail", new { id = blog.blogID })" class="btn">DEVAMINI OKU</a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div class="tt-pagination">
+                            @if (sayfaNo > 1)
+                            {
+                                <a href="@Url.Action("Blog", new { id = (sayfaNo - 1) })" class="btn-pagination btn-prev"></a>
+                            }
+                            <ul>
+                                @for (int i = 1; i <= sayfaAdedi; i++)
+                                {
+                                    <li class="@(i == sayfaNo ? "active" : "")"><a href="@Url.Action("Blog", new { id = i })">@i</a></li>
+                                }
+                            </ul>
+                            @if (sayfaNo < sayfaAdedi)
+                            {
+                                <a href="@Url.Action("Blog", new { id = (sayfaNo + 1) })" class="btn-pagination btn-next"></a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

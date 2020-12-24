@@ -27,6 +27,7 @@
     DataTable dt_urun_kategorileri = SQL.get("SELECT * FROM urunKategori WHERE silindi = 0 AND urunID = " + urunID);
     DataTable dt_urun_ozellikleri = SQL.get("SELECT * FROM ozellikler WHERE silindi = 0");
     DataTable dt_model_grubu = SQL.get("SELECT * FROM modelGrubu WHERE silindi = 0");
+    DataTable dt_marka = SQL.get("SELECT * FROM markalar WHERE silindi = 0");
 
     DataTable dt_urun_ozellik = SQL.get("SELECT uo.degerID, od.deger, o.ozellik, o.ozellikID FROM urunOzellik uo INNER JOIN ozellikDegerleri od ON od.silindi = 0 AND od.ozellikDegerID = uo.degerID INNER JOIN ozellikler o ON o.silindi = 0 AND o.ozellikID = od.ozellikID WHERE uo.silindi = 0 AND uo.urunID = " + urunID);
     DataTable dt_urun_resimleri = SQL.get("SELECT * FROM urunResim WHERE silindi = 0 AND urunID = " + urunID);
@@ -198,6 +199,18 @@
                                             @foreach (DataRow item in dt_urunDurumu.Rows)
                                             {
                                                 <option value="@item["parametreID"]" @(urunID == 0 ? "" : (@item["parametreID"].ToString() == dt_urun.Rows[0]["urunDurumuParametreID"].ToString() ? " selected " : ""))>@item["deger"]</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Marka</label>
+                                        <select name="markaID" class="form-control">
+                                            <option value="0">-</option>
+                                            @foreach (DataRow item in dt_marka.Rows)
+                                            {
+                                                <option value="@item["markaID"]" @(urunID == 0 ? "" : (@item["markaID"].ToString() == dt_urun.Rows[0]["markaID"].ToString() ? " selected " : ""))>@item["marka"]</option>
                                             }
                                         </select>
                                     </div>

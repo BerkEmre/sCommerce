@@ -19,8 +19,18 @@ namespace sCommerce.Models
         public string ikon;
         public string resim;
         public string aciklama;
-
         public List<Kategori> altKategori = new List<Kategori>();
+
+        public Kategori()
+        {
+
+        }
+
+        public Kategori(int kategoriID, string kategori)
+        {
+            this.kategoriID = kategoriID;
+            this.kategori = kategori;
+        }
 
         public List<Kategori> loadKategoriler(int kategoriTipiParametreID)
         {

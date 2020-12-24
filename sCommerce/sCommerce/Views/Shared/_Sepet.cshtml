@@ -1,0 +1,51 @@
+﻿@using sCommerce.Models
+@{
+    List<Sepet> sepet = Site.GetSepet();
+}
+@if (sepet.Count == 0)
+{
+    <a class="tt-cart-empty">
+        <i class="icon-f-39"></i>
+        <p>Sepetinizde hiç ürün yok</p>
+    </a>
+}
+else
+{
+    <div class="tt-cart-content">
+        <div class="tt-cart-list">
+            @foreach (Sepet sepetItem in sepet)
+            {
+                <div class="tt-item">
+                    <a href="@Url.Action("Product", new { id = sepetItem.urun.urunID })">
+                        <div class="tt-item-img">
+                            <img src="~/Content/icerik/urun/kucuk/@(sepetItem.urun.urunResimleri.Count > 0 ? sepetItem.urun.urunResimleri[0].resim : "yok.jpg")" alt="@sepetItem.urun.urunAdi">
+                        </div>
+                        <div class="tt-item-descriptions">
+                            <h2 class="tt-title">@sepetItem.urun.urunAdi</h2>
+                            <ul class="tt-add-info">
+                                <li>@sepetItem.urun.modelGrubu.modelGrubu</li>
+                            </ul>
+                            <div class="tt-quantity">@sepetItem.miktar X</div> <div class="tt-price">@sepetItem.urun.fiyat TL</div>
+                        </div>
+                    </a>
+                    <div class="tt-item-close">
+                        <a class="tt-btn-close" onclick="onSepetEkle(@(sepetItem.urun.urunID), @sepetItem.miktar, 0)"></a>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="tt-cart-total-row">
+            <div class="tt-cart-total-title">TOPLAM:</div>
+            <div class="tt-cart-total-price">@sepet.Sum(x => x.urun.fiyat * x.miktar).ToString("N2") TL</div>
+        </div>
+        <div class="tt-cart-btn">
+            <div class="tt-item">
+                <a href="@Url.Action("CheckOut")" class="btn">ÖDEMEYE DEVAM ET</a>
+            </div>
+            <div class="tt-item">
+                <a href="@Url.Action("Cart")" class="btn-link-02 tt-hidden-mobile">Sepete Git</a>
+                <a href="@Url.Action("Cart")" class="btn btn-border tt-hidden-desctope">SEPETE GİT</a>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,83 @@
+﻿@using sCommerce.Models;
+@{
+    Blog blog = new Blog();
+    blog.Load(ViewBag.id);
+
+    ViewBag.Title = blog.baslik;
+
+    List<Blog> blogs = blog.GetBlogs(1, 2);
+}
+<br />
+<div class="tt-breadcrumb">
+    <div class="container">
+        <ul>
+            <li><a href="@Url.Action("Index")">Ana Sayfa</a></li>
+            <li><a href="@Url.Action("Blog")">Blog</a></li>
+            <li>@blog.baslik</li>
+        </ul>
+    </div>
+</div>
+<div id="tt-pageContent">
+    <div class="container-indent">
+        <div class="container container-fluid-custom-mobile-padding">
+            <div class="row justify-content-center">
+                <div class="col-xs-12 col-md-10 col-lg-8 col-md-auto">
+                    <div class="tt-post-single">
+                        <div class="tt-tag"><a>@blog.kategori.kategori</a></div>
+                        <h1 class="tt-title">@blog.baslik</h1>
+                        <div class="tt-autor">by <span>@blog.kaydedenKullanici.adSoyad()</span> on @blog.kayitTarihi.ToString("dd.MM.yyyy")</div>
+                        <div class="tt-post-content">
+                            <img src="~/Content/images/loader.svg" data-src="/Content/icerik/blog/buyuk/@blog.gorsel" alt="@blog.baslik">
+                            <h2 class="tt-title">@blog.baslik</h2>
+                            @MvcHtmlString.Create(blog.yazi)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-indent wrapper-social-icon">
+        <div class="container">
+            <ul class="tt-social-icon justify-content-center">
+                @(MvcHtmlString.Create(Site.siteBilgileri.facebook.ToString().Length <= 0 ? "" : "<li><a class='icon-g-64' target='_blank' href='" + Site.siteBilgileri.facebook + "'></a></li>"))
+                @(MvcHtmlString.Create(Site.siteBilgileri.twitter.ToString().Length <= 0 ? "" : "<li><a class='icon-h-58' target='_blank' href='" + Site.siteBilgileri.twitter + "'></a></li>"))
+                @(MvcHtmlString.Create(Site.siteBilgileri.instagram.ToString().Length <= 0 ? "" : "<li><a class='icon-g-67' target='_blank' href='" + Site.siteBilgileri.instagram + "'></a></li>"))
+                @(MvcHtmlString.Create(Site.siteBilgileri.youtube.ToString().Length <= 0 ? "" : "<li><a class='icon-g-76' target='_blank' href='" + Site.siteBilgileri.youtube + "'></a></li>"))
+                @(MvcHtmlString.Create(Site.siteBilgileri.linkedin.ToString().Length <= 0 ? "" : "<li><a class='icon-g-68' target='_blank' href='" + Site.siteBilgileri.linkedin + "'></a></li>"))
+                @(MvcHtmlString.Create(Site.siteBilgileri.pinterest.ToString().Length <= 0 ? "" : "<li><a class='icon-g-68' target='_blank' href='" + Site.siteBilgileri.pinterest + "'></a></li>"))
+            </ul>
+        </div>
+    </div>
+    <div class="container-indent">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xs-12 col-md-10 col-lg-8 col-md-auto">
+                    <div class="comments-single-post">
+                        <h6 class="tt-title-border">SON POSTLAR</h6>
+                        <div class="tt-blog-thumb-list">
+                            <div class="row">
+                                @foreach (Blog sonBlog in blogs)
+                                {
+                                    <div class="col-sm-6">
+                                        <div class="tt-blog-thumb">
+                                            <div class="tt-img"><a href="@Url.Action("BlogDetail", new { id = sonBlog.blogID })"><img src="images/loader.svg" data-src="/Content/icerik/blog/buyuk/@sonBlog.gorsel" alt="@sonBlog.baslik"></a></div>
+                                            <div class="tt-title-description">
+                                                <div class="tt-background"></div>
+                                                <div class="tt-tag">
+                                                    <a href="@Url.Action("BlogDetail", new { id = sonBlog.blogID })">@sonBlog.kategori.kategori</a>
+                                                </div>
+                                                <div class="tt-title">
+                                                    <a href="@Url.Action("BlogDetail", new { id = sonBlog.blogID })">@sonBlog.baslik</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

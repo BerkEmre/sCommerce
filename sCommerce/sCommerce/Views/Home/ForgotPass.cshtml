@@ -1,0 +1,47 @@
+﻿
+@{
+    ViewBag.Title = "Şifremi Unuttum";
+}
+<br />
+<div class="tt-breadcrumb">
+    <div class="container">
+        <ul>
+            <li><a href="@Url.Action("Index")">Ana Sayfa</a></li>
+            <li>Şifremi Unuttum</li>
+        </ul>
+    </div>
+</div>
+<div id="tt-pageContent">
+    <div class="container-indent">
+        <div class="container">
+            <h1 class="tt-title-subpages noborder">ENDİŞELENMEYE GEREK YOK</h1>
+            <div class="tt-login-form">
+                <div class="row">
+                    @if (Request.Params["hata"] != null) {<div class="alert alert-danger col-md-12 text-danger" role="alert">@Request.Params["hata"]</div>}
+                    <div class="col-xs-12 col-md-12">
+                        <div class="tt-item">
+                            <h2 class="tt-title">ŞİFREMİ SIFIRLA</h2>
+                            <div class="form-default form-top">
+                                <form method="post" action="SifremiUnuttum">
+                                    <div class="form-group">
+                                        <label for="loginInputName">E-MAIL *</label>
+                                        <div class="tt-required">Girdiğiniz mail adresine bir sıfırlama linki göndereceğiz...</div>
+                                        <input type="email" name="eMail" class="form-control" placeholder="E-mail" required>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-auto mr-auto">
+                                            <div class="form-group">
+                                                <button class="btn btn-border" type="submit">MAIL GÖNDER</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

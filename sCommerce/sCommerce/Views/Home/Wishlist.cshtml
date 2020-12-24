@@ -1,0 +1,17 @@
+﻿@using sCommerce.Models
+@{
+    ViewBag.Title = "Favoriler";
+}
+<br />
+<div class="tt-breadcrumb">
+    <div class="container">
+        <ul>
+            <li><a href="@Url.Action("Index")">Ana Sayfa</a></li>
+            <li>Favoriler</li>
+        </ul>
+    </div>
+</div>
+<div id="tt-pageContent">
+    @Html.Partial("_Wishlist")
+</div>
+<div id="WLPAGE"></div>

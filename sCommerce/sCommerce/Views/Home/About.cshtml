@@ -1,0 +1,33 @@
+﻿@using sCommerce.Models
+@{
+    ViewBag.Title = "Hakkımızda";
+}
+<br />
+<div class="tt-breadcrumb">
+    <div class="container">
+        <ul>
+            <li><a href="@Url.Action("Index")">Ana Sayfa</a></li>
+            <li>Hakkımızda</li>
+        </ul>
+    </div>
+</div>
+<div id="tt-pageContent">
+    <div class="container-indent">
+        <div class="container container-fluid-custom-mobile-padding">
+            <h1 class="tt-title-subpages">HAKKIMIZDA</h1>
+            <div class="tt-box-faq-listing">
+                <div class="row">
+                    <div class="col-sm-12 col-md-6 text-right">
+                        <img src="~/Content/icerik/site_logo/@Site.siteBilgileri.logo" alt="@Site.siteBilgileri.siteAdi">
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <h2 class="tt-base-color small">@Site.siteBilgileri.siteAdi</h2>
+                        <div class="tt-box-faq">
+                            @MvcHtmlString.Create(Site.siteBilgileri.hakkimizda)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

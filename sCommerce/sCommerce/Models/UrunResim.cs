@@ -22,7 +22,7 @@ namespace sCommerce.Models
         {
             List<UrunResim> urunResims = new List<UrunResim>();
 
-            DataTable dt = SQL.get("SELECT * FROM urunResim WHERE silindi = 0 AND urunID = " + urunID);
+            DataTable dt = SQL.get("SELECT * FROM urunResim WHERE silindi = 0 AND urunID = " + urunID + " ORDER by sira");
             
             foreach (DataRow dr in dt.Rows)
             {

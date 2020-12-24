@@ -69,7 +69,7 @@ namespace sCommerce.Helper
                     cmd.ExecuteNonQuery();
                     con.Close();
                 }
-                catch (Exception e)
+                catch
                 {
                     con.Close();
                 }

@@ -125,13 +125,20 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\Kripto.cs" />
     <Compile Include="Helper\SQL.cs" />
+    <Compile Include="Models\Blog.cs" />
+    <Compile Include="Models\CaptchaResponse.cs" />
+    <Compile Include="Models\Favori.cs" />
     <Compile Include="Models\Kategori.cs" />
     <Compile Include="Models\Kullanici.cs" />
+    <Compile Include="Models\Marka.cs" />
+    <Compile Include="Models\Mesaj.cs" />
     <Compile Include="Models\ModelGrubu.cs" />
     <Compile Include="Models\Ozellik.cs" />
     <Compile Include="Models\OzellikDeger.cs" />
     <Compile Include="Models\Parametre.cs" />
+    <Compile Include="Models\Sepet.cs" />
     <Compile Include="Models\Site.cs" />
     <Compile Include="Models\SiteBilgileri.cs" />
     <Compile Include="Models\Urun.cs" />
@@ -168,9 +175,22 @@
     <Content Include="Views\Admin\UrunDetay.cshtml" />
     <Content Include="Views\Home\Product.cshtml" />
     <Content Include="Views\Home\ProductDetail.cshtml" />
-    <Content Include="Views\Home\Shop.cshtml" />
     <Content Include="Views\Home\ComingSoon.cshtml" />
     <Content Include="Views\Admin\ModelGrubu.cshtml" />
+    <Content Include="Views\Shared\_Sepet.cshtml" />
+    <Content Include="Views\Admin\Marka.cshtml" />
+    <Content Include="Views\Home\Blog.cshtml" />
+    <Content Include="Views\Home\BlogDetail.cshtml" />
+    <Content Include="Views\Home\Page404.cshtml" />
+    <Content Include="Views\Home\Contact.cshtml" />
+    <Content Include="Views\Home\Page.cshtml" />
+    <Content Include="Views\Home\About.cshtml" />
+    <Content Include="Views\Home\Login.cshtml" />
+    <Content Include="Views\Home\Customer.cshtml" />
+    <Content Include="Views\Home\Wishlist.cshtml" />
+    <Content Include="Views\Home\ForgotPass.cshtml" />
+    <Content Include="Views\Home\RePass.cshtml" />
+    <Content Include="Views\Shared\_Wishlist.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

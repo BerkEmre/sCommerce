@@ -1,0 +1,92 @@
+﻿@using sCommerce.Models
+@using System.Configuration
+@{
+    ViewBag.Title = "İletişim";
+}
+<br />
+<div class="tt-breadcrumb">
+    <div class="container">
+        <ul>
+            <li><a href="@Url.Action("Index")">Ana Sayfa</a></li>
+            <li>İletişim</li>
+        </ul>
+    </div>
+</div>
+<div id="tt-pageContent">
+    <div class="container-indent">
+        <div class="container">
+            <div class="contact-map">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1063.614882205663!2d28.676415270118312!3d41.06118445210948!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x421e382ca886f3e3!2sAy%C5%9Fem%20Y%C3%BCn%20Tuhafiye%20ve%20Okul%20K%C4%B1yafetleri!5e0!3m2!1str!2str!4v1608760773884!5m2!1str!2str" width="100%" height="450" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+            </div>
+        </div>
+    </div>
+    <div class="container-indent">
+        <div class="container container-fluid-custom-mobile-padding">
+            <div class="tt-contact02-col-list">
+                <div class="row">
+                    <div class="col-sm-12 col-md-4 ml-sm-auto mr-sm-auto">
+                        <div class="tt-contact-info">
+                            <i class="tt-icon icon-f-93"></i>
+                            <h6 class="tt-title">BİZİ ARAYIN!</h6>
+                            <address>
+                                @Site.siteBilgileri.tel<br>
+                                @Site.siteBilgileri.gsm
+                            </address>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-4">
+                        <div class="tt-contact-info">
+                            <i class="tt-icon icon-f-24"></i>
+                            <h6 class="tt-title">MAĞAZAMIZI ZİYARET EDİN</h6>
+                            <address>
+                                @Site.siteBilgileri.adres
+                            </address>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-4">
+                        <div class="tt-contact-info">
+                            <i class="tt-icon icon-f-92"></i>
+                            <h6 class="tt-title">ÇALIŞMA SAATLERİMİZ</h6>
+                            <address>
+                                @Site.siteBilgileri.calismaSaatleri
+                            </address>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-indent">
+        <div class="container container-fluid-custom-mobile-padding">
+            <form id="mesajGonder" class="contact-form form-default" method="post" novalidate="novalidate">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <input type="text" name="adSoyad" class="form-control" id="adSoyad" placeholder="Ad Soyad (gerekli)">
+                        </div>
+                        <div class="form-group">
+                            <input type="email" name="eMail" class="form-control" id="eMail" placeholder="E-mail (gerekli)">
+                        </div>
+                        <div class="form-group">
+                            <input type="tel" name="telefon" class="form-control" id="telefon" placeholder="Telefon">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="baslik" class="form-control" id="baslik" placeholder="Konu">
+                        </div>
+                        <input type="hidden" name="kaynakEkran" value="İletişim" />
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <textarea name="mesaj" class="form-control" id="mesaj" rows="7" placeholder="Mesajınız..."></textarea>
+                        </div>
+                        <div class="g-recaptcha" data-sitekey="@ConfigurationManager.AppSettings["recaptcha_key"]"></div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn">GÖNDER</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

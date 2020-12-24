@@ -1,0 +1,61 @@
+﻿@using sCommerce.Models
+@{
+    int id = ViewBag.id;
+    string baslik = "";
+    string yazi = "";
+
+    switch (id)
+    {
+        case 0:
+            baslik = "Gizlilik Politikası";
+            yazi = Site.siteBilgileri.gizlilikPolitikasi;
+            break;
+        case 1:
+            baslik = "Mesafeli Satış Sözleşmesi";
+            yazi = Site.siteBilgileri.mesafeliSatisSozlesmesi;
+            break;
+        case 2:
+            baslik = "Teslimat ve İade Şartları";
+            yazi = Site.siteBilgileri.kullanimSartlari;
+            break;
+        case 3:
+            baslik = "SSS";
+            yazi = Site.siteBilgileri.sikSorulanSorular;
+            break;
+        case 4:
+            baslik = "Üyelik Sözleşmesi";
+            yazi = Site.siteBilgileri.uyelikSozlesmesi;
+            break;
+        default:
+            baslik = "Hatalı Sayfa";
+            yazi = "";
+            break;
+    }
+
+    ViewBag.Title = baslik;
+}
+<br />
+<div class="tt-breadcrumb">
+    <div class="container">
+        <ul>
+            <li><a href="@Url.Action("Index")">Ana Sayfa</a></li>
+            <li>@baslik</li>
+        </ul>
+    </div>
+</div>
+<div id="tt-pageContent">
+    <div class="container-indent">
+        <div class="container container-fluid-custom-mobile-padding">
+            <h1 class="tt-title-subpages">@baslik</h1>
+            <div class="tt-box-faq-listing">
+                <div class="row">
+                    <div class="col-sm-12 col-md-12">
+                        <div class="tt-box-faq">
+                            @MvcHtmlString.Create(yazi)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

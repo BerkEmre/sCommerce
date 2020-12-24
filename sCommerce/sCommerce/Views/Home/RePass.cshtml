@@ -1,0 +1,59 @@
+﻿@using sCommerce.Models;
+@{
+    ViewBag.Title = "Şifre Sıfırlama";
+    string a = ViewBag.a;
+    string b = ViewBag.b;
+    Kullanici musteri = ViewBag.musteri;
+}
+<br />
+<div class="tt-breadcrumb">
+    <div class="container">
+        <ul>
+            <li><a href="@Url.Action("Index")">Ana Sayfa</a></li>
+            <li>Şifre Sıfırlama</li>
+        </ul>
+    </div>
+</div>
+<div id="tt-pageContent">
+    <div class="container-indent">
+        <div class="container">
+            <h1 class="tt-title-subpages noborder">ŞİFRE SIFIRLA</h1>
+            <div class="tt-login-form">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12">
+                        <div class="tt-item">
+                            @if (musteri == null)
+                            {
+                                <h2>Link kırılmış veya değiştirilmiş olabilir, lütfen tekar şifre sıfırlama adımlarını tekrarlayınız.</h2>
+                            }
+                            else
+                            {
+                                <h2 class="tt-title">ŞİFREYİ GÜNCELLE</h2>
+                                <div class="form-default form-top">
+                                    <form method="post" action="SifreSifirla">
+                                        <div class="form-group">
+                                            <label for="loginInputName">YENİ ŞİFRENİZ *</label>
+                                            <div class="tt-required">@musteri.eMail</div>
+                                            <input type="password" name="sifre" class="form-control" placeholder="Yeni şifreniz" required>
+                                            <input type="hidden" name="eMail" value="@musteri.eMail">
+                                            <input type="hidden" name="a" value="@a">
+                                            <input type="hidden" name="b" value="@b">
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-auto mr-auto">
+                                                <div class="form-group">
+                                                    <button class="btn btn-border" type="submit">ŞİFREYİ GÜNCELLE</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

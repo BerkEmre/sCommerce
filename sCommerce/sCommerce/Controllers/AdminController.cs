@@ -580,7 +580,7 @@ namespace sCommerce.Controllers
 
         [ValidateInput(false)]
         [HttpPost]
-        public ActionResult blogDuzenle(int modelGrubuID, string modelGrubu)
+        public ActionResult modelGrubuDuzenle(int modelGrubuID, string modelGrubu)
         {
             if (modelGrubu.Length <= 0)
                 return RedirectToAction("ModelGrubu", new { hata = "Eksik bilgi girdiniz!" });
@@ -598,6 +598,48 @@ namespace sCommerce.Controllers
 
             SQL.set("UPDATE modelGrubu SET guncelleyenKullaniciID = " + Session["kullaniciID"] + ", guncellemeTarihi = GETDATE(), silindi = 1 WHERE modelGrubuID = " + modelGrubuID);
             return RedirectToAction("ModelGrubu", new { tepki = 3 });
+        }
+        #endregion
+        #region Marka
+        public ActionResult Marka()
+        {
+            if (Session["kullaniciID"] == null)
+                return RedirectToAction("Login");
+            return View();
+        }
+
+        [ValidateInput(false)]
+        [HttpPost]
+        public ActionResult markaEkle(string marka)
+        {
+            if (marka.Length <= 0)
+                return RedirectToAction("Marka", new { hata = "Eksik bilgi girdiniz!" });
+
+            SQL.set("INSERT INTO markalar (kaydedenKullaniciID, marka) VALUES (" + Session["kullaniciID"] + ", '" + marka + "')");
+
+            return RedirectToAction("Marka", new { tepki = 1 });
+        }
+
+        [ValidateInput(false)]
+        [HttpPost]
+        public ActionResult markaDuzenle(int markaID, string marka)
+        {
+            if (marka.Length <= 0)
+                return RedirectToAction("Marka", new { hata = "Eksik bilgi girdiniz!" });
+
+            SQL.set("UPDATE markalar SET guncelleyenKullaniciID = " + Session["kullaniciID"] + ", guncellemeTarihi = GETDATE(), marka = '" + marka + "' WHERE markaID = " + markaID);
+
+            return RedirectToAction("Marka", new { tepki = 1 });
+        }
+
+        public ActionResult markaSil(int markaID)
+        {
+            DataTable dt = SQL.get("SELECT * FROM urunler WHERE silindi = 0 AND markaID = " + markaID);
+            if (dt.Rows.Count > 0)
+                return RedirectToAction("Marka", new { hata = "Markaya dahil ürünler bulunmakta model grubu silinemez" });
+
+            SQL.set("UPDATE markalar SET guncelleyenKullaniciID = " + Session["kullaniciID"] + ", guncellemeTarihi = GETDATE(), silindi = 1 WHERE markaID = " + markaID);
+            return RedirectToAction("Marka", new { tepki = 3 });
         }
         #endregion
     }

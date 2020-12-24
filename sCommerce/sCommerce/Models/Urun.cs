@@ -35,11 +35,13 @@ namespace sCommerce.Models
         public int urunDurumuParametreID;
         public int oneCikanlar;
         public int modelGrubuID;
+        public int markaID;
         public Parametre urunEtiketi;
         public Parametre vergi;
         public Parametre stokBitince;
         public Parametre urunDurumu;
         public ModelGrubu modelGrubu;
+        public Marka marka;
         public List<Kategori> urunKategorileri;
         public List<UrunResim> urunResimleri;
         public List<UrunOzellik> urunOzellikleri;
@@ -55,7 +57,8 @@ namespace sCommerce.Models
                 "    vergi = pVergi.deger, " +
                 "    stokBitince = pSBitince.deger, " +
                 "    urunDurumu = pUDurumu.deger, " +
-                "    modelGrubu = mg.modelGrubu " +
+                "    modelGrubu = mg.modelGrubu, " +
+                "    marka = m.marka " +
                 "FROM " +
                 "    urunler u " +
                 "    LEFT OUTER JOIN parametreler pUEtiket ON pUEtiket.parametreID = u.urunEtiketiParametreID " +
@@ -63,6 +66,7 @@ namespace sCommerce.Models
                 "    LEFT OUTER JOIN parametreler pSBitince ON pSBitince.parametreID = u.stokBitinceParametreID " +
                 "    LEFT OUTER JOIN parametreler pUDurumu ON pUDurumu.parametreID = u.urunDurumuParametreID " +
                 "    LEFT OUTER JOIN modelGrubu mg ON mg.modelGrubuID = u.modelGrubuID " +
+                "    LEFT OUTER JOIN markalar m ON m.markaID = u.markaID " +
                 "WHERE " +
                 "    u.silindi = 0 " +
                 "    AND u.oneCikanlar = 1 " +
@@ -97,18 +101,87 @@ namespace sCommerce.Models
                 Int32.TryParse(dataRow["urunDurumuParametreID"].ToString(), out urun.urunDurumuParametreID);
                 Int32.TryParse(dataRow["oneCikanlar"].ToString(), out urun.oneCikanlar);
                 Int32.TryParse(dataRow["modelGrubuID"].ToString(), out urun.modelGrubuID);
+                Int32.TryParse(dataRow["markaID"].ToString(), out urun.markaID);
                 urun.urunEtiketi = new Parametre(urun.urunEtiketiParametreID, dataRow["urunEtiketi"].ToString());
                 urun.vergi = new Parametre(urun.urunEtiketiParametreID, dataRow["vergi"].ToString());
                 urun.stokBitince = new Parametre(urun.urunEtiketiParametreID, dataRow["stokBitince"].ToString());
                 urun.urunDurumu = new Parametre(urun.urunEtiketiParametreID, dataRow["urunDurumu"].ToString());
                 urun.modelGrubu = new ModelGrubu(urun.modelGrubuID, DateTime.Now, 0, DateTime.Now, 0, 0, dataRow["modelGrubu"].ToString());
+                urun.modelGrubu = new ModelGrubu(urun.markaID, DateTime.Now, 0, DateTime.Now, 0, 0, dataRow["marka"].ToString());
                 //urun.urunKategorileri = new Kategori().GetUrunKategorileri(urun.urunID);
                 urun.urunResimleri = new UrunResim().GetUrunResimleri(urun.urunID);
-                //urun.urunOzellikleri = new UrunOzellik().GetUrunOzellik(urun.urunID);
+                urun.urunOzellikleri = new UrunOzellik().GetUrunOzellik(urun.urunID);
 
                 u.Add(urun);
             }
             return u;
+        }
+
+        public bool LoadFromID(int urunID)
+        {
+            DataTable dt = SQL.get(
+                "SELECT " +
+                "    u.*, " +
+                "    urunEtiketi = pUEtiket.deger, " +
+                "    vergi = pVergi.deger, " +
+                "    stokBitince = pSBitince.deger, " +
+                "    urunDurumu = pUDurumu.deger, " +
+                "    modelGrubu = mg.modelGrubu, " +
+                "    marka = m.marka " +
+                "FROM " +
+                "    urunler u " +
+                "    LEFT OUTER JOIN parametreler pUEtiket ON pUEtiket.parametreID = u.urunEtiketiParametreID " +
+                "    LEFT OUTER JOIN parametreler pVergi ON pVergi.parametreID = u.vergiParametreID " +
+                "    LEFT OUTER JOIN parametreler pSBitince ON pSBitince.parametreID = u.stokBitinceParametreID " +
+                "    LEFT OUTER JOIN parametreler pUDurumu ON pUDurumu.parametreID = u.urunDurumuParametreID " +
+                "    LEFT OUTER JOIN modelGrubu mg ON mg.modelGrubuID = u.modelGrubuID " +
+                "    LEFT OUTER JOIN markalar m ON m.markaID = u.markaID " +
+                "WHERE " +
+                "    u.urunID = " + urunID);
+
+            if (dt.Rows.Count <= 0)
+                return false;
+
+            DataRow dataRow = dt.Rows[0];
+
+            Int32.TryParse(dataRow["urunID"].ToString(), out this.urunID);
+            DateTime.TryParse(dataRow["kayitTarihi"].ToString(), out this.kayitTarihi);
+            Int32.TryParse(dataRow["kaydedenKullaniciID"].ToString(), out this.kaydedenKullaniciID);
+            DateTime.TryParse(dataRow["guncellemeTarihi"].ToString(), out this.guncellemeTarihi);
+            Int32.TryParse(dataRow["guncelleyenKullaniciID"].ToString(), out this.guncelleyenKullaniciID);
+            Int32.TryParse(dataRow["silindi"].ToString(), out this.silindi);
+            this.urunAdi = dataRow["urunAdi"].ToString();
+            this.urunAciklamasi = dataRow["urunAciklamasi"].ToString();
+            this.seoAciklama = dataRow["seoAciklama"].ToString();
+            this.seoKeywords = dataRow["urunEtiketiParametreID"].ToString();
+            Int32.TryParse(dataRow["urunEtiketiParametreID"].ToString(), out this.urunEtiketiParametreID);
+            this.barkod = dataRow["barkod"].ToString();
+            this.stokKodu = dataRow["stokKodu"].ToString();
+            this.depoLokasyonu = dataRow["depoLokasyonu"].ToString();
+            Decimal.TryParse(dataRow["eskiFiyat"].ToString(), out this.eskiFiyat);
+            Decimal.TryParse(dataRow["fiyat"].ToString(), out this.fiyat);
+            Int32.TryParse(dataRow["vergiParametreID"].ToString(), out this.vergiParametreID);
+            Int32.TryParse(dataRow["vergiDahilSatis"].ToString(), out this.vergiDahilSatis);
+            Int32.TryParse(dataRow["miktar"].ToString(), out this.miktar);
+            Int32.TryParse(dataRow["minimumMiktar"].ToString(), out this.minimumMiktar);
+            Int32.TryParse(dataRow["stokBitinceParametreID"].ToString(), out this.stokBitinceParametreID);
+            Decimal.TryParse(dataRow["agirlik"].ToString(), out this.agirlik);
+            Int32.TryParse(dataRow["kargoSuresi"].ToString(), out this.kargoSuresi);
+            Int32.TryParse(dataRow["urunDurumuParametreID"].ToString(), out this.urunDurumuParametreID);
+            Int32.TryParse(dataRow["oneCikanlar"].ToString(), out this.oneCikanlar);
+            Int32.TryParse(dataRow["modelGrubuID"].ToString(), out this.modelGrubuID);
+            Int32.TryParse(dataRow["markaID"].ToString(), out this.markaID);
+            this.urunEtiketi = new Parametre(this.urunEtiketiParametreID, dataRow["urunEtiketi"].ToString());
+            this.vergi = new Parametre(this.urunEtiketiParametreID, dataRow["vergi"].ToString());
+            this.stokBitince = new Parametre(this.urunEtiketiParametreID, dataRow["stokBitince"].ToString());
+            this.urunDurumu = new Parametre(this.urunEtiketiParametreID, dataRow["urunDurumu"].ToString());
+            this.modelGrubu = new ModelGrubu(this.modelGrubuID, DateTime.Now, 0, DateTime.Now, 0, 0, dataRow["modelGrubu"].ToString());
+            this.modelGrubu = new ModelGrubu(this.markaID, DateTime.Now, 0, DateTime.Now, 0, 0, dataRow["marka"].ToString());
+            //this.urunKategorileri = new Kategori().GetUrunKategorileri(this.urunID);
+            this.urunResimleri = new UrunResim().GetUrunResimleri(this.urunID);
+            this.urunOzellikleri = new UrunOzellik().GetUrunOzellik(this.urunID);
+
+            return true;
         }
     }
 }

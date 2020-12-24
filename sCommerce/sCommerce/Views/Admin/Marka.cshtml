@@ -1,9 +1,9 @@
 ﻿@using System.Data
 @using sCommerce.Helper
 @{
-    ViewBag.Title = "Model Grubu";
+    ViewBag.Title = "Marka";
 
-    DataTable dtModelGrubu = SQL.get("SELECT * FROM modelGrubu WHERE silindi = 0");
+    DataTable dtModelGrubu = SQL.get("SELECT * FROM markalar WHERE silindi = 0");
 }
 @section style
 {
@@ -15,10 +15,10 @@
     <script src="~/Content/assets/js/pages/ui/dialogs.js"></script>
     <script src="~/Content/vendor/dropify/js/dropify.min.js"></script>
     <script>
-        function ModelGrubuSil(modelGrubuID) {
+        function markaSil(markaID) {
             swal({
                 title: "Silmek istediğinizden emin misiniz?",
-                text: "Silinen model grubu geri getirilemez!",
+                text: "Silinen marka geri getirilemez!",
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonClass: "btn-danger",
@@ -27,7 +27,7 @@
                 closeOnConfirm: false
             },
                 function () {
-                    window.location = "/Admin/modelGrubuSil?modelGrubuID=" + modelGrubuID;
+                    window.location = "/Admin/markaSil?markaID=" + markaID;
                 });
         }
     </script>
@@ -39,11 +39,11 @@
     @{ if (Request.Params["tepki"] != null)
         {
             if (Request.Params["tepki"].ToString() == "1")
-            { <div class="alert alert-success col-md-12" role="alert">Tebrikler, yeni model grubu eklendi...</div> }
+            { <div class="alert alert-success col-md-12" role="alert">Tebrikler, yeni marka eklendi...</div> }
             if (Request.Params["tepki"].ToString() == "2")
-            { <div class="alert alert-success col-md-12" role="alert">Tebrikler, model grubu güncellendi...</div> }
+            { <div class="alert alert-success col-md-12" role="alert">Tebrikler, marka güncellendi...</div> }
             if (Request.Params["tepki"].ToString() == "3")
-            { <div class="alert alert-info col-md-12" role="alert">Model grubu silindi...</div> }
+            { <div class="alert alert-info col-md-12" role="alert">Marka silindi...</div> }
 
         }
     }
@@ -51,7 +51,7 @@
         <div class="card">
             <div class="header">
                 <div class="pull-right">
-                    <a href="javascript:void(0);" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addcontact"><i class="fa fa-plus"></i> Yeni Model Grubu</a>
+                    <a href="javascript:void(0);" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addcontact"><i class="fa fa-plus"></i> Yeni Marka</a>
                 </div>
             </div>
             <div class="body">
@@ -59,7 +59,7 @@
                     <table class="table table-custom table-hover m-b-0 c_list">
                         <thead>
                             <tr>
-                                <th>Model Grubu</th>
+                                <th>Marka</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -67,27 +67,27 @@
                             @foreach (DataRow dr_item in dtModelGrubu.Rows)
                             {
                                 <tr>
-                                    <td>@dr_item["modelGrubu"]</td>
+                                    <td>@dr_item["marka"]</td>
                                     <td>
-                                        <a href="javascript:void(0);" class="btn btn-sm btn-default" data-toggle="modal" data-target="#tedarikci_duzenle_@dr_item["modelGrubuID"]"><i class="fa fa-edit"></i></a>
-                                        <button onclick="ModelGrubuSil(@dr_item["modelGrubuID"])" class="btn btn-danger" title="Delete" type="button"><i class="fa fa-trash-o"></i></button>
+                                        <a href="javascript:void(0);" class="btn btn-sm btn-default" data-toggle="modal" data-target="#tedarikci_duzenle_@dr_item["markaID"]"><i class="fa fa-edit"></i></a>
+                                        <button onclick="markaSil(@dr_item["markaID"])" class="btn btn-danger" title="Delete" type="button"><i class="fa fa-trash-o"></i></button>
                                     </td>
                                 </tr>
 
-                                <div class="modal fade" id="tedarikci_duzenle_@dr_item["modelGrubuID"]" tabindex="-1" role="dialog">
+                                <div class="modal fade" id="tedarikci_duzenle_@dr_item["markaID"]" tabindex="-1" role="dialog">
                                     <div class="modal-dialog modal-lg" role="document">
                                         <div class="modal-content">
-                                            <form action="/Admin/modelGrubuDuzenle" method="post" enctype="multipart/form-data">
+                                            <form action="/Admin/markaDuzenle" method="post" enctype="multipart/form-data">
                                                 <div class="modal-header">
-                                                    <h6 class="title" id="defaultModalLabel">Model Grubu Düzenle</h6>
+                                                    <h6 class="title" id="defaultModalLabel">Marka Düzenle</h6>
                                                 </div>
                                                 <div class="modal-body">
                                                     <div class="row clearfix">
-                                                        <input name="modelGrubuID" type="hidden" value="@dr_item["modelGrubuID"]" />
+                                                        <input name="markaID" type="hidden" value="@dr_item["markaID"]" />
                                                         <div class="col-12">
                                                             <div class="form-group">
-                                                                <label class="control-label">Model Grubu</label>
-                                                                <input type="text" name="modelGrubu" class="form-control" placeholder="Model Grubu" autocomplete="off" value="@dr_item["modelGrubuID"]" />
+                                                                <label class="control-label">Marka</label>
+                                                                <input type="text" name="marka" class="form-control" placeholder="Model Grubu" autocomplete="off" value="@dr_item["marka"]" />
                                                             </div>
                                                         </div>
                                                     </div>
@@ -112,16 +112,16 @@
 <div class="modal fade" id="addcontact" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <form method="post" action="~/Admin/modelGrubuEkle" enctype="multipart/form-data">
+            <form method="post" action="~/Admin/markaEkle" enctype="multipart/form-data">
                 <div class="modal-header">
-                    <h6 class="title" id="defaultModalLabel">Model Grubu Ekle</h6>
+                    <h6 class="title" id="defaultModalLabel">Marka Ekle</h6>
                 </div>
                 <div class="modal-body">
                     <div class="row clearfix">
                         <div class="col-12">
                             <div class="form-group">
-                                <label class="control-label">Model Grubu</label>
-                                <input type="text" name="modelGrubu" class="form-control" placeholder="Model Grubu" autocomplete="off" />
+                                <label class="control-label">Marka</label>
+                                <input type="text" name="marka" class="form-control" placeholder="Marka" autocomplete="off" />
                             </div>
                         </div>
                     </div>
