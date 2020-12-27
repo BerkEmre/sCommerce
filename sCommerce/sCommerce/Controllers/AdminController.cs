@@ -230,12 +230,12 @@ namespace sCommerce.Controllers
 
             DataTable dt = SQL.get("SELECT * FROM bloglar WHERE silindi = 0 AND kategoriID = " + kategoriID);
             cnt += dt.Rows.Count;
-            dt = SQL.get("SELECT * FROM urunKategori WHERE silindi = 0 AND kategoriID = " + kategoriID);
-            cnt += dt.Rows.Count;
+            //dt = SQL.get("SELECT * FROM urunKategori WHERE silindi = 0 AND kategoriID = " + kategoriID);
+            //cnt += dt.Rows.Count;
 
-            if (dt.Rows.Count > 0)
+            if (cnt > 0)
                 return RedirectToAction("Kategori", new { hata = "Silmek istediğiniz kategoriye bağlı kayıtlar vardır, bu kayıtlar mevcutken kategori silinemez!" });
-
+            SQL.set("UPDATE urunKategori SET guncelleyenKullaniciID = " + Session["kullaniciID"] + ", guncellemeTarihi = GETDATE(), silindi = 1 WHERE kategoriID = " + kategoriID);
             SQL.set("UPDATE kategoriler SET guncelleyenKullaniciID = " + Session["kullaniciID"] + ", guncellemeTarihi = GETDATE(), silindi = 1 WHERE kategoriID = " + kategoriID);
             
             if (kategoriTipiParametreID == 4)

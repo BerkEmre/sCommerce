@@ -552,7 +552,7 @@
                     <div class="tt-col-right">
                         <div class="tt-col-item">
                             <!-- payment-list -->
-                            <img style="height: 30px;" src="~/Content/images/promo/iyzico.png" />
+                            <img style="width: 100%" src="~/Content/images/promo/iyzico.png" />
                             <!-- /payment-list -->
                         </div>
                     </div>
@@ -680,22 +680,22 @@
                                     </div>
                                     <div class="tt-wrapper" id="modalHizliGosterUrunAciklamasi"></div>
                                     <div class="tt-wrapper">
-                                        <div class="tt-row-custom-01">
-                                            <form method="post" id="modalHizliGosterFormGonder">
+                                        <form method="post" id="modalHizliGosterFormGonder">
+                                            <div class="tt-row-custom-01">
                                                 <input type="hidden" name="id" id="modalHizliGosterUrunID" value="" />
                                                 <input type="hidden" name="ekleCikar" value="1" />
                                                 <div class="col-item">
                                                     <div class="tt-input-counter style-01">
                                                         <span class="minus-btn"></span>
-                                                        <input name="miktar" type="number" value="1" size="5">
+                                                        <input id="modalHizliGosterUrunMiktar" name="miktar" type="text" value="1" size="5">
                                                         <span class="plus-btn"></span>
                                                     </div>
                                                 </div>
                                                 <div class="col-item">
                                                     <button type="submit" class="btn btn-lg"><i class="icon-f-39"></i>SEPETE EKLE</button>
                                                 </div>
-                                            </form>
-                                        </div>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -734,12 +734,13 @@
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="~/Content/external/jquery/jquery.min.js"><\/script>')</script>
     <script defer src="~/Content/js/bundle.js"></script>
     @RenderSection("script", false)
     <script>
         function onFavoriEkle(id) {
             var request = $.ajax({
-                url: 'FavoriEkle',
+                url: '/Home/FavoriEkle',
                 type: 'POST',
                 dataType: 'JSON',
                 data: { id: id }
@@ -769,14 +770,14 @@
 
         function onSepetEkle(id, miktar, ekleCikar) {
             var request = $.ajax({
-                url: 'SepetEkle',
+                url: '/Home/SepetEkle',
                 type: 'POST',
                 dataType: 'JSON',
                 data: { id: id, miktar: miktar, ekleCikar: ekleCikar }
             });
 
             request.done(function (data) {
-                if (data.durum == "true") {
+                if (data.durum == "true" && $("#CPAGE").length == 0) {
                     $("#modalSepeteEkleResim").attr("src", "/Content/icerik/urun/kucuk/" + data.urun.urunResimleri[0].resim);
                     $("#modalSepeteEkleUrunAdi").html(data.urun.urunAdi);
                     $("#modalSepeteEkleMiktar").html(data.miktar);
@@ -786,6 +787,7 @@
                 }
 
                 sepetGuncelle(data.count);
+                cartGuncelle();
             });
 
             request.fail(function () {
@@ -795,7 +797,7 @@
 
         function onHizliGoster(id) {
             var request = $.ajax({
-                url: 'HizliGoster',
+                url: '/Home/HizliGoster',
                 type: 'POST',
                 dataType: 'JSON',
                 data: { id: id }
@@ -809,6 +811,8 @@
                 $("#modalHizliGosterEskiFiyat").html(data.urun.eskiFiyat != 0 ? data.urun.eskiFiyat + " TL" : "");
                 $("#modalHizliGosterUrunAciklamasi").html(data.urun.urunAciklamasi);
                 $("#modalHizliGosterUrunID").val(data.urun.urunID);
+                $("#modalHizliGosterUrunMiktar").val(1);
+                $("#modalHizliGosterUrunMiktar").attr("size", data.urun.miktar);
                 $("#modalHizliGoster").modal("show");
             });
 
@@ -845,9 +849,16 @@
             $("#modalHizliGoster").modal("hide");
         });
 
+        $("#productSatinAl").on("submit", function (event) {
+            event.preventDefault();
+            var data = $(this).serializeFormJSON();
+
+            onSepetEkle(data.id, data.miktar, 1);
+        });
+
         function sepetGuncelle(adet) {
             $.ajax({
-                url: 'SepetGuncelle',
+                url: '/Home/SepetGuncelle',
                 type: 'POST',
                 dataType: 'html',
                 success: function (data) {
@@ -867,7 +878,20 @@
         function wishlistGuncelle() {
             if ($("#WLPAGE").length != 0) {
                 $.ajax({
-                    url: 'WishlistGuncelle',
+                    url: '/Home/WishlistGuncelle',
+                    type: 'POST',
+                    dataType: 'html',
+                    success: function (data) {
+                        $("#tt-pageContent").html(data);
+                    }
+                });
+            }
+        }
+
+        function cartGuncelle() {
+            if ($("#CPAGE").length != 0) {
+                $.ajax({
+                    url: '/Home/CartGuncelle',
                     type: 'POST',
                     dataType: 'html',
                     success: function (data) {
@@ -901,6 +925,17 @@
             });
 
         });
+
+        function DevaminiYukle() {
+            $.ajax({
+                url: '/Home/DevaminiYukle',
+                type: 'POST',
+                dataType: 'html',
+                success: function (data) {
+                    $("#itemList").append(data);
+                }
+            });
+        }
     </script>
     <a href="#" class="tt-back-to-top" id="js-back-to-top">YUKARI</a>
 </body>

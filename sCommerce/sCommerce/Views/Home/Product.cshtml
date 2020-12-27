@@ -1,7 +1,272 @@
-﻿
+﻿@using sCommerce.Models
 @{
-    ViewBag.Title = "Product";
+    Urun urun = ViewBag.urun;
+    ViewBag.Title = urun.urunAdi;
+    List<Favori> favoriler = Site.GetFavori();
+
+
+    List<Urun> modelGrubuUrunler = new UrunFilter(new List<int>(), new List<int>(), new List<int> { urun.modelGrubuID }, new List<int>(), 0, false, 1, 100).GetUruns();
+    List<Urun> onerilenUrunler = new UrunFilter(new List<int>(), new List<int>(), new List<int>(), new List<int> { urun.markaID }, 0, true, 1, 8).GetUruns();
 }
-
-<h2>Product</h2>
-
+@section script {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fotorama/4.6.4/fotorama.js"></script>
+    <script defer src="/Content/separate-include/single-product/single-product.js"></script>
+}
+<br />
+<div class="tt-breadcrumb">
+    <div class="container">
+        <ul>
+            <li><a href="@Url.Action("Index")">Ana Sayfa</a></li>
+            <li>Mağaza</li>
+            <li>@urun.urunAdi</li>
+        </ul>
+    </div>
+</div>
+<div id="tt-pageContent">
+    <div class="container-indent">
+        <!-- mobile product slider  -->
+        <div class="tt-mobile-product-layout visible-xs">
+            <div class="tt-mobile-product-slider arrow-location-center" id="zoom-mobile__slider">
+                @foreach (UrunResim urunResim in urun.urunResimleri)
+                {
+                    <div><img data-lazy="/Content/icerik/urun/kucuk/@urunResim.resim" alt="@urun.urunAdi"></div>
+                }
+            </div>
+            <div id="zoom-mobile__layout">
+                <a class="zoom-mobile__close btn" href="#">GERİ</a>
+                <div id="tt-fotorama" data-nav="thumbs" data-auto="false" data-allowfullscreen="false" dataa-fit="cover"></div>
+            </div>
+        </div>
+        <!-- /mobile product slider  -->
+        <div class="container container-fluid-mobile">
+            <div class="row">
+                <div class="col-12 col-lg-9">
+                    <div class="row">
+                        <div class="col-6 hidden-xs">
+                            <div class="tt-product-vertical-layout">
+                                <div class="tt-product-single-img">
+                                    <div>
+                                        <button class="tt-btn-zomm tt-top-right"><i class="icon-h-06"></i></button>
+                                        <img class="zoom-product" src='~/Content/icerik/urun/kucuk/@(urun.urunResimleri.Count > 0 ? urun.urunResimleri[0].resim : "yok.jpg")' data-zoom-image="/Content/icerik/urun/buyuk/@(urun.urunResimleri.Count > 0 ? urun.urunResimleri[0].resim : "yok.jpg")" alt="@urun.urunAdi">
+                                    </div>
+                                </div>
+                                <div class="tt-product-single-carousel-vertical">
+                                    <ul id="smallGallery" class="tt-slick-button-vertical  slick-animated-show-js">
+                                        @for (int i = 0; i < urun.urunResimleri.Count; i++)
+                                        {
+                                            <li><a @(i == 0 ? "class='zoomGalleryActive'" : "") href="#" data-image="/Content/icerik/urun/kucuk/@urun.urunResimleri[i].resim" data-zoom-image="/Content/icerik/urun/buyuk/@urun.urunResimleri[i].resim"><img src="~/Content/icerik/urun/kucuk/@urun.urunResimleri[i].resim" alt="@urun.urunAdi"></a></li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="tt-product-single-info">
+                                <div class="tt-wrapper">
+                                    @if (urun.urunEtiketi.deger.Length > 1)
+                                    {
+                                        <div class="tt-label">
+                                            @if (urun.miktar <= 0 && urun.stokBitinceParametreID == 12)
+                                            {
+                                                <span class="tt-label-our-stock">Stokta Yok</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="@(urun.urunEtiketi.deger == "Yeni" ? "tt-label-new" : "tt-label-our-fatured")">@urun.urunEtiketi.deger</span>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                                <div class="tt-add-info">
+                                    <ul>
+                                        <li><span>Marka:</span> @urun.marka.marka</li>
+                                        <li><span>Model Grubu:</span> @urun.modelGrubu.modelGrubu</li>
+                                    </ul>
+                                </div>
+                                <h1 class="tt-title">@urun.urunAdi</h1>
+                                <div class="tt-price">
+                                    @if (urun.eskiFiyat > 0)
+                                    {
+                                        <span class="new-price">@urun.fiyat TL</span>
+                                        <span class="old-price">@urun.eskiFiyat TL</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="price">@urun.fiyat TL</span>
+                                    }
+                                </div>
+                                <div class="tt-review">
+                                    <div class="tt-rating">
+                                        <i class="icon-star"></i>
+                                        <i class="icon-star"></i>
+                                        <i class="icon-star"></i>
+                                        <i class="icon-star"></i>
+                                        <i class="icon-star"></i>
+                                    </div>
+                                </div>
+                                <div class="tt-wrapper">
+                                    <form method="post" id="productSatinAl">
+                                        <div class="tt-row-custom-01  tt-responsive-lg">
+                                            <input type="hidden" name="id" value="@urun.urunID" />
+                                            <input type="hidden" name="ekleCikar" value="1" />
+                                            <div class="col-item">
+                                                <div class="tt-input-counter style-01">
+                                                    <span class="minus-btn"></span>
+                                                    <input name="miktar" type="text" value="1" size="@urun.miktar">
+                                                    <span class="plus-btn"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-item">
+                                                <button type="submit" class="btn btn-lg"><i class="icon-g-46"></i>SEPETE EKLE</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="tt-collapse-block">
+                                    <div class="tt-item active">
+                                        <div class="tt-collapse-title">AÇIKLAMA</div>
+                                        <div class="tt-collapse-content">
+                                            @MvcHtmlString.Create(urun.urunAciklamasi)
+                                        </div>
+                                    </div>
+                                    <div class="tt-item active">
+                                        <div class="tt-collapse-title">ÖZELLİKLER</div>
+                                        <div class="tt-collapse-content">
+                                            <table class="tt-table-03">
+                                                <tbody>
+                                                    @foreach (UrunOzellik urunOzellik in urun.urunOzellikleri)
+                                                    {
+                                                        <tr>
+                                                            <td>@urunOzellik.ozellikDeger.ozellik.ozellik:</td>
+                                                            <td>@urunOzellik.ozellikDeger.deger</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-3">
+                    <div class="tt-product-single-aside">
+                        <div class="tt-services-aside">
+                            <div class="tt-aside" style="height: 500px; overflow: auto;">
+                                @foreach (Urun modelGrubuUrun in modelGrubuUrunler)
+                                {
+                                    <a class="tt-item" href="@Url.Action("Product", new { id = modelGrubuUrun.urunID })">
+                                        <div class="tt-img">
+                                            <span class="tt-img-default"><img src="~/Content/icerik/urun/kucuk/@(modelGrubuUrun.urunResimleri.Count > 0 ? modelGrubuUrun.urunResimleri[0].resim : "yok.jpg")" data-src="/Content/icerik/urun/kucuk/@(modelGrubuUrun.urunResimleri.Count > 0 ? modelGrubuUrun.urunResimleri[0].resim : "yok.jpg")" alt="@modelGrubuUrun.urunAdi" class="loaded" data-was-processed="true"></span>
+                                            @if (modelGrubuUrun.urunResimleri.Count > 1)
+                                            {
+                                                <span class="tt-img-roll-over"><img src="~/Content/icerik/urun/kucuk/@modelGrubuUrun.urunResimleri[1].resim" data-src="/Content/icerik/urun/kucuk/@modelGrubuUrun.urunResimleri[1].resim" alt="@modelGrubuUrun.urunAdi" class="loaded" data-was-processed="true"></span>
+                                            }
+                                        </div>
+                                        <div class="tt-content">
+                                            <h6 class="tt-title">@modelGrubuUrun.urunAdi</h6>
+                                            <div class="tt-price">
+                                                @if (modelGrubuUrun.eskiFiyat > 0)
+                                                {
+                                                    <span class="new-price">@modelGrubuUrun.fiyat TL</span>
+                                                    <span class="old-price">@modelGrubuUrun.eskiFiyat TL</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="price">@modelGrubuUrun.fiyat TL</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-indent wrapper-social-icon">
+        <div class="container">
+            <ul class="tt-social-icon justify-content-center">
+                @(MvcHtmlString.Create(Site.siteBilgileri.facebook.ToString().Length <= 0 ? "" : "<li><a class='icon-g-64' target='_blank' href='" + Site.siteBilgileri.facebook + "'></a></li>"))
+                @(MvcHtmlString.Create(Site.siteBilgileri.twitter.ToString().Length <= 0 ? "" : "<li><a class='icon-h-58' target='_blank' href='" + Site.siteBilgileri.twitter + "'></a></li>"))
+                @(MvcHtmlString.Create(Site.siteBilgileri.instagram.ToString().Length <= 0 ? "" : "<li><a class='icon-g-67' target='_blank' href='" + Site.siteBilgileri.instagram + "'></a></li>"))
+                @(MvcHtmlString.Create(Site.siteBilgileri.youtube.ToString().Length <= 0 ? "" : "<li><a class='icon-g-76' target='_blank' href='" + Site.siteBilgileri.youtube + "'></a></li>"))
+                @(MvcHtmlString.Create(Site.siteBilgileri.linkedin.ToString().Length <= 0 ? "" : "<li><a class='icon-g-68' target='_blank' href='" + Site.siteBilgileri.linkedin + "'></a></li>"))
+                @(MvcHtmlString.Create(Site.siteBilgileri.pinterest.ToString().Length <= 0 ? "" : "<li><a class='icon-g-68' target='_blank' href='" + Site.siteBilgileri.pinterest + "'></a></li>"))
+            </ul>
+        </div>
+    </div>
+    <div class="container-indent">
+        <div class="container container-fluid-custom-mobile-padding">
+            <div class="tt-block-title text-left">
+                <h3 class="tt-title-small">ÖNERİLEN ÜRÜNLER</h3>
+            </div>
+            <div class="tt-carousel-products row arrow-location-right-top tt-alignment-img tt-layout-product-item slick-animated-show-js">
+                @foreach (Urun onerilenUrun in onerilenUrunler)
+                {
+                    <div class="col-2 col-md-4 col-lg-3">
+                        <div class="tt-product thumbprod-center">
+                            <div class="tt-image-box">
+                                <a onclick='onHizliGoster(@(onerilenUrun.urunID))' class="tt-btn-quickview"></a>
+                                <a onclick="onFavoriEkle(@onerilenUrun.urunID)" class="tt-btn-wishlist @(favoriler.Where(x => x.urunID == urun.urunID).Count() > 0 ? "active" : "")"></a>
+                                <a href="@Url.Action("Product", new { id = onerilenUrun.urunID })">
+                                    <span class="tt-img"><img src="~/Content/images/loader.svg" data-src="/Content/icerik/urun/kucuk/@(onerilenUrun.urunResimleri.Count > 0 ? onerilenUrun.urunResimleri[0].resim : "yok.jpg")" alt="@onerilenUrun.urunAdi"></span>
+                                    @if (onerilenUrun.urunResimleri.Count > 1)
+                                    {
+                                        <span class="tt-img-roll-over"><img src="~/Content/images/loader.svg" data-src="/Content/icerik/urun/kucuk/@onerilenUrun.urunResimleri[1].resim" alt="@onerilenUrun.urunAdi"></span>
+                                    }
+                                    @if (onerilenUrun.urunEtiketi.deger.Length > 1)
+                                    {
+                                        <span class="tt-label-location">
+                                            @if (onerilenUrun.miktar <= 0 && onerilenUrun.stokBitinceParametreID == 12)
+                                            {
+                                                <span class="tt-label-our-stock">Stokta Yok</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="@(onerilenUrun.urunEtiketi.deger == "Yeni" ? "tt-label-new" : "tt-label-our-fatured")">@onerilenUrun.urunEtiketi.deger</span>
+                                            }
+                                        </span>
+                                    }
+                                </a>
+                            </div>
+                            <div class="tt-description">
+                                <div class="tt-row">
+                                    <ul class="tt-add-info">
+                                        <li><a href="@Url.Action("Product", new { id = onerilenUrun.urunID })">@onerilenUrun.modelGrubu.modelGrubu</a></li>
+                                    </ul>
+                                </div>
+                                <h2 class="tt-title"><a href="@Url.Action("Product", new { id = onerilenUrun.urunID })">@onerilenUrun.urunAdi</a></h2>
+                                <div class="tt-price">
+                                    @if (onerilenUrun.eskiFiyat > 0)
+                                    {
+                                        <span class="new-price">@onerilenUrun.fiyat TL</span>
+                                        <span class="old-price">@onerilenUrun.eskiFiyat TL</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="price">@onerilenUrun.fiyat TL</span>
+                                    }
+                                </div>
+                                <div class="tt-product-inside-hover">
+                                    <div class="tt-row-btn">
+                                        <a class="tt-btn-addtocart thumbprod-button-bg" onclick="onSepetEkle(@(onerilenUrun.urunID), 1, 1)">SEPETE EKLE</a>
+                                    </div>
+                                    <div class="tt-row-btn">
+                                        <a class="tt-btn-quickview"></a>
+                                        <a class="tt-btn-wishlist"></a>
+                                        <a class="tt-btn-quickview" onclick='onHizliGoster(@(onerilenUrun.urunID))'></a>
+                                        <a class="tt-btn-wishlist @(favoriler.Where(x => x.urunID == onerilenUrun.urunID).Count() > 0 ? "active" : "")" onclick="onFavoriEkle(@onerilenUrun.urunID)"></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

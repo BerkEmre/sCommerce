@@ -32,6 +32,31 @@ namespace sCommerce.Models
             this.kategori = kategori;
         }
 
+        public bool LoadKategori(int kategoriID)
+        {
+            DataTable dt = SQL.get("SELECT * FROM kategoriler WHERE silindi = 0 AND kategoriID = " + kategoriID);
+            if (dt.Rows.Count <= 0)
+                return false;
+
+            DataRow dr = dt.Rows[0];
+
+            this.kategoriID = Convert.ToInt32(dr["kategoriID"]);
+            this.kayitTarihi = Convert.ToDateTime(dr["kayitTarihi"]);
+            this.kaydedenKullaniciID = Convert.ToInt32(dr["kaydedenKullaniciID"]);
+            Int32.TryParse(dr["guncelleyenKullaniciID"].ToString(), out this.guncelleyenKullaniciID);
+            DateTime.TryParse(dr["guncellemeTarihi"].ToString(), out this.guncellemeTarihi);
+            this.silindi = Convert.ToInt32(dr["silindi"]);
+            this.kategori = Convert.ToString(dr["kategori"]);
+            this.ustKategoriID = Convert.ToInt32(dr["ustKategoriID"]);
+            this.kategoriTipiParametreID = Convert.ToInt32(dr["kategoriTipiParametreID"]);
+            this.ikon = Convert.ToString(dr["ikon"]);
+            this.resim = Convert.ToString(dr["resim"]);
+            this.aciklama = Convert.ToString(dr["aciklama"]);
+            this.loadAltKategori();
+
+            return true;
+        }
+
         public List<Kategori> loadKategoriler(int kategoriTipiParametreID)
         {
             List<Kategori> kategoriler = new List<Kategori>();

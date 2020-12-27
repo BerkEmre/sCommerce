@@ -1,0 +1,150 @@
+﻿@using sCommerce.Models
+@using sCommerce.Helper
+@{
+    int siralama = ViewBag.siralama;
+    int count = ViewBag.count;
+    int markaID = ViewBag.markaID;
+    filtremeleTipleri filtremele = (filtremeleTipleri)siralama;
+    Kategori kategori = ViewBag.kategori;
+    UrunFilter urunFilter = new UrunFilter(kategori.kategoriID == 0 ? new List<int>() : new List<int> { kategori.kategoriID }, new List<int>(), new List<int>(), markaID == 0 ? new List<int>(): new List<int> { markaID }, filtremele, false, 1, count);
+    Session["urunFilter"] = urunFilter;
+    ViewBag.Title = kategori.kategori;
+}
+@section script{
+    <script src="~/Content/separate-include/listing/listing.js"></script>
+    <script>
+        function changeCount(select) {
+            var val = select.value;
+            window.location.href = "/Home/Category?id=@kategori.kategoriID&siralama=@siralama&count=" + val;
+        }
+        function changeSiralama(select) {
+            var val = select.value;
+            window.location.href = "/Home/Category?id=@kategori.kategoriID&count=@count&siralama=" + val;
+        }
+    </script>
+}
+<br />
+<div class="tt-breadcrumb">
+    <div class="container">
+        <ul>
+            <li><a href="@Url.Action("Index")">Ana Sayfa</a></li>
+            <li>Kategoriler</li>
+            <li>@kategori.kategori</li>
+        </ul>
+    </div>
+</div>
+<div id="tt-pageContent">
+    <div class="container-indent">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 col-lg-3 col-xl-3 leftColumn aside" id="js-leftColumn-aside">
+                    <div class="tt-btn-col-close">
+                        <a href="#">KAPAT</a>
+                    </div>
+                    <div class="tt-collapse open tt-filter-detach-option">
+                        <div class="tt-collapse-content">
+                            <div class="filters-mobile">
+                                <div class="filters-row-select">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tt-collapse open">
+                        <a class="btn-link-02"></a>
+                        <h3 class="tt-collapse-title">ALT KATEGORİLER</h3>
+                        <div class="tt-collapse-content">
+                            <ul class="tt-list-row">
+                                @foreach (Kategori altKategori in kategori.altKategori)
+                                {
+                                    <li><a href="@Url.Action("Category", new { id = altKategori.kategoriID })">@altKategori.kategori</a></li>
+                                }
+                            </ul>
+                            <br />
+                            @if (kategori.ustKategoriID != 0)
+                            {
+                                <a href="@Url.Action("Category", new { id = kategori.ustKategoriID })"><i class="icon-e-02"></i> Üst Kategori</a>
+                            }
+                        </div>
+                    </div>
+                    <!--
+                        <div class="tt-collapse open">
+                            <h3 class="tt-collapse-title">SEÇİLİ MARKALAR</h3>
+                            <div class="tt-collapse-content">
+                                <ul class="tt-filter-list">
+                                    <li><a>Shirts</a></li>
+                                    <li><a>XS</a></li>
+                                </ul>
+                                <a class="btn-link-02">Seçimleri Kaldır</a>
+                            </div>
+                        </div>
+                        <div class="tt-collapse open">
+                            <h3 class="tt-collapse-title">MARKALAR</h3>
+                            <div class="tt-collapse-content">
+                                <br />
+                                <ul class="tt-list-row">
+                                    <li><a href="#">Levi's</a></li>
+                                    <li><a href="#">Gap</a></li>
+                                    <li><a href="#">Polo</a></li>
+                                    <li><a href="#">Lacoste</a></li>
+                                    <li><a href="#">Guess</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    -->
+                </div>
+                <div class="col-md-12 col-lg-9 col-xl-9">
+                    @if (kategori.resim.Length > 0)
+                    {
+                        <div class="content-indent">
+                            <div class="row tt-layout-promo-box">
+                                <div class="col-md-12">
+                                    <a href="listing-left-column.html" class="tt-promo-box">
+                                        <img src="~/Content/images/loader.svg" data-src="/Content/icerik/kategori/@kategori.resim" alt="@kategori.kategori">
+                                        <div class="tt-description">
+                                            <div class="tt-description-wrapper">
+                                                <div class="tt-background"></div>
+                                                <div class="tt-title-large">@kategori.kategori</div>
+                                                <p>@kategori.aciklama</p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="content-indent container-fluid-custom-mobile-padding-02">
+                        <div class="tt-filters-options" id="js-tt-filters-options">
+                            <h1 class="tt-title">
+                                @kategori.kategori
+                            </h1>
+                            <div class="tt-btn-toggle">
+                                <a href="#">FİLTRE</a>
+                            </div>
+                            <div class="tt-sort">
+                                <select id="siralama" onchange="changeSiralama(this)">
+                                    <option value="0" @(siralama == 0 ? "selected" : "")>Önerilen Sıralama</option>
+                                    <option value="1" @(siralama == 1 ? "selected" : "")>En Düşük Fiyat</option>
+                                    <option value="2" @(siralama == 2 ? "selected" : "")>En Yüksek Fiyat</option>
+                                </select>
+                                <select id="count" onchange="changeCount(this)">
+                                    <option value="18" @(count == 18 ? "selected" : "")>18</option>
+                                    <option value="30" @(count == 30 ? "selected" : "")>30</option>
+                                    <option value="48" @(count == 48 ? "selected" : "")>48</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="tt-product-listing row" id="itemList">
+                            @Html.Partial("_Category")
+                        </div>
+                        <div class="text-center">
+                            <a class="btn btn-border" onclick="DevaminiYukle()">DEVAMINI YÜKLE</a>
+                            <!--<a class="btn btn-border01">DAHA FAZLA GÖSTERİLECEK ÜRÜN YOK</a>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

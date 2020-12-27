@@ -125,6 +125,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\Enums.cs" />
     <Compile Include="Helper\Kripto.cs" />
     <Compile Include="Helper\SQL.cs" />
     <Compile Include="Models\Blog.cs" />
@@ -174,7 +175,6 @@
     <Content Include="Views\Admin\Urun.cshtml" />
     <Content Include="Views\Admin\UrunDetay.cshtml" />
     <Content Include="Views\Home\Product.cshtml" />
-    <Content Include="Views\Home\ProductDetail.cshtml" />
     <Content Include="Views\Home\ComingSoon.cshtml" />
     <Content Include="Views\Admin\ModelGrubu.cshtml" />
     <Content Include="Views\Shared\_Sepet.cshtml" />
@@ -191,6 +191,10 @@
     <Content Include="Views\Home\ForgotPass.cshtml" />
     <Content Include="Views\Home\RePass.cshtml" />
     <Content Include="Views\Shared\_Wishlist.cshtml" />
+    <Content Include="Views\Home\Category.cshtml" />
+    <Content Include="Views\Home\Cart.cshtml" />
+    <Content Include="Views\Shared\_Cart.cshtml" />
+    <Content Include="Views\Shared\_Category.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

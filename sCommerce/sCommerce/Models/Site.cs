@@ -71,12 +71,12 @@ namespace sCommerce.Models
         public static List<Sepet> GetSepet()
         {
             List<Sepet> sepet = new List<Sepet>();
-
+            Urun urun = new Urun();
             if (HttpContext.Current.Session["sepet"] != null)
             {
                 sepet = (List<Sepet>)HttpContext.Current.Session["sepet"];
             }
-
+            HttpContext.Current.Session["sepet"] = sepet;
             return sepet;
         }
 
@@ -84,18 +84,22 @@ namespace sCommerce.Models
         {
             List<Sepet> sepet = GetSepet();
             bool ret = ekleCikar;
+            int yeniMiktar = 0;
 
             int cnt = sepet.Where(x => x.urun.urunID == urun.urunID).Count();
             if (ekleCikar)
             {
                 if(cnt == 0)
                 {
-                    sepet.Add(new Sepet(urun, miktar));
+                    yeniMiktar = miktar > urun.miktar && urun.stokBitinceParametreID == 12 ? urun.miktar : miktar;
+                    sepet.Add(new Sepet(urun, yeniMiktar));
                 }
                 else
                 {
                     Sepet s = sepet.First(x => x.urun.urunID == urun.urunID);
-                    s.miktar += miktar;
+                    yeniMiktar = s.miktar + miktar;
+                    yeniMiktar = yeniMiktar > urun.miktar && urun.stokBitinceParametreID == 12 ? urun.miktar : yeniMiktar;
+                    s.miktar = yeniMiktar;
                 }
             }
             else

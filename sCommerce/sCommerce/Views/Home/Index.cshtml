@@ -1,9 +1,10 @@
 ﻿@using sCommerce.Models;
+@using sCommerce.Helper;
 @{
     ViewBag.Title = Site.siteBilgileri.siteAdi;
 
-    List<Urun> yeniUrunler = new Urun().GetUrunFromUrunEtiketi(20);
-    List<Urun> cokSatanUrunler = new Urun().GetUrunFromUrunEtiketi(18);
+    List<Urun> yeniUrunler = new UrunFilter(new List<int>(), new List<int> { 20 }, new List<int>(), new List<int>(), 0, true, 1, 10).GetUruns();
+    List<Urun> cokSatanUrunler = new UrunFilter(new List<int>(), new List<int> { 18 }, new List<int>(), new List<int>(), 0, true, 1, 10).GetUruns();
 
     List<Favori> favoriler = Site.GetFavori();
 }
@@ -92,7 +93,7 @@
                 </div>
                 <div class="divider-sm d-block d-md-none"></div>
                 <div class="col-sm-6 col-md-4 col-lg-3 text-center">
-                    <a href="@Url.Action("Shop")" class="tt-promo-box hover-type-2 nomargin">
+                    <a href="@Url.Action("Category", new { id = 0 })" class="tt-promo-box hover-type-2 nomargin">
                         <img src="~/Content/images/loader.svg" data-src="/Content/images/promo/index20-promo-img-05.jpg" alt="@Site.siteBilgileri.siteAdi">
                         <div class="tt-description tt-point-v-b">
                             <div class="tt-description-wrapper">
@@ -111,61 +112,61 @@
             <div class="tt-btn-img-list">
                 <div class="row">
                     <div class="col-6 col-sm-4 col-5-inrow-lg">
-                        <a href="@Url.Action("Category", new { id = 12 })" class="tt-btn-img tt-layout-01">
+                        <a href="@Url.Action("Category", new { markaID = 1 })" class="tt-btn-img tt-layout-01">
                             <div class="tt-img" style="background-image: url('/Content/images/custom/gazzal.png');"></div>
                             <div class="tt-title">Gazzal</div>
                         </a>
                     </div>
                     <div class="col-6 col-sm-4 col-5-inrow-lg">
-                        <a href="@Url.Action("Category", new { id = 14 })" class="tt-btn-img tt-layout-01">
+                        <a href="@Url.Action("Category", new { markaID = 2 })" class="tt-btn-img tt-layout-01">
                             <div class="tt-img" style="background-image: url('/Content/images/custom/nako.png');"></div>
                             <div class="tt-title">Nako</div>
                         </a>
                     </div>
                     <div class="col-6 col-sm-4 col-5-inrow-lg">
-                        <a href="@Url.Action("Category", new { id = 13 })" class="tt-btn-img tt-layout-01">
+                        <a href="@Url.Action("Category", new { markaID = 3 })" class="tt-btn-img tt-layout-01">
                             <div class="tt-img" style="background-image: url('/Content/images/custom/alize.png');"></div>
                             <div class="tt-title">Alize</div>
                         </a>
                     </div>
                     <div class="col-6 col-sm-4 col-5-inrow-lg">
-                        <a href="@Url.Action("Category", new { id = 16 })" class="tt-btn-img tt-layout-01">
+                        <a href="@Url.Action("Category", new { markaID = 4 })" class="tt-btn-img tt-layout-01">
                             <div class="tt-img" style="background-image: url('/Content/images/custom/tulip.png');"></div>
                             <div class="tt-title">Tulip</div>
                         </a>
                     </div>
                     <div class="col-6 col-sm-4 col-5-inrow-lg">
-                        <a href="@Url.Action("Category", new { id = 15 })" class="tt-btn-img tt-layout-01">
+                        <a href="@Url.Action("Category", new { markaID = 5 })" class="tt-btn-img tt-layout-01">
                             <div class="tt-img" style="background-image: url('/Content/images/custom/anchor.png');"></div>
                             <div class="tt-title">Anchor</div>
                         </a>
                     </div>
                     <div class="col-6 col-sm-4 col-5-inrow-lg">
-                        <a href="@Url.Action("Category", new { id = 17 })" class="tt-btn-img tt-layout-01">
+                        <a href="@Url.Action("Category", new { markaID = 6 })" class="tt-btn-img tt-layout-01">
                             <div class="tt-img" style="background-image: url('/Content/images/custom/coats.png');"></div>
                             <div class="tt-title">Coats</div>
                         </a>
                     </div>
                     <div class="col-6 col-sm-4 col-5-inrow-lg">
-                        <a href="@Url.Action("Category", new { id = 18 })" class="tt-btn-img tt-layout-01">
+                        <a href="@Url.Action("Category", new { markaID = 7 })" class="tt-btn-img tt-layout-01">
                             <div class="tt-img" style="background-image: url('/Content/images/custom/orenbayan.png');"></div>
                             <div class="tt-title">Ören Bayan</div>
                         </a>
                     </div>
                     <div class="col-6 col-sm-4 col-5-inrow-lg">
-                        <a href="@Url.Action("Category", new { id = 19 })" class="tt-btn-img tt-layout-01">
+                        <a href="@Url.Action("Category", new { markaID = 8 })" class="tt-btn-img tt-layout-01">
                             <div class="tt-img" style="background-image: url('/Content/images/custom/singer.png');"></div>
                             <div class="tt-title">Singer</div>
                         </a>
                     </div>
                     <div class="col-6 col-sm-4 col-5-inrow-lg">
-                        <a href="@Url.Action("Category", new { id = 20 })" class="tt-btn-img tt-layout-01">
+                        <a href="@Url.Action("Category", new { markaID = 9 })" class="tt-btn-img tt-layout-01">
                             <div class="tt-img" style="background-image: url('/Content/images/custom/royalparis.png');"></div>
                             <div class="tt-title">Royal Paris</div>
                         </a>
                     </div>
                     <div class="col-6 col-sm-4 col-5-inrow-lg">
-                        <a href="@Url.Action("Category", new { id = 21 })" class="tt-btn-img tt-layout-01">
+                        <a href="@Url.Action("Category", new { markaID = 10 })" class="tt-btn-img tt-layout-01">
                             <div class="tt-img" style="background-image: url('/Content/images/custom/diger.png');"></div>
                             <div class="tt-title">Diğer</div>
                         </a>
@@ -199,10 +200,17 @@
                                             {
                                                 <span class="tt-img-roll-over"><img src="~/Content/images/loader.svg" data-src="/Content/icerik/urun/kucuk/@urun.urunResimleri[1].resim" alt="@urun.urunAdi"></span>
                                             }
-                                            @if (urun.urunEtiketi.deger.Length > 0)
+                                            @if (urun.urunEtiketi.deger.Length > 1)
                                             {
                                                 <span class="tt-label-location">
-                                                    <span class="@(urun.urunEtiketi.deger == "Yeni" ? "tt-label-new" : "tt-label-our-fatured")">@urun.urunEtiketi.deger</span>
+                                                    @if (urun.miktar <= 0 && urun.stokBitinceParametreID == 12)
+                                                    {
+                                                        <span class="tt-label-our-stock">Stokta Yok</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="@(urun.urunEtiketi.deger == "Yeni" ? "tt-label-new" : "tt-label-our-fatured")">@urun.urunEtiketi.deger</span>
+                                                    }
                                                 </span>
                                             }
                                         </a>
@@ -235,7 +243,14 @@
                                         </div>
                                         <div class="tt-product-inside-hover">
                                             <div class="tt-row-btn">
-                                                <a class="tt-btn-addtocart thumbprod-button-bg" onclick="onSepetEkle(@(urun.urunID), 1, 1)">SEPETE EKLE</a>
+                                                @if (urun.miktar <= 0 && urun.stokBitinceParametreID == 12)
+                                                {
+                                                    <a class="tt-btn-addtocart thumbprod-button-bg disable">STOKTA YOK</a>
+                                                }
+                                                else
+                                                {
+                                                    <a class="tt-btn-addtocart thumbprod-button-bg" onclick="onSepetEkle(@(urun.urunID), 1, 1)">SEPETE EKLE</a>
+                                                }
                                             </div>
                                             <div class="tt-row-btn">
                                                 <a class="tt-btn-quickview" onclick='onHizliGoster(@(urun.urunID))'></a>
@@ -276,7 +291,7 @@
                                             {
                                                 <span class="tt-img-roll-over"><img src="~/Content/images/loader.svg" data-src="/Content/icerik/urun/kucuk/@urun.urunResimleri[1].resim" alt="@urun.urunAdi"></span>
                                             }
-                                            @if (urun.urunEtiketi.deger.Length > 0)
+                                            @if (urun.urunEtiketi.deger.Length > 1)
                                             {
                                                 <span class="tt-label-location">
                                                     <span class="@(urun.urunEtiketi.deger == "Yeni" ? "tt-label-new" : "tt-label-our-fatured")">@urun.urunEtiketi.deger</span>

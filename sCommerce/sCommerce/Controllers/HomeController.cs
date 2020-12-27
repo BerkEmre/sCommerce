@@ -14,39 +14,82 @@ namespace sCommerce.Controllers
             return View();
         }
 
-        public ActionResult ComingSoon()
+        public ActionResult Wishlist()
         {
             return View();
         }
 
-        public ActionResult Page404()
+        public ActionResult Cart()
         {
             return View();
         }
 
-        public ActionResult Page(int id = 0)
+        public ActionResult Blog(int id = 1)
         {
             ViewBag.id = id;
             return View();
         }
 
-        public ActionResult Contact()
+        public ActionResult BlogDetail(int id = 1)
         {
+            ViewBag.id = id;
+
+            if (new Blog().IsBlog(id))
+                return View();
+            else
+                return RedirectToAction("Index");
+        }
+
+        public ActionResult Category(int id = 0, int markaID = 0, int siralama = 0, int count = 18)
+        {
+            Kategori k = new Kategori();
+
+            if (id == 0)
+            {
+                k.kategoriID = 0;
+                k.kategori = "Mağaza";
+                k.resim = "";
+                k.ustKategoriID = 0;
+                k.loadAltKategori();
+            }
+            else
+            {
+                if (!k.LoadKategori(id))
+                    return RedirectToAction("Index");
+            }
+
+            ViewBag.kategori = k;
+            ViewBag.siralama = siralama;
+            ViewBag.count = count;
+            ViewBag.markaID = markaID;
+
             return View();
         }
 
-        public ActionResult About()
+        public ActionResult Product(int id = 0)
         {
+            if(id == 0)
+                return RedirectToAction("Index");
+
+            Urun u = new Urun();
+            if(!u.LoadFromID(id))
+                return RedirectToAction("Index");
+
+            ViewBag.urun = u;
+
             return View();
         }
-
+        #region Kullanıcı İşlemleri
         public ActionResult Customer()
         {
             return View();
         }
 
-        public ActionResult Wishlist()
+        public ActionResult ForgotPass()
         {
+            if (Site.GetMusteri() != null)
+                return RedirectToAction("Index");
+
             return View();
         }
 
@@ -56,14 +99,6 @@ namespace sCommerce.Controllers
             ViewBag.musteri = musteri;
             ViewBag.a = a;
             ViewBag.b = b;
-            return View();
-        }
-
-        public ActionResult ForgotPass()
-        {
-            if (Site.GetMusteri() != null)
-                return RedirectToAction("Index");
-
             return View();
         }
 
@@ -143,32 +178,7 @@ namespace sCommerce.Controllers
 
             return RedirectToAction("ForgotPass", new { hata = "Sıfırlama mailinizi gönderdik lütfen gelen maildeki linke tıklayarak şifrenizi yenileyiniz." });
         }
-
-        public ActionResult Blog(int id = 1)
-        {
-            ViewBag.id = id;
-            return View();
-        }
-
-        public ActionResult BlogDetail(int id = 1)
-        {
-            ViewBag.id = id;
-
-            if (new Blog().IsBlog(id))
-                return View();
-            else
-                return RedirectToAction("Index");
-        }
-
-        public ActionResult Product()
-        {
-            return View();
-        }
-
-        public ActionResult ProductDetail()
-        {
-            return View();
-        }
+        #endregion
         #region Ajax Data
         [ValidateInput(false)]
         [HttpPost]
@@ -217,9 +227,23 @@ namespace sCommerce.Controllers
         }
 
         [HttpPost]
+        public ActionResult CartGuncelle()
+        {
+            return PartialView("~/Views/Shared/_Cart.cshtml");
+        }
+
+        [HttpPost]
         public ActionResult WishlistGuncelle()
         {
             return PartialView("~/Views/Shared/_Wishlist.cshtml");
+        }
+
+        public ActionResult DevaminiYukle()
+        {
+            UrunFilter uf = (UrunFilter)Session["urunFilter"];
+            uf.page++;
+            Session["urunFilter"] = uf;
+            return PartialView("~/Views/Shared/_Category.cshtml");
         }
 
         [HttpPost]
@@ -265,6 +289,34 @@ namespace sCommerce.Controllers
 
             return Json(new { basarili = captchaResponse.Success, hata = hata }, JsonRequestBehavior.AllowGet);
         }
+        #endregion
+        #region Extra Sayfalar
+        public ActionResult ComingSoon()
+        {
+            return View();
+        }
+
+        public ActionResult Page404()
+        {
+            return View();
+        }
+
+        public ActionResult Page(int id = 0)
+        {
+            ViewBag.id = id;
+            return View();
+        }
+
+        public ActionResult Contact()
+        {
+            return View();
+        }
+
+        public ActionResult About()
+        {
+            return View();
+        }
+
         #endregion
     }
 }

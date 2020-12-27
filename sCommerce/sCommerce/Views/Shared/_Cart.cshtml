@@ -1,0 +1,91 @@
+﻿@using sCommerce.Models
+@{
+    List<Sepet> sepet = Site.GetSepet();
+}
+@if (sepet.Count <= 0)
+{
+    <div class="container-indent nomargin">
+        <div class="tt-empty-cart">
+            <span class="tt-icon icon-f-39"></span>
+            <h1 class="tt-title">SEPETİNİZ BOŞ :(</h1>
+            <p>Sepetinizde hiç ürün bulunmamakta, hadi sepeti doldurmaya başlayalım.</p>
+            <a href="@Url.Action("Index")" class="btn">ALIŞVERİŞE DEVAM ET</a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container-indent">
+        <div class="container">
+            <h1 class="tt-title-subpages noborder">SEPET</h1>
+            <div class="tt-shopcart-table-02">
+                <table>
+                    <tbody>
+                        @foreach (Sepet sepetItem in sepet)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="tt-product-img">
+                                        <img src="~/Content/icerik/urun/kucuk/@sepetItem.urun.urunResimleri[0].resim" alt="@sepetItem.urun.urunAdi">
+                                    </div>
+                                </td>
+                                <td>
+                                    <h2 class="tt-title">
+                                        <a href="@Url.Action("Product", new { id = sepetItem.urun.urunID })">@sepetItem.urun.urunAdi</a>
+                                    </h2>
+                                    <ul class="tt-list-description">
+                                        @foreach (UrunOzellik urunOzellik in sepetItem.urun.urunOzellikleri)
+                                        {
+                                            <li>@urunOzellik.ozellikDeger.ozellik.ozellik: @urunOzellik.ozellikDeger.deger</li>
+                                        }
+                                    </ul>
+                                    <ul class="tt-list-parameters">
+                                        <li>
+                                            <div class="tt-price">
+                                                @sepetItem.urun.fiyat TL
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="detach-quantity-mobile"></div>
+                                        </li>
+                                        <li>
+                                            <div class="tt-price subtotal">
+                                                @((sepetItem.urun.fiyat * sepetItem.miktar).ToString("N2")) TL
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <div class="tt-price">
+                                        @sepetItem.urun.fiyat TL
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="col-item">
+                                        <input name="miktar" class="form-control" type="number" value="@sepetItem.miktar" max="@sepetItem.urun.miktar" onchange="miktarChange(@sepetItem.urun.urunID, @sepetItem.miktar, this)">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="tt-price subtotal">
+                                        @((sepetItem.urun.fiyat * sepetItem.miktar).ToString("N2")) TL
+                                    </div>
+                                </td>
+                                <td>
+                                    <a class="tt-btn-close" onclick="onSepetEkle(@(sepetItem.urun.urunID), @sepetItem.miktar, 0)"></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="tt-shopcart-btn">
+                    <div class="col-left">
+                        <a class="btn-link" href="@Url.Action("Index")"><i class="icon-e-19"></i>ALIŞVERİŞE DEVAM</a>
+                    </div>
+                    <div class="col-right">
+                        <a class="btn-link" href="@Url.Action("CheckOut")">ÖDEMEYE GEÇ <i class="icon-e-20"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

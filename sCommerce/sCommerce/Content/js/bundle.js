@@ -3943,7 +3943,7 @@ jQuery(function($) {
 					var target = e.target,
 							$link = $('<link>', {
 								rel: 'stylesheet',
-								href: '../Content/css/rtl.css',
+								href: 'css/rtl.css',
 								class: 'rtl'
 							});
 
@@ -3972,19 +3972,19 @@ jQuery(function($) {
 					};
 				});
 				ttBoxedbutton.on('click', '.rtlbutton-color li', function(e){
-					$('link[href^="../Content/css/theme-"]').remove();
+					$('link[href^="css/theme-"]').remove();
 
 					var dataValue = $(this).attr('data-color'),
-							htmlLocation =  $('link[href^="../Content/css/theme-"]');
+							htmlLocation =  $('link[href^="css/theme-"]');
 
 					if($(this).hasClass('active')) return;
 
 					$(this).toggleClass('active').siblings().removeClass('active');
 
 					if(dataValue != undefined){
-						$('head').append('<link rel="stylesheet" href="../Content/css/theme-'+dataValue+'.css" rel="stylesheet">');
+						$('head').append('<link rel="stylesheet" href="css/theme-'+dataValue+'.css" rel="stylesheet">');
 					} else {
-						$('head').append('<link rel="stylesheet" href="../Content/css/theme-08.css" rel="stylesheet">');
+						$('head').append('<link rel="stylesheet" href="css/theme.css" rel="stylesheet">');
 					};
 
 					return false;
@@ -4401,7 +4401,7 @@ jQuery(function($) {
 
 			if(ttwindowWidth > 1024 && hasalready){
 				$.ajax({
-						url: '../Content/ajax-content/ajax_desktop_menu.html',
+						url: 'ajax-content/ajax_desktop_menu.html',
 						success: function(data) {
 							var $item = $(data);
 							$('#js-include-desktop-menu').append($item);
@@ -6556,6 +6556,49 @@ jQuery.fn.liColl = function(options){
 
 
 
+   var mapElement = document.getElementById('map');
+ if (mapElement) {
+	// When the window has finished loading create our google map below
+	google.maps.event.addDomListener(window, 'load', init);
 
+	function init() {
+		// Basic options for a simple Google Map
+		// For more options see: https://developers.google.com/maps/documentation/javascript/reference#MapOptions
+		var mapOptions = {
+			// How zoomed in you want the map to start at (always required)
+			zoom: 12,
+
+			// The latitude and longitude to center the map (always required)
+			center: new google.maps.LatLng(40.6700, -73.9400), // New York
+
+			scrollwheel:  false,
+
+			// How you would like to style the map.
+			// This is where you would paste any style found on Snazzy Maps.
+			styles: [{
+					"featureType":"water",
+					"elementType":"geometry.fill","stylers":[{"color":"#abd0fa"}]},
+					{"featureType":"transit","stylers":[{"color":"#808080"},{"visibility":"off"}]},
+					{"featureType":"road.highway","elementType":"geometry.stroke",
+					"stylers":[{"visibility":"on"},{"color":"#e1d9c6"}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#eee9da"}]},{"featureType":"road.local","elementType":"geometry.fill","stylers":[{"visibility":"on"},{"color":"000"},{"weight":1.8}]},{"featureType":"road.local","elementType":"geometry.stroke","stylers":[{"color":"#d7d7d7"}]},{"featureType":"poi","elementType":"geometry.fill","stylers":[{"visibility":"on"},{"color":"#ebebeb"}]},{"featureType":"administrative","elementType":"geometry","stylers":[{"color":"#eee9da"}]},{"featureType":"road.arterial","elementType":"geometry.fill","stylers":[{"color":"#fffbf8"}]},{"featureType":"road.arterial","elementType":"geometry.fill","stylers":[{"color":"#fffbf8"}]},{"featureType":"landscape","elementType":"geometry.fill","stylers":[{"visibility":"on"},{"color":"#fbf7ee"}]},{"featureType":"road","elementType":"labels.text.fill","stylers":[{"color":"#d6d6d6"}]},{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"visibility":"on"},{"color":"#3c3424"}]},{"featureType":"poi","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"poi","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"road.arterial","elementType":"geometry.stroke","stylers":[{"color":"#d6d6d6"}]},{"featureType":"road","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{},{"featureType":"poi","elementType":"geometry.fill","stylers":[{"color":"#aee9c6"}]}]
+		};
+
+		// Get the HTML DOM element that will contain your map
+		// We are using a div with id="map" seen below in the <body>
+		var mapElement = document.getElementById('map');
+
+		// Create the Google Map using our element and options defined above
+		var map = new google.maps.Map(mapElement, mapOptions);
+
+		var image = 'images/custom/beachflag.png';
+
+		 var marker = new google.maps.Marker({
+				position: new google.maps.LatLng(40.6700, -73.9400),
+				map: map,
+				icon : image,
+				title: 'Snazzy!'
+			});
+	}
+}
 
 
