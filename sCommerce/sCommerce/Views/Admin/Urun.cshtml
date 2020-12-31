@@ -4,8 +4,7 @@
 @{
     ViewBag.Title = "Ürün";
 
-    List<Urun> uruns = new UrunFilter("", new List<int>(), new List<int>(), new List<int>(), new List<int>(), filtremeleTipleri.onerilenSiralama, false, 1, 10);
-    ber
+    //List<Urun> uruns = new UrunFilter("", new List<int>(), new List<int>(), new List<int>(), new List<int>(), filtremeleTipleri.onerilenSiralama, false, 1, 10);
     int sayfa_no = ViewBag.sayfa_no;
     int cnt_blog = Convert.ToInt32(SQL.get("SELECT cnt = COUNT(*) FROM urunler u INNER JOIN kullanicilar k ON k.kullaniciID = u.kaydedenKullaniciID WHERE u.silindi = 0").Rows[0]["cnt"]);
     int sayfa_sayisi = Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(cnt_blog) / 10));
