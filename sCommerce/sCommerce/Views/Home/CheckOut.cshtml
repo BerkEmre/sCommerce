@@ -1,0 +1,51 @@
+﻿@{
+    ViewBag.Title = "Alışverişi Tamamla";
+}
+@section script{
+    <script>
+        function adresGetir(select) {
+            var adresID = select.value;
+
+            $.ajax({
+                url: '/Home/AdresGetir',
+                type: 'POST',
+                dataType: 'JSON',
+                data: { adresID: adresID },
+                success: function (data) {
+                    $("#adresDetayi").html(data.adres.adresSatir1 + " " + data.adres.adresSatir2);
+                }
+            });
+        }
+    </script>
+    <script>
+        function miktarChange(urunID, sepetMiktar, input) {
+            var yeniMiktar = input.value;
+            var ekleCikar = 1;
+            var miktar = 0;
+            if (sepetMiktar > yeniMiktar) {
+                ekleCikar = 0;
+                miktar = sepetMiktar - yeniMiktar;
+            }
+            else {
+                ekleCikar = 1;
+                miktar = yeniMiktar - sepetMiktar;
+            }
+
+            onSepetEkle(urunID, miktar, ekleCikar);
+        }
+    </script>
+}
+<br />
+<div class="tt-breadcrumb">
+    <div class="container">
+        <ul>
+            <li><a href="@Url.Action("Index")">Ana Sayfa</a></li>
+            <li>Alışverişi Tamamla</li>
+        </ul>
+    </div>
+</div>
+
+<div id="tt-pageContent">
+    @Html.Partial("_AlisverisiTamamla")
+</div>
+<div id="COPAGE"></div>

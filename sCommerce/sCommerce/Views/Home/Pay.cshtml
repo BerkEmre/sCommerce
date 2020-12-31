@@ -1,0 +1,86 @@
+﻿@using sCommerce.Models
+@using sCommerce.Helper
+@{
+    ViewBag.Title = "Siparişi Tamamla";
+    Siparis siparis = ViewBag.siparis;
+    decimal toplam = siparis.siparisKalemleri.Sum(x => x.fiyat * x.miktar);
+}
+<br />
+<div class="tt-breadcrumb">
+    <div class="container">
+        <ul>
+            <li><a href="@Url.Action("Index")">Ana Sayfa</a></li>
+            <li>Siparişi Tamamla</li>
+        </ul>
+    </div>
+</div>
+<div id="tt-pageContent">
+    <div class="container-indent">
+        <div class="container">
+            <h1 class="tt-title-subpages noborder">SİPARİŞİ TAMAMLA</h1>
+            <div class="tt-login-form">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12">
+                        @if (siparis.odemeTipi == (int)odemeTipleri.havale)
+                        {
+                            <div class="tt-item">
+                                <h2 class="tt-title">HAVALE</h2>
+                                <p>Aşağıda yer alan bilgiler ile ödemenizi gerçekleştirmenizin ardından siparişiniz işleme alınacaktır,<br />lüften havale açıklaması olarak sipariş numaranızı yazınız.</p>
+                                <br />
+                                <p><strong>Toplam Tutar: </strong>@toplam TL</p>
+                                <br />
+                                <p><strong>IBAN: </strong>@Site.siteBilgileri.iban</p>
+                                <p><strong>Banka: </strong>@Site.siteBilgileri.banka</p>
+                                <p><strong>Hesap No: </strong>@Site.siteBilgileri.sube</p>
+                                <p><strong>Şube: </strong>@Site.siteBilgileri.hesapNo</p>
+                                <br />
+                                <p><strong>Sipariş No: </strong>#@siparis.siparisID</p>
+                                <br />
+                                <p>Siparişinizin takibini <a href="@Url.Action("Customer")">Hesabım</a> ekranında siparişler bölümünden yapabilirsiniz.</p>
+                                <a href="@Url.Action("Index")" class="btn">ANA SAYFA</a>
+                                <a href="@Url.Action("Customer")" class="btn">HESABIM</a>
+                            </div>
+                        }
+                        else if (siparis.odemeTipi == (int)odemeTipleri.kapidaOdeme)
+                        {
+                            <div class="tt-item">
+                                <h2 class="tt-title">KAPIDA ÖDEME</h2>
+                                <p>Sipariş verdiğiniz için teşekkürler, siparişinizi en kısa sürede hazırlayıp yollayacağız.</p>
+                                <br />
+                                <p><strong>Toplam Tutar: </strong>@toplam TL</p>
+                                <br />
+                                <p><strong>Sipariş No: </strong>#@siparis.siparisID</p>
+                                <br />
+                                <p>Siparişinizin takibini <a href="@Url.Action("Customer")">Hesabım</a> ekranında siparişler bölümünden yapabilirsiniz.</p>
+                                <a href="@Url.Action("Index")" class="btn">ANA SAYFA</a>
+                                <a href="@Url.Action("Customer")" class="btn">HESABIM</a>
+                            </div>
+                        }
+                        else if (siparis.odemeTipi == (int)odemeTipleri.krediBankaKarti)
+                        {
+                            <div class="tt-item">
+                                <h2 class="tt-title">KREDİ KARTI</h2>
+                                <p>Kredi kartı ödeme ekranı.</p>
+                            </div>
+                        }
+                        else if (siparis.odemeTipi == (int)odemeTipleri.magazadanTeslim)
+                        {
+                            <div class="tt-item">
+                                <h2 class="tt-title">MAĞAZADAN TESLİM</h2>
+                                <p>Sipariş verdiğiniz için teşekkürler, siparişinizi en kısa sürede hazırlayıp sizi bilgilendireceğiz.</p>
+                                <br />
+                                <p><strong>Toplam Tutar: </strong>@toplam TL</p>
+                                <br />
+                                <p><strong>Sipariş No: </strong>#@siparis.siparisID</p>
+                                <br />
+                                <p>Siparişinizin takibini <a href="@Url.Action("Customer")">Hesabım</a> ekranında siparişler bölümünden yapabilirsiniz.</p>
+                                <a href="@Url.Action("Index")" class="btn">ANA SAYFA</a>
+                                <a href="@Url.Action("Customer")" class="btn">HESABIM</a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

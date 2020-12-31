@@ -1,0 +1,149 @@
+﻿@using sCommerce.Models
+@{
+    Kullanici musteri = Site.GetMusteri();
+    musteri.LoadSiparisler();
+    int siparisID = ViewBag.id;
+
+    Siparis siparis = new Siparis();
+    if (siparisID != 0)
+    {
+        siparis = musteri.siparisler.First(x => x.siparisID == siparisID);
+    }
+    ViewBag.Title = "Sipariş";
+}
+<br />
+<div class="tt-breadcrumb">
+    <div class="container">
+        <ul>
+            <li><a href="@Url.Action("Index")">Ana Sayfa</a></li>
+            <li>Hesabım</li>
+            <li>Sipariş</li>
+        </ul>
+    </div>
+</div>
+<div id="tt-pageContent">
+    <div class="container-indent">
+        <div class="container">
+            <h1 class="tt-title-subpages noborder">SİPARİŞ DETAY</h1>
+            <div class="tt-shopcart-table-02">
+                <table>
+                    <tbody>
+                        @foreach (SiparisKalem siparisKalem in siparis.siparisKalemleri)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="tt-product-img">
+                                        <img src="~/Content/icerik/urun/kucuk/@siparisKalem.urun.urunResimleri[0].resim" alt="@siparisKalem.urun.urunAdi">
+                                    </div>
+                                </td>
+                                <td>
+                                    <h2 class="tt-title">
+                                        <a href="@Url.Action("Product", new { id = siparisKalem.urunID })">@siparisKalem.urun.urunAdi</a>
+                                    </h2>
+                                    <ul class="tt-list-parameters">
+                                        <li>
+                                            <div class="tt-price">
+                                                @siparisKalem.fiyat TL
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="detach-quantity-mobile"></div>
+                                        </li>
+                                        <li>
+                                            <div class="tt-price subtotal">
+                                                @(siparisKalem.fiyat * siparisKalem.miktar) TL 
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <div class="tt-price">
+                                        @siparisKalem.fiyat TL
+                                    </div>
+                                </td>
+                                <td>
+                                    <strong>x @siparisKalem.miktar</strong>
+                                </td>
+                                <td>
+                                    <div class="tt-price subtotal">
+                                        @(siparisKalem.fiyat * siparisKalem.miktar) TL
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="tt-shopcart-btn">
+                    <div class="col-left">
+                        <a class="btn-link" href="@Url.Action("Customer")"><i class="icon-e-19"></i>HESABIM</a>
+                    </div>
+                    <div class="col-right">
+                    </div>
+                </div>
+            </div>
+            <div class="tt-shopcart-col">
+                <div class="row">
+                    <div class="col-md-6 col-lg-6">
+                        <div class="tt-shopcart-box tt-boredr-large">
+                            <table class="tt-shopcart-table01">
+                                <tbody>
+                                    <tr>
+                                        <th>TOPLAM</th>
+                                        <td>@siparis.GetToplamFiyat() TL</td>
+                                    </tr>
+                                    <tr>
+                                        <th>SİPARİŞ TARİHİ</th>
+                                        <td>@siparis.kayitTarihi.ToString("dd.MM.yyyy")</td>
+                                    </tr>
+                                    <tr>
+                                        <th>KARGO NO</th>
+                                        <td>@siparis.kargoNo</td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>SİPARİŞ DURUMU</th>
+                                        <td>@siparis.GetSiparisDurum()</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6">
+                        <div class="tt-shopcart-box">
+                            <h4 class="tt-title">SİPARİŞ NOTU</h4>
+                            <p>@siparis.siparisNotu</p>
+
+                            <h4 class="tt-title">ADRES BİLGİLERİ</h4>
+                            <table class="tt-shopcart-table01">
+                                <tbody>
+                                    <tr>
+                                        <th>AD SOYAD</th>
+                                        <td>@siparis.ad @siparis.soyad</td>
+                                    </tr>
+                                    <tr>
+                                        <th>TELEFON</th>
+                                        <td>@siparis.telefon</td>
+                                    </tr>
+                                    <tr>
+                                        <th>ŞEHİR / SEMT / MAHALLE</th>
+                                        <td>@siparis.sehir / @siparis.semt / @siparis.mahalle</td>
+                                    </tr>
+                                    <tr>
+                                        <th>ADRES</th>
+                                        <td>@siparis.adresSatir1 <br />@siparis.adresSatir2</td>
+                                    </tr>
+                                    <tr>
+                                        <th>POSTA KODU</th>
+                                        <td>@siparis.postaKodu</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

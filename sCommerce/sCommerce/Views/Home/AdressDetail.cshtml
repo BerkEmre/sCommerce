@@ -1,0 +1,177 @@
+﻿@using sCommerce.Models
+@{
+    Kullanici musteri = Site.GetMusteri();
+
+    int adresID = ViewBag.id;
+
+    Adres adres = new Adres();
+    if (adresID != 0)
+    {
+        adres = musteri.adresler.First(x => x.adresID == adresID);
+    }
+    ViewBag.Title = "Adres Ekle/Güncelle";
+}
+<br />
+
+<div class="tt-breadcrumb">
+    <div class="container">
+        <ul>
+            <li><a href="@Url.Action("Index")">Ana Sayfa</a></li>
+            <li>Hesabım</li>
+            <li>Adressler</li>
+            <li>@(adresID == 0 ? "Adres Ekle" : adres.adres)</li>
+        </ul>
+    </div>
+</div>
+<div id="tt-pageContent">
+    <div class="container-indent">
+        <div class="container container-fluid-custom-mobile-padding">
+            <h1 class="tt-title-subpages noborder">@musteri.adSoyad()</h1>
+            <div class="tt-shopping-layout">
+                <div class="tt-wrapper">
+                    <a href="@Url.Action("Adress")" class="tt-link-back"><i class="icon-h-46"></i> GERİ DÖN</a>
+                </div>
+                <div class="tt-wrapper">
+                    <h6 class="tt-title">@(adresID == 0 ? "Adres Ekle" : adres.adres + " Güncelle")</h6>
+                    <div class="form-default">
+                        <form method="post" action="/Home/AdresEkle">
+                            <input type="hidden" name="adresID" value="@adresID"/>
+                            <div class="form-group">
+                                <label for="shopInputFirstName" class="control-label">ADRES ADI *</label>
+                                <input type="text" class="form-control" name="adres" size="50" value="@(adresID == 0 ? "" : adres.adres)" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="shopInputFirstName" class="control-label">AD *</label>
+                                <input type="text" class="form-control" name="ad" size="50" value="@(adresID == 0 ? "" : adres.ad)" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="shopInputLastName" class="control-label">SOYAD *</label>
+                                <input type="text" class="form-control" name="soyad" size="50" value="@(adresID == 0 ? "" : adres.soyad)" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="shopCompanyName" class="control-label">TELEFON *</label>
+                                <input type="text" class="form-control" name="telefon" size="50" value="@(adresID == 0 ? "" : adres.telefon)" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="shopCompanyName" class="control-label">ŞEHİR *</label>
+                                <select class="form-control" name="sehir" required>
+                                    <option value="">ŞEHİR SEÇ</option>
+                                    <option value="Adana" @(adresID == 0 ? "" : adres.sehir == "Adana" ? "selected" : "")>Adana</option>
+                                    <option value="Adıyaman" @(adresID == 0 ? "" : adres.sehir == "Adıyaman" ? "selected" : "")>Adıyaman</option>
+                                    <option value="Afyonkarahisar" @(adresID == 0 ? "" : adres.sehir == "Afyonkarahisar" ? "selected" : "")>Afyonkarahisar</option>
+                                    <option value="Ağrı" @(adresID == 0 ? "" : adres.sehir == "Ağrı" ? "selected" : "")>Ağrı</option>
+                                    <option value="Amasya" @(adresID == 0 ? "" : adres.sehir == "Amasya" ? "selected" : "")>Amasya</option>
+                                    <option value="Ankara" @(adresID == 0 ? "" : adres.sehir == "Ankara" ? "selected" : "")>Ankara</option>
+                                    <option value="Antalya" @(adresID == 0 ? "" : adres.sehir == "Antalya" ? "selected" : "")>Antalya</option>
+                                    <option value="Artvin" @(adresID == 0 ? "" : adres.sehir == "Artvin" ? "selected" : "")>Artvin</option>
+                                    <option value="Aydın" @(adresID == 0 ? "" : adres.sehir == "Aydın" ? "selected" : "")>Aydın</option>
+                                    <option value="Balıkesir" @(adresID == 0 ? "" : adres.sehir == "Balıkesir" ? "selected" : "")>Balıkesir</option>
+                                    <option value="Bilecik" @(adresID == 0 ? "" : adres.sehir == "Bilecik" ? "selected" : "")>Bilecik</option>
+                                    <option value="Bingöl" @(adresID == 0 ? "" : adres.sehir == "Bingöl" ? "selected" : "")>Bingöl</option>
+                                    <option value="Bitlis" @(adresID == 0 ? "" : adres.sehir == "Bitlis" ? "selected" : "")>Bitlis</option>
+                                    <option value="Bolu" @(adresID == 0 ? "" : adres.sehir == "Bolu" ? "selected" : "")>Bolu</option>
+                                    <option value="Burdur" @(adresID == 0 ? "" : adres.sehir == "Burdur" ? "selected" : "")>Burdur</option>
+                                    <option value="Bursa" @(adresID == 0 ? "" : adres.sehir == "Bursa" ? "selected" : "")>Bursa</option>
+                                    <option value="Çanakkale" @(adresID == 0 ? "" : adres.sehir == "Çanakkale" ? "selected" : "")>Çanakkale</option>
+                                    <option value="Çankırı" @(adresID == 0 ? "" : adres.sehir == "Çankırı" ? "selected" : "")>Çankırı</option>
+                                    <option value="Çorum" @(adresID == 0 ? "" : adres.sehir == "Çorum" ? "selected" : "")>Çorum</option>
+                                    <option value="Denizli" @(adresID == 0 ? "" : adres.sehir == "Denizli" ? "selected" : "")>Denizli</option>
+                                    <option value="Diyarbakır" @(adresID == 0 ? "" : adres.sehir == "Diyarbakır" ? "selected" : "")>Diyarbakır</option>
+                                    <option value="Edirne" @(adresID == 0 ? "" : adres.sehir == "Edirne" ? "selected" : "")>Edirne</option>
+                                    <option value="Elazığ" @(adresID == 0 ? "" : adres.sehir == "Elazığ" ? "selected" : "")>Elazığ</option>
+                                    <option value="Erzincan" @(adresID == 0 ? "" : adres.sehir == "Erzincan" ? "selected" : "")>Erzincan</option>
+                                    <option value="Erzurum" @(adresID == 0 ? "" : adres.sehir == "Erzurum" ? "selected" : "")>Erzurum</option>
+                                    <option value="Eskişehir" @(adresID == 0 ? "" : adres.sehir == "Eskişehir" ? "selected" : "")>Eskişehir</option>
+                                    <option value="Gaziantep" @(adresID == 0 ? "" : adres.sehir == "Gaziantep" ? "selected" : "")>Gaziantep</option>
+                                    <option value="Giresun" @(adresID == 0 ? "" : adres.sehir == "Giresun" ? "selected" : "")>Giresun</option>
+                                    <option value="Gümüşhane" @(adresID == 0 ? "" : adres.sehir == "Gümüşhane" ? "selected" : "")>Gümüşhane</option>
+                                    <option value="Hakkâri" @(adresID == 0 ? "" : adres.sehir == "Hakkâri" ? "selected" : "")>Hakkâri</option>
+                                    <option value="Hatay" @(adresID == 0 ? "" : adres.sehir == "Hatay" ? "selected" : "")>Hatay</option>
+                                    <option value="Isparta" @(adresID == 0 ? "" : adres.sehir == "Isparta" ? "selected" : "")>Isparta</option>
+                                    <option value="Mersin" @(adresID == 0 ? "" : adres.sehir == "Mersin" ? "selected" : "")>Mersin</option>
+                                    <option value="İstanbul" @(adresID == 0 ? "" : adres.sehir == "İstanbul" ? "selected" : "")>İstanbul</option>
+                                    <option value="İzmir" @(adresID == 0 ? "" : adres.sehir == "İzmir" ? "selected" : "")>İzmir</option>
+                                    <option value="Kars" @(adresID == 0 ? "" : adres.sehir == "Kars" ? "selected" : "")>Kars</option>
+                                    <option value="Kastamonu" @(adresID == 0 ? "" : adres.sehir == "Kastamonu" ? "selected" : "")>Kastamonu</option>
+                                    <option value="Kayseri" @(adresID == 0 ? "" : adres.sehir == "Kayseri" ? "selected" : "")>Kayseri</option>
+                                    <option value="Kırklareli" @(adresID == 0 ? "" : adres.sehir == "Kırklareli" ? "selected" : "")>Kırklareli</option>
+                                    <option value="Kırşehir" @(adresID == 0 ? "" : adres.sehir == "Kırşehir" ? "selected" : "")>Kırşehir</option>
+                                    <option value="Kocaeli" @(adresID == 0 ? "" : adres.sehir == "Kocaeli" ? "selected" : "")>Kocaeli</option>
+                                    <option value="Konya" @(adresID == 0 ? "" : adres.sehir == "Konya" ? "selected" : "")>Konya</option>
+                                    <option value="Kütahya" @(adresID == 0 ? "" : adres.sehir == "Kütahya" ? "selected" : "")>Kütahya</option>
+                                    <option value="Malatya" @(adresID == 0 ? "" : adres.sehir == "Malatya" ? "selected" : "")>Malatya</option>
+                                    <option value="Manisa" @(adresID == 0 ? "" : adres.sehir == "Manisa" ? "selected" : "")>Manisa</option>
+                                    <option value="Kahramanmaraş" @(adresID == 0 ? "" : adres.sehir == "Kahramanmaraş" ? "selected" : "")>Kahramanmaraş</option>
+                                    <option value="Mardin" @(adresID == 0 ? "" : adres.sehir == "Mardin" ? "selected" : "")>Mardin</option>
+                                    <option value="Muğla" @(adresID == 0 ? "" : adres.sehir == "Muğla" ? "selected" : "")>Muğla</option>
+                                    <option value="Muş" @(adresID == 0 ? "" : adres.sehir == "Muş" ? "selected" : "")>Muş</option>
+                                    <option value="Nevşehir" @(adresID == 0 ? "" : adres.sehir == "Nevşehir" ? "selected" : "")>Nevşehir</option>
+                                    <option value="Niğde" @(adresID == 0 ? "" : adres.sehir == "Niğde" ? "selected" : "")>Niğde</option>
+                                    <option value="Ordu" @(adresID == 0 ? "" : adres.sehir == "Ordu" ? "selected" : "")>Ordu</option>
+                                    <option value="Rize" @(adresID == 0 ? "" : adres.sehir == "Rize" ? "selected" : "")>Rize</option>
+                                    <option value="Sakarya" @(adresID == 0 ? "" : adres.sehir == "Sakarya" ? "selected" : "")>Sakarya</option>
+                                    <option value="Samsun" @(adresID == 0 ? "" : adres.sehir == "Samsun" ? "selected" : "")>Samsun</option>
+                                    <option value="Siirt" @(adresID == 0 ? "" : adres.sehir == "Siirt" ? "selected" : "")>Siirt</option>
+                                    <option value="Sinop" @(adresID == 0 ? "" : adres.sehir == "Sinop" ? "selected" : "")>Sinop</option>
+                                    <option value="Sivas" @(adresID == 0 ? "" : adres.sehir == "Sivas" ? "selected" : "")>Sivas</option>
+                                    <option value="Tekirdağ" @(adresID == 0 ? "" : adres.sehir == "Tekirdağ" ? "selected" : "")>Tekirdağ</option>
+                                    <option value="Tokat" @(adresID == 0 ? "" : adres.sehir == "Tokat" ? "selected" : "")>Tokat</option>
+                                    <option value="Trabzon" @(adresID == 0 ? "" : adres.sehir == "Trabzon" ? "selected" : "")>Trabzon</option>
+                                    <option value="Tunceli" @(adresID == 0 ? "" : adres.sehir == "Tunceli" ? "selected" : "")>Tunceli</option>
+                                    <option value="Şanlıurfa" @(adresID == 0 ? "" : adres.sehir == "Şanlıurfa" ? "selected" : "")>Şanlıurfa</option>
+                                    <option value="Uşak" @(adresID == 0 ? "" : adres.sehir == "Uşak" ? "selected" : "")>Uşak</option>
+                                    <option value="Van" @(adresID == 0 ? "" : adres.sehir == "Van" ? "selected" : "")>Van</option>
+                                    <option value="Yozgat" @(adresID == 0 ? "" : adres.sehir == "Yozgat" ? "selected" : "")>Yozgat</option>
+                                    <option value="Zonguldak" @(adresID == 0 ? "" : adres.sehir == "Zonguldak" ? "selected" : "")>Zonguldak</option>
+                                    <option value="Aksaray" @(adresID == 0 ? "" : adres.sehir == "Aksaray" ? "selected" : "")>Aksaray</option>
+                                    <option value="Bayburt" @(adresID == 0 ? "" : adres.sehir == "Bayburt" ? "selected" : "")>Bayburt</option>
+                                    <option value="Karaman" @(adresID == 0 ? "" : adres.sehir == "Karaman" ? "selected" : "")>Karaman</option>
+                                    <option value="Kırıkkale" @(adresID == 0 ? "" : adres.sehir == "Kırıkkale" ? "selected" : "")>Kırıkkale</option>
+                                    <option value="Batman" @(adresID == 0 ? "" : adres.sehir == "Batman" ? "selected" : "")>Batman</option>
+                                    <option value="Şırnak" @(adresID == 0 ? "" : adres.sehir == "Şırnak" ? "selected" : "")>Şırnak</option>
+                                    <option value="Bartın" @(adresID == 0 ? "" : adres.sehir == "Bartın" ? "selected" : "")>Bartın</option>
+                                    <option value="Ardahan" @(adresID == 0 ? "" : adres.sehir == "Ardahan" ? "selected" : "")>Ardahan</option>
+                                    <option value="Iğdır" @(adresID == 0 ? "" : adres.sehir == "Iğdır" ? "selected" : "")>Iğdır</option>
+                                    <option value="Yalova" @(adresID == 0 ? "" : adres.sehir == "Yalova" ? "selected" : "")>Yalova</option>
+                                    <option value="Karabük" @(adresID == 0 ? "" : adres.sehir == "Karabük" ? "selected" : "")>Karabük</option>
+                                    <option value="Kilis" @(adresID == 0 ? "" : adres.sehir == "Kilis" ? "selected" : "")>Kilis</option>
+                                    <option value="Osmaniye" @(adresID == 0 ? "" : adres.sehir == "Osmaniye" ? "selected" : "")>Osmaniye</option>
+                                    <option value="Düzce" @(adresID == 0 ? "" : adres.sehir == "Düzce" ? "selected" : "")>Düzce</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="shopAddress" class="control-label">SEMT</label>
+                                <input type="text" class="form-control" name="semt" size="50" value="@(adresID == 0 ? "" : adres.semt)">
+                            </div>
+                            <div class="form-group">
+                                <label for="shopTown" class="control-label">MAHALLE</label>
+                                <input type="text" class="form-control" name="mahalle" size="50" value="@(adresID == 0 ? "" : adres.mahalle)">
+                            </div>
+                            <div class="form-group">
+                                <label for="shopPostCode" class="control-label">POSTA KODU</label>
+                                <input type="text" class="form-control" name="postaKodu" size="50" value="@(adresID == 0 ? "" : adres.postaKodu)">
+                            </div>
+                            <div class="form-group">
+                                <label for="shopPhone" class="control-label">ADRES SATIR 1 *</label>
+                                <input type="text" class="form-control" name="adresSatir1" size="250" required value="@(adresID == 0 ? "" : adres.adresSatir1)">
+                            </div>
+                            <div class="form-group">
+                                <label for="shopEmail" class="control-label">ADRES SATIR 2</label>
+                                <input type="text" class="form-control" name="adresSatir2" size="250" value="@(adresID == 0 ? "" : adres.adresSatir2)">
+                            </div>
+                            <div class="row tt-offset-21">
+                                <div class="col-auto">
+                                    <button type="submit" class="btn">@(adresID == 0 ? "ADRES EKLE" : "GÜNCELLE")</button>
+                                </div>
+                                <div class="col-auto align-self-center">
+                                    ya da	<a href="@Url.Action("Customer")" class="tt-link">İptal</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

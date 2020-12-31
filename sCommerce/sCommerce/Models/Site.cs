@@ -68,7 +68,7 @@ namespace sCommerce.Models
             return ret;
         }
 
-        public static List<Sepet> GetSepet()
+        public static List<Sepet> GetSepet(bool stok = false)
         {
             List<Sepet> sepet = new List<Sepet>();
             Urun urun = new Urun();
@@ -76,6 +76,21 @@ namespace sCommerce.Models
             {
                 sepet = (List<Sepet>)HttpContext.Current.Session["sepet"];
             }
+
+            if (stok)
+            {
+                for (int i = 0; i < sepet.Count; i++)
+                {
+                    Sepet sepetItem = sepet[i];
+                    sepetItem.urun.LoadFromID(sepetItem.urun.urunID);
+                    if (sepetItem.urun.miktar < sepetItem.miktar && sepetItem.urun.stokBitinceParametreID == 12)
+                        sepetItem.miktar = sepetItem.urun.miktar;
+
+                    if(sepetItem.miktar == 0)
+                        sepet.Remove(sepetItem);
+                }
+            }
+
             HttpContext.Current.Session["sepet"] = sepet;
             return sepet;
         }

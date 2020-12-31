@@ -1,0 +1,177 @@
+﻿@using sCommerce.Models
+@using sCommerce.Helper
+@using System.Configuration
+@{
+    Kullanici musteri = Site.GetMusteri();
+
+    List<Sepet> sepet = Site.GetSepet(true);
+    decimal toplam = sepet.Sum(x => x.urun.fiyat * x.miktar);
+}
+@if (sepet.Count <= 0)
+{
+    <div class="container-indent nomargin">
+        <div class="tt-empty-cart">
+            <span class="tt-icon icon-f-39"></span>
+            <h1 class="tt-title">SEPETİNİZ BOŞ :(</h1>
+            <p>Sepetinizde hiç ürün yok, hadi sepeti doldurmaya başlayalım.</p>
+            <a href="@Url.Action("Index")" class="btn">ALIŞVERİŞE DEVAM ET</a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container-indent">
+        <div class="container">
+            <h1 class="tt-title-subpages noborder">ALIŞVERİŞİ TAMAMLA</h1>
+            <div class="row">
+                <div class="col-sm-12 col-xl-8">
+                    <div class="tt-shopcart-table" id="sepetTable">
+
+                        <table>
+                            <tbody>
+                                @foreach (Sepet sepetItem in sepet)
+                                {
+                                    <tr>
+                                        <td>
+                                            <input type="hidden" id="toplamFiyat" value="@toplam" />
+                                            <a onclick="onSepetEkle(@(sepetItem.urun.urunID), @sepetItem.miktar, 0)" class="tt-btn-close"></a>
+                                        </td>
+                                        <td>
+                                            <div class="tt-product-img">
+                                                <img src="~/Content/icerik/urun/kucuk/@sepetItem.urun.urunResimleri[0].resim" alt="@sepetItem.urun.urunAdi">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <h2 class="tt-title">
+                                                <a href="@Url.Action("Product", new { id = sepetItem.urun.urunID })">@sepetItem.urun.urunAdi</a>
+                                            </h2>
+                                            <ul class="tt-list-parameters">
+                                                <li>
+                                                    <div class="tt-price">
+                                                        @sepetItem.urun.fiyat TL
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="detach-quantity-mobile"></div>
+                                                </li>
+                                                <li>
+                                                    <div class="tt-price subtotal">
+                                                        @((sepetItem.urun.fiyat * sepetItem.miktar).ToString("N2")) TL
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </td>
+                                        <td>
+                                            <div class="tt-price">
+                                                @sepetItem.urun.fiyat TL
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <input name="miktar" class="form-control" type="number" value="@sepetItem.miktar" max="@sepetItem.urun.miktar" onchange="miktarChange(@sepetItem.urun.urunID, @sepetItem.miktar, this)">
+                                        </td>
+                                        <td>
+                                            <div class="tt-price subtotal">
+                                                @((sepetItem.urun.fiyat * sepetItem.miktar).ToString("N2")) TL
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <div class="tt-shopcart-btn">
+                            <div class="col-left">
+                                <a class="btn-link" href="@Url.Action("Index")"><i class="icon-e-19"></i>ALIŞVERİŞE DEVAM ET</a>
+                            </div>
+                            <div class="col-right">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-xl-4">
+                    <div class="tt-shopcart-wrapper">
+                        @if (musteri != null)
+                        {
+                            <form method="POST" action="/Home/SiparisGir">
+                                <div class="tt-shopcart-box">
+                                    <h4 class="tt-title">ADRES SEÇ</h4>
+                                    <p>Ürünlerinizin gönderileceği adresinizi seçiniz.</p>
+                                    <div class="form-group">
+                                        <label for="address_country">ADRES <sup>*</sup></label>
+                                        <select name="adresID" class="form-control" onchange="adresGetir(this)" required>
+                                            <option value="">ADRES SEÇİN</option>
+                                            @foreach (Adres adres in musteri.adresler)
+                                            {
+                                                <option value="@adres.adresID">@adres.adres</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <p id="adresDetayi"></p>
+                                    <ul class="tt-list-dot list-dot-large">
+                                        <li><a href="@Url.Action("Adress")">Yeni adres eklemek ve adresinizi göncellemek için tıklayınız</a></li>
+                                    </ul>
+                                    <br />
+                                    <h4 class="tt-title">ÖDEME TİPİ SEÇ</h4>
+                                    <br />
+                                    <div class="form-group">
+                                        <label for="address_country">ÖDEME TİPİ <sup>*</sup></label>
+                                        <select name="odemeTipi" class="form-control" required>
+                                            <option value="">ÖDEME TİPİ SEÇİN</option>
+                                            @if (ConfigurationManager.AppSettings["kredi_karti"] != "-1")
+                                            {
+                                                <option value="@Convert.ToInt32(odemeTipleri.krediBankaKarti)">Kredi/Banka Kartı</option>
+                                            }
+                                            @if (ConfigurationManager.AppSettings["havale"] != "-1")
+                                            {
+                                                <option value="@Convert.ToInt32(odemeTipleri.havale)">Havale</option>
+                                            }
+                                            @if (ConfigurationManager.AppSettings["kapida_odeme"] != "-1")
+                                            {
+                                                <option value="@Convert.ToInt32(odemeTipleri.kapidaOdeme)">Kapıda Ödeme</option>
+                                            }
+                                            @if (ConfigurationManager.AppSettings["magazadan_teslim"] != "-1")
+                                            {
+                                                <option value="@Convert.ToInt32(odemeTipleri.magazadanTeslim)">Mağazadan Teslim</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="tt-shopcart-box">
+                                    <h4 class="tt-title">
+                                        NOT
+                                    </h4>
+                                    <p>Sipariş için notunuz var ise girebilirsiniz...</p>
+                                    <textarea class="form-control" rows="7" name="siparisNotu" maxlength="250"></textarea>
+                                </div>
+                                <div class="tt-shopcart-box tt-boredr-large">
+                                    <table class="tt-shopcart-table01">
+                                        <tfoot>
+                                            <tr>
+                                                <th>TOPLAM TUTAR</th>
+                                                <td id="divToplamFiyat">@toplam TL</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                    <button type="submit" class="btn btn-lg"><span class="icon icon-check_circle"></span>ÖDEME ADIMINA GEÇ</button>
+                                </div>
+                            </form>
+                        }
+                        else
+                        {
+                            <div class="tt-shopcart-box text-center">
+                                <h4 class="tt-title">
+                                    ÜYE GİRİŞİ
+                                </h4>
+                                <p>Sipariş verebilmek için sitemize üye olmanız gerekmekte, hemen müşterilerimiz arasına katılın.</p>
+                                <br />
+                                <a href="@Url.Action("Login", new { id = 1 })" class="btn btn-border">GİRİŞ YAP</a>
+                                <p>ya da</p>
+                                <br />
+                                <a href="@Url.Action("Login", new { id = 1 })" class="btn btn-border">ÜYE OL</a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

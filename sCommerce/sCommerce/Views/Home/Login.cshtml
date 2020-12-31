@@ -1,6 +1,7 @@
 ﻿
 @{
     ViewBag.Title = "Giriş Yap";
+    int id = ViewBag.id;
 }
 <br />
 <div class="tt-breadcrumb">
@@ -17,12 +18,12 @@
             <h1 class="tt-title-subpages noborder">ARAMIZA KATILIN</h1>
             <div class="tt-login-form">
                 <div class="row">
-                    @if (Request.Params["hata"] != null) {<div class="alert alert-danger col-md-12 text-danger" role="alert">@Request.Params["hata"]</div>}
                     <div class="col-xs-12 col-md-6">
                         <div class="tt-item">
                             <h2 class="tt-title">GİRİŞ YAP</h2>
                             <div class="form-default form-top">
-                                <form method="post" action="GirisYap">
+                                <form method="post" action="/Home/GirisYap">
+                                    <input type="hidden" name="id" value="@id" />
                                     <div class="form-group">
                                         <label for="loginInputName">E-MAIL *</label>
                                         <div class="tt-required">* Gerekli alanlar</div>
@@ -55,7 +56,8 @@
                         <div class="tt-item">
                             <h2 class="tt-title">MÜŞTERİMİZ DEĞİL MİSİNİZ?</h2>
                             <div class="form-default">
-                                <form method="post" action="UyeOl">
+                                <form method="post" action="/Home/UyeOl">
+                                    <input type="hidden" name="id" value="@id" />
                                     <div class="form-group">
                                         <label for="loginInputName">AD *</label>
                                         <div class="tt-required">* Gerekli alanlar</div>
@@ -97,4 +99,3 @@
         </div>
     </div>
 </div>
-

@@ -20,6 +20,8 @@ namespace sCommerce.Models
         public string eMail;
         public int kullaniciTipiParametreID;
         public bool isValid = false;
+        public List<Adres> adresler;
+        public List<Siparis> siparisler;
 
         public Kullanici()
         {
@@ -64,6 +66,7 @@ namespace sCommerce.Models
             this.eMail = Convert.ToString(dr["eMail"]);
             this.kullaniciTipiParametreID = Convert.ToInt32(dr["kullaniciTipiParametreID"]);
             this.isValid = true;
+            this.adresler = new Adres().GetKullaniciAdres(this.kullaniciID);
 
             return true;
         }
@@ -114,6 +117,7 @@ namespace sCommerce.Models
             this.eMail = Convert.ToString(dr["eMail"]);
             this.kullaniciTipiParametreID = Convert.ToInt32(dr["kullaniciTipiParametreID"]);
             this.isValid = true;
+            this.adresler = new Adres().GetKullaniciAdres(this.kullaniciID);
 
             return "";
         }
@@ -249,6 +253,48 @@ namespace sCommerce.Models
         public bool SifreSifirla(string eMail, string sifre)
         {
             SQL.set("UPDATE kullanicilar SET sifre = '" + SQL.MD5(sifre) + "' WHERE silindi = 0 AND eMail = '" + eMail + "'");
+
+            return true;
+        }
+        
+        public bool SifreGuncelle(string eMail, string sifre, string eskiSifre)
+        {
+            SQL.set("UPDATE kullanicilar SET sifre = '" + SQL.MD5(sifre) + "' WHERE silindi = 0 AND eMail = '" + eMail + "' AND sifre = '" + SQL.MD5(eskiSifre) + "'");
+
+            return true;
+        }
+    
+        public bool LoadSiparisler()
+        {
+            this.siparisler = new List<Siparis>();
+            DataTable dt = SQL.get("SELECT TOP 20 * FROM siparisler WHERE silindi = 0 AND kullaniciID = " + this.kullaniciID + " ORDER by kayitTarihi DESC");
+            foreach (DataRow dr in dt.Rows)
+            {
+                Siparis s = new Siparis();
+                Int32.TryParse(dr["siparisID"].ToString(), out s.siparisID);
+                DateTime.TryParse(dr["kayitTarihi"].ToString(), out s.kayitTarihi);
+                Int32.TryParse(dr["kaydedenKullaniciID"].ToString(), out s.kaydedenKullaniciID);
+                DateTime.TryParse(dr["guncellemeTarihi"].ToString(), out s.guncellemeTarihi);
+                Int32.TryParse(dr["guncelleyenKullaniciID"].ToString(), out s.guncelleyenKullaniciID);
+                Int32.TryParse(dr["silindi"].ToString(), out s.silindi);
+                s.ad = dr["ad"].ToString();
+                s.soyad = dr["soyad"].ToString();
+                s.telefon = dr["telefon"].ToString();
+                s.sehir = dr["sehir"].ToString();
+                s.semt = dr["semt"].ToString();
+                s.mahalle = dr["mahalle"].ToString();
+                s.postaKodu = dr["postaKodu"].ToString();
+                s.adresSatir1 = dr["adresSatir1"].ToString();
+                s.adresSatir2 = dr["adresSatir2"].ToString();
+                Int32.TryParse(dr["kullaniciID"].ToString(), out s.kullaniciID);
+                Int32.TryParse(dr["siparisDurum"].ToString(), out s.siparisDurum);
+                Int32.TryParse(dr["odemeTipi"].ToString(), out s.odemeTipi);
+                s.siparisNotu = dr["siparisNotu"].ToString();
+                s.kargoNo = dr["kargoNo"].ToString();
+                s.siparisKalemleri = new SiparisKalem().GetSiparisKalem(s.siparisID);
+
+                this.siparisler.Add(s);
+            }
 
             return true;
         }

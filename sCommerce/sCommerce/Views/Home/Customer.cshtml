@@ -1,7 +1,81 @@
-﻿
+﻿@using sCommerce.Models
+@using sCommerce.Helper
 @{
-    ViewBag.Title = "Profile";
+    Kullanici musteri = Site.GetMusteri();
+    musteri.LoadSiparisler();
+    ViewBag.Title = "Hesabım";
 }
-
-<h2>Profile</h2>
+<br />
+<div class="tt-breadcrumb">
+    <div class="container">
+        <ul>
+            <li><a href="@Url.Action("Index")">Ana Sayfa</a></li>
+            <li>Hesabım</li>
+        </ul>
+    </div>
+</div>
+<div id="tt-pageContent">
+    <div class="container-indent">
+        <div class="container container-fluid-custom-mobile-padding">
+            <h1 class="tt-title-subpages noborder">HESABIM</h1>
+            <div class="tt-shopping-layout">
+                <h2 class="tt-title-border">@musteri.adSoyad()</h2>
+                <div class="tt-wrapper">
+                    <h3 class="tt-title">SİPARİŞLERİM</h3>
+                    <div class="tt-table-responsive">
+                        <table class="tt-table-shop-01">
+                            <thead>
+                                <tr>
+                                    <th>SİPARİŞ NO</th>
+                                    <th>TARİH</th>
+                                    <th>SİPARİŞ DURUMU</th>
+                                    <th>KARGO NO</th>
+                                    <th>TOPLAM</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (Siparis siparis in musteri.siparisler)
+                                {
+                                    <tr>
+                                        <td><a href="@Url.Action("Order", new { id = siparis.siparisID })">#@siparis.siparisID</a></td>
+                                        <td>@siparis.kayitTarihi.ToString("dd.MM.yyyy")</td>
+                                        <td>@siparis.GetSiparisDurum()</td>
+                                        <td>@siparis.kargoNo</td>
+                                        <td>@siparis.GetToplamFiyat() TL</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tt-wrapper">
+                    <h3 class="tt-title">HESAP BİLGİLERİ</h3>
+                    <div class="tt-table-responsive">
+                        <table class="tt-table-shop-02">
+                            <tbody>
+                                <tr>
+                                    <td>AD:</td>
+                                    <td>@musteri.ad </td>
+                                </tr>
+                                <tr>
+                                    <td>SOYAD:</td>
+                                    <td>@musteri.soyad </td>
+                                </tr>
+                                <tr>
+                                    <td>E-MAIL:</td>
+                                    <td>@musteri.eMail </td>
+                                </tr>
+                                <tr>
+                                    <td>ŞİFRE:</td>
+                                    <td><a href="@Url.Action("ChangePass")" class="btn btn-border">ŞİRFE DEĞİŞTİR</a> </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <a href="@Url.Action("Adress")" class="btn btn-border">ADRESLERİM</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 

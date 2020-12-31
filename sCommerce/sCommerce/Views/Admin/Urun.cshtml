@@ -3,12 +3,9 @@
 @using sCommerce.Models
 @{
     ViewBag.Title = "Ürün";
-    /*int siralama = ViewBag.siralama;
-    int count = ViewBag.count;
-    int markaID = ViewBag.markaID;
-    int kategoriID = ViewBag.kategoriID;
-    UrunFilter urunFilter = new UrunFilter(kategoriID == 0 ? new List<int>() : new List<int> { kategoriID }, new List<int>(), new List<int>(), markaID == 0 ? new List<int>() : new List<int> { markaID }, filtremele, false, 1, count);
-    */
+
+    List<Urun> uruns = new UrunFilter("", new List<int>(), new List<int>(), new List<int>(), new List<int>(), filtremeleTipleri.onerilenSiralama, false, 1, 10);
+    ber
     int sayfa_no = ViewBag.sayfa_no;
     int cnt_blog = Convert.ToInt32(SQL.get("SELECT cnt = COUNT(*) FROM urunler u INNER JOIN kullanicilar k ON k.kullaniciID = u.kaydedenKullaniciID WHERE u.silindi = 0").Rows[0]["cnt"]);
     int sayfa_sayisi = Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(cnt_blog) / 10));

@@ -15,7 +15,18 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LDZ86JBSVP"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-LDZ86JBSVP');
+    </script>
+
     <script src="https://www.google.com/recaptcha/api.js?hl=tr" async defer></script>
+    <script src="//code.jivosite.com/widget/2MXfOtK2H2" async></script>
     <link rel="stylesheet" href="~/Content/css/style.css">
     <link rel="stylesheet" href="/Content/css/theme-08.css">
     <!--<link rel="stylesheet" href="/Content/css/rtl.css" class="rtl">-->
@@ -276,9 +287,9 @@
                                 </button>
                                 <div class="tt-dropdown-menu">
                                     <div class="container">
-                                        <form>
+                                        <form method="POST" action="/Home/Search">
                                             <div class="tt-col">
-                                                <input type="text" class="tt-search-input" placeholder="Ürün Ara...">
+                                                <input type="text" class="tt-search-input" name="searchText" placeholder="Ürün Ara..." autocomplete="off">
                                                 <button class="tt-btn-search" type="submit"></button>
                                             </div>
                                             <div class="tt-col">
@@ -416,9 +427,9 @@
                     <div class="col-12 col-lg-9">
                         <div class="tt-search-type2 size-large tt-full-width tt-no-btn">
                             <!-- tt-search -->
-                            <form method="get" role="search">
+                            <form method="POST" action="/Home/Search">
                                 <i class="icon-f-85"></i>
-                                <input class="tt-search-input" type="search" placeholder="Ürün, Kategori veya Marka" aria-label="Ürün, Kategori veya Marka" autocomplete="off">
+                                <input class="tt-search-input" type="text" placeholder="Ürün, Kategori veya Marka" name="searchText" autocomplete="off">
                                 <button type="submit" class="tt-btn-search">ARA</button>
                             </form>
                             <!-- /tt-search -->
@@ -733,10 +744,31 @@
         </div>
     </div>
 
+    @if (Request.Params["hata"] != null)
+    {
+        <div class="modal  fade" id="Modalnewsletter" tabindex="-1" role="dialog" aria-label="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content ">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="icon icon-clear"></span></button>
+                    </div>
+                    <form>
+                        <div class="modal-body no-background">
+                            <div class="tt-modal-newsletter">
+                                <div class="tt-modal-newsletter-promo">
+                                    <div class="tt-title-large"></div>
+                                    <div class="tt-title-small">@Request.Params["hata"]</div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="~/Content/external/jquery/jquery.min.js"><\/script>')</script>
     <script defer src="~/Content/js/bundle.js"></script>
-    @RenderSection("script", false)
     <script>
         function onFavoriEkle(id) {
             var request = $.ajax({
@@ -777,7 +809,7 @@
             });
 
             request.done(function (data) {
-                if (data.durum == "true" && $("#CPAGE").length == 0) {
+                if (data.durum == "true" && $("#CPAGE").length == 0 && $("#COPAGE").length == 0) {
                     $("#modalSepeteEkleResim").attr("src", "/Content/icerik/urun/kucuk/" + data.urun.urunResimleri[0].resim);
                     $("#modalSepeteEkleUrunAdi").html(data.urun.urunAdi);
                     $("#modalSepeteEkleMiktar").html(data.miktar);
@@ -788,6 +820,7 @@
 
                 sepetGuncelle(data.count);
                 cartGuncelle();
+                alisverisiTamamlaGuncelle();
             });
 
             request.fail(function () {
@@ -901,6 +934,19 @@
             }
         }
 
+        function alisverisiTamamlaGuncelle() {
+            if ($("#COPAGE").length != 0) {
+                $.ajax({
+                    url: '/Home/AlisverisiTamamlaGuncelle',
+                    type: 'POST',
+                    dataType: 'html',
+                    success: function (data) {
+                        $("#tt-pageContent").html(data);
+                    }
+                });
+            }
+        }
+
         $("#mesajGonder").on("submit", function (event) {
             event.preventDefault();
             var form = $(this);
@@ -916,15 +962,19 @@
                         $("#telefon").val("");
                         $("#baslik").val("");
                         $("#mesaj").val("");
-                        $("#modalMesajText").html("<i class='icon-f-68'></i> Mesajınız alınmıştır, en kısa sürede size dönüş yapacağız.");
+                        mesajGoster("<i class='icon-f-68'></i> Mesajınız alınmıştır, en kısa sürede size dönüş yapacağız.");
                     } else {
-                        $("#modalMesajText").html(data.hata);
+                        mesajGoster(data.hata);
                     }
-                    $("#modalMesaj").modal("show");
                 }
             });
 
         });
+
+        function mesajGoster(mesaj) {
+            $("#modalMesajText").html(mesaj);
+            $("#modalMesaj").modal("show");
+        }
 
         function DevaminiYukle() {
             $.ajax({
@@ -937,6 +987,7 @@
             });
         }
     </script>
+    @RenderSection("script", false)
     <a href="#" class="tt-back-to-top" id="js-back-to-top">YUKARI</a>
 </body>
 </html>

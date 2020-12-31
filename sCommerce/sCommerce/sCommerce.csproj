@@ -128,6 +128,7 @@
     <Compile Include="Helper\Enums.cs" />
     <Compile Include="Helper\Kripto.cs" />
     <Compile Include="Helper\SQL.cs" />
+    <Compile Include="Models\Adres.cs" />
     <Compile Include="Models\Blog.cs" />
     <Compile Include="Models\CaptchaResponse.cs" />
     <Compile Include="Models\Favori.cs" />
@@ -140,6 +141,8 @@
     <Compile Include="Models\OzellikDeger.cs" />
     <Compile Include="Models\Parametre.cs" />
     <Compile Include="Models\Sepet.cs" />
+    <Compile Include="Models\Siparis.cs" />
+    <Compile Include="Models\SiparisKalem.cs" />
     <Compile Include="Models\Site.cs" />
     <Compile Include="Models\SiteBilgileri.cs" />
     <Compile Include="Models\Urun.cs" />
@@ -195,6 +198,14 @@
     <Content Include="Views\Home\Cart.cshtml" />
     <Content Include="Views\Shared\_Cart.cshtml" />
     <Content Include="Views\Shared\_Category.cshtml" />
+    <Content Include="Views\Home\CheckOut.cshtml" />
+    <Content Include="Views\Home\ChangePass.cshtml" />
+    <Content Include="Views\Home\Adress.cshtml" />
+    <Content Include="Views\Home\AdressDetail.cshtml" />
+    <Content Include="Views\Shared\_AlisverisiTamamla.cshtml" />
+    <Content Include="Views\Home\Pay.cshtml" />
+    <Content Include="Views\Home\Order.cshtml" />
+    <Content Include="Views\Home\Search.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

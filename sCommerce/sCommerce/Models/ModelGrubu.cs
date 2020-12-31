@@ -33,7 +33,7 @@ namespace sCommerce.Models
 
         }
 
-        public ModelGrubu GetSQL(int modelGrubuID)
+        public ModelGrubu Load(int modelGrubuID)
         {
             ModelGrubu modelGrubu = new ModelGrubu();
 

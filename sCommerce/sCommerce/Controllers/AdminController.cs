@@ -414,16 +414,16 @@ namespace sCommerce.Controllers
         [ValidateInput(false)]
         [HttpPost]
         public ActionResult urunEkle(int[] kategoriID, int[] ozellikID, string[] resimPath, int[] resimID, int[] resimSira, string urunAdi = "", int urunDurumuParametreID = 0, int oneCikanlar = 0, string urunAciklamasi = "", string seoAciklama = "", string seoKeywords = "", int urunEtiketiParametreID = 0, int modelGrubuID = 0, string barkod = "", string stokKodu = "", string depoLokasyonu = "",
-            string eskiFiyat = "0", string fiyat = "0", int vergiParametreID = 0, int vergiDahilSatis = 0, int miktar = 0, int minimumMiktar = 0, int stokBitinceParametreID = 0, string agirlik = "0", int kargoSuresi = 0)
+            string eskiFiyat = "0", string fiyat = "0", int vergiParametreID = 0, int vergiDahilSatis = 0, int miktar = 0, int minimumMiktar = 0, int stokBitinceParametreID = 0, string agirlik = "0", int kargoSuresi = 0, int markaID = 0)
         {
             string result = "";
             int yeni_urun_id;
             yeni_urun_id = Convert.ToInt32(SQL.get(
                 "INSERT INTO urunler (kaydedenKullaniciID, urunAdi, urunAciklamasi, seoAciklama, seoKeywords, urunEtiketiParametreID, modelGrubuID, barkod, stokKodu, depoLokasyonu, eskiFiyat, fiyat, vergiParametreID, " + 
-                " vergiDahilSatis, miktar, minimumMiktar, stokBitinceParametreID, agirlik, kargoSuresi, urunDurumuParametreID, oneCikanlar) " + 
+                " vergiDahilSatis, miktar, minimumMiktar, stokBitinceParametreID, agirlik, kargoSuresi, urunDurumuParametreID, oneCikanlar, markaID) " + 
                 " VALUES (" + Session["kullaniciID"] + ", '" + urunAdi + "', '" + urunAciklamasi + "', '" + seoAciklama + "', '" + seoKeywords + "', " + urunEtiketiParametreID + ", " + modelGrubuID + ", '" + barkod + "'," + 
                 " '" + stokKodu + "', '" + depoLokasyonu + "', " + eskiFiyat.ToString().Replace(',', '.') + ", " + fiyat.ToString().Replace(',', '.') + ", " + vergiParametreID + ", " + vergiDahilSatis + "," + 
-                " " + miktar + ", " + minimumMiktar + ", " + stokBitinceParametreID + "," + agirlik.ToString().Replace(',', '.') + ", " + kargoSuresi + ", " + urunDurumuParametreID + ", " + oneCikanlar + "); SELECT SCOPE_IDENTITY();").Rows[0][0]);
+                " " + miktar + ", " + minimumMiktar + ", " + stokBitinceParametreID + "," + agirlik.ToString().Replace(',', '.') + ", " + kargoSuresi + ", " + urunDurumuParametreID + ", " + oneCikanlar + ", " + markaID + "); SELECT SCOPE_IDENTITY();").Rows[0][0]);
 
             if (kategoriID != null)
             {
@@ -471,7 +471,7 @@ namespace sCommerce.Controllers
         [HttpPost]
         public ActionResult urunDuzenle(int urunID, int[] kategoriID, int[] ozellikID, string[] resimPath, int[] resimID, int[] resimSira, string urunAdi = "", string urunAciklamasi = "", string seoAciklama = "", string seoKeywords = "", int urunEtiketiParametreID = 0, int modelGrubuID = 0, string barkod = "", string stokKodu = "", 
             string depoLokasyonu = "", string eskiFiyat = "0", string fiyat = "0", int vergiParametreID = 0, int vergiDahilSatis = 0, int miktar = 0, int minimumMiktar = 0, int stokBitinceParametreID = 0, string agirlik = "0", int kargoSuresi = 0, int urunDurumuParametreID = 0, 
-            int oneCikanlar = 0)
+            int oneCikanlar = 0, int markaID = 0)
         {
             string result = "";
             string resim_ids = "";
@@ -480,7 +480,7 @@ namespace sCommerce.Controllers
                 " stokKodu = '" + stokKodu + "', depoLokasyonu = '" + depoLokasyonu + "', eskiFiyat = " + eskiFiyat.ToString().Replace(',', '.') + ", fiyat = " + fiyat.ToString().Replace(',', '.') + ", " + 
                 " vergiParametreID = " + vergiParametreID + ", vergiDahilSatis = " + vergiDahilSatis + ", miktar = " + miktar + ", minimumMiktar = " + minimumMiktar + ", " + 
                 " stokBitinceParametreID = " + stokBitinceParametreID + ", agirlik = " + agirlik.ToString().Replace(',', '.') + ", kargoSuresi = " + kargoSuresi + ", urunDurumuParametreID = " + urunDurumuParametreID + ", " + 
-                " oneCikanlar = " + oneCikanlar + " WHERE urunID = " + urunID);
+                " oneCikanlar = " + oneCikanlar + ", markaID = " + markaID + " WHERE urunID = " + urunID);
 
             SQL.set("UPDATE urunKategori SET guncelleyenKullaniciID = " + Session["kullaniciID"] + ", guncellemeTarihi = GETDATE(), silindi = 1 WHERE urunID = " + urunID);
             SQL.set("UPDATE urunOzellik SET guncelleyenKullaniciID = " + Session["kullaniciID"] + ", guncellemeTarihi = GETDATE(), silindi = 1 WHERE urunID = " + urunID);

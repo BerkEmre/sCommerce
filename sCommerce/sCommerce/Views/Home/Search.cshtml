@@ -1,0 +1,110 @@
+﻿@using sCommerce.Models
+@{
+    string searchText = ViewBag.searchText;
+    List<Urun> uruns = ViewBag.uruns;
+    List<Favori> favoriler = Site.GetFavori();
+
+    ViewBag.Title = "Arama Sonuçları";
+}
+<br />
+
+<div class="tt-breadcrumb">
+    <div class="container">
+        <ul>
+            <li><a href="@Url.Action("Index")">Ana Sayfa</a></li>
+            <li>Arama Sonuçları</li>
+        </ul>
+    </div>
+</div>
+<div id="tt-pageContent">
+    <div class="container-indent">
+        <div class="container container-fluid-custom-mobile-padding">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="content-indent">
+                        <div class="tt-filters-options desctop-no-sidebar" id="js-tt-filters-options">
+                            <h1 class="tt-title">ARAMA SONUÇLARI</h1>
+                        </div>
+                        <div class="tt-product-listing row">
+                            @foreach (Urun urun in uruns)
+                            {
+                                <div class="col-6 col-md-4 col-lg-3 tt-col-item">
+                                    <div class="tt-product thumbprod-center">
+                                        <div class="tt-image-box">
+                                            <a class="tt-btn-quickview" onclick='onHizliGoster(@(urun.urunID))' data-tooltip="HIZLI GÖRÜNÜM" data-tposition="left"></a>
+                                            <a class="tt-btn-wishlist @(favoriler.Where(x => x.urunID == urun.urunID).Count() > 0 ? "active" : "")" data-tooltip="İSTEK LİSTESİNE EKLE" data-tposition="left" onclick="onFavoriEkle(@urun.urunID)"></a>
+                                            <a href="@Url.Action("Product", new { id = urun.urunID })">
+                                                <span class="tt-img"><img src="~/Content/images/loader.svg" data-src="/Content/icerik/urun/kucuk/@(urun.urunResimleri.Count > 0 ? urun.urunResimleri[0].resim : "yok.jpg")" alt="@urun.urunAdi"></span>
+                                                @if (urun.urunResimleri.Count > 1)
+                                                {
+                                                    <span class="tt-img-roll-over"><img src="~/Content/images/loader.svg" data-src="/Content/icerik/urun/kucuk/@urun.urunResimleri[1].resim" alt="@urun.urunAdi"></span>
+                                                }
+                                                @if (urun.urunEtiketi.deger.Length > 1)
+                                                {
+                                                    <span class="tt-label-location">
+                                                        @if (urun.miktar <= 0 && urun.stokBitinceParametreID == 12)
+                                                        {
+                                                            <span class="tt-label-our-stock">Stokta Yok</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="@(urun.urunEtiketi.deger == "Yeni" ? "tt-label-new" : "tt-label-our-fatured")">@urun.urunEtiketi.deger</span>
+                                                        }
+                                                    </span>
+                                                }
+                                            </a>
+                                        </div>
+                                        <div class="tt-description">
+                                            <div class="tt-row">
+                                                <ul class="tt-add-info">
+                                                    <li><a>@urun.modelGrubu.modelGrubu</a></li>
+                                                </ul>
+                                                <div class="tt-rating">
+                                                    <i class="icon-star"></i>
+                                                    <i class="icon-star"></i>
+                                                    <i class="icon-star"></i>
+                                                    <i class="icon-star"></i>
+                                                    <i class="icon-star"></i>
+                                                </div>
+                                            </div>
+                                            <h2 class="tt-title"><a href="@Url.Action("Product", new { id = urun.urunID })">@urun.urunAdi</a></h2>
+                                            <div class="tt-price">
+                                                @if (urun.eskiFiyat > 0)
+                                                {
+                                                    <span class="new-price">@urun.fiyat TL</span>
+                                                    <span class="old-price">@urun.eskiFiyat TL</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="price">@urun.fiyat TL</span>
+                                                }
+
+                                            </div>
+                                            <div class="tt-product-inside-hover">
+                                                <div class="tt-row-btn">
+                                                    @if (urun.miktar <= 0 && urun.stokBitinceParametreID == 12)
+                                                    {
+                                                        <a class="tt-btn-addtocart thumbprod-button-bg disable">STOKTA YOK</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a class="tt-btn-addtocart thumbprod-button-bg" onclick="onSepetEkle(@(urun.urunID), 1, 1)">SEPETE EKLE</a>
+                                                    }
+                                                </div>
+                                                <div class="tt-row-btn">
+                                                    <a class="tt-btn-quickview" onclick='onHizliGoster(@(urun.urunID))'></a>
+                                                    <a class="tt-btn-wishlist @(favoriler.Where(x => x.urunID == urun.urunID).Count() > 0 ? "active" : "")" onclick="onFavoriEkle(@urun.urunID)"></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
