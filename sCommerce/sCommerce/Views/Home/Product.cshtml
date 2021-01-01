@@ -5,7 +5,7 @@
     List<Favori> favoriler = Site.GetFavori();
 
 
-    List<Urun> modelGrubuUrunler = new UrunFilter("", new List<int>(), new List<int>(), new List<int> { urun.modelGrubuID }, new List<int>(), 0, false, 1, 1000).GetUruns();
+    List<Urun> modelGrubuUrunler = new UrunFilter("", new List<int>(), new List<int>(), new List<int> { urun.modelGrubuID }, new List<int>(), 0, false, 1, 100).GetUruns();
     List<Urun> onerilenUrunler = new UrunFilter("", new List<int>(), new List<int>(), new List<int>(), new List<int> { urun.markaID }, 0, true, 1, 8).GetUruns();
 }
 @section script {

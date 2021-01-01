@@ -403,7 +403,7 @@ namespace sCommerce.Controllers
         }
         #endregion
         #region Ürün
-        public ActionResult Urun(int id = 0)
+        public ActionResult Urun(int id = 1)
         {
             if (Session["kullaniciID"] == null)
                 return RedirectToAction("Login");
