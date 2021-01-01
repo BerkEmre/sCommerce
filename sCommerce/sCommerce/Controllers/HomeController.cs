@@ -155,7 +155,7 @@ namespace sCommerce.Controllers
 
         public ActionResult Search(string searchText = "")
         {
-            if (searchText.Length <= 3)
+            if (searchText.Length <= 2)
                 return RedirectToAction("Index");
 
             ViewBag.searchText = searchText;

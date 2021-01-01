@@ -401,14 +401,28 @@ namespace sCommerce.Controllers
         }
         #endregion
         #region Ürün
-        public ActionResult Urun(int id = 0)
+        public ActionResult Urun(int id = 1)
         {
             if (Session["kullaniciID"] == null)
                 return RedirectToAction("Login");
-
+            if (id <= 0)
+                id = 1;
             ViewBag.sayfa_no = id;
 
             return View();
+        }
+
+        public ActionResult UrunBarkod(string barkod)
+        {
+            int urunID = new Urun().BarkodAra(barkod);
+
+            if (urunID == 0)
+            {
+                return RedirectToAction("Urun", new { hata = "Girdiğiniz barkod ile ürün bulunamadı!" });
+
+            }
+
+            return RedirectToAction("UrunDetay", new { id = urunID, turet = 0 });
         }
 
         [ValidateInput(false)]

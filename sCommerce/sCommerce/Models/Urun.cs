@@ -258,6 +258,18 @@ namespace sCommerce.Models
 
             return uruns;
         }
+    
+        public int BarkodAra(string barkod)
+        {
+            int urunID = 0;
+
+            DataTable dt = SQL.get("SELECT TOP 1 urunID FROM urunler WHERE silindi = 0 AND barkod = '" + barkod + "'");
+            if (dt.Rows.Count <= 0)
+                return urunID;
+
+            urunID = Convert.ToInt32(dt.Rows[0]["urunID"]);
+            return urunID;
+        } 
     }
 
     public class UrunFilter
@@ -301,6 +313,18 @@ namespace sCommerce.Models
                 case filtremeleTipleri.yuksekFiyat: 
                     orderBy = "fiyat DESC"; 
                     break;
+                case filtremeleTipleri.urunAdi:
+                    orderBy = "urunAdi";
+                    break;
+                case filtremeleTipleri.urunAdiTersten:
+                    orderBy = "urunAdi DESC";
+                    break;
+                case filtremeleTipleri.urunID:
+                    orderBy = "urunID";
+                    break;
+                case filtremeleTipleri.urunIDTersten:
+                    orderBy = "urunID DESC";
+                    break;
             }
 
             DataTable dt = SQL.get(
@@ -324,6 +348,7 @@ namespace sCommerce.Models
                 "WHERE " +
                 "    u.silindi = 0 " +
                 "    AND u.urunDurumuParametreID != 9 " +
+                (urunAdi.Length > 0 ? " AND u.urunAdi LIKE '%" + urunAdi + "%' " : "") +
                 (oneCikanlar ? " AND u.oneCikanlar = 1 " : "") +
                 (kategoriIDs.Count > 0 ? " AND EXISTS (SELECT urunID FROM urunKategori uk WHERE uk.silindi = 0 AND uk.urunID = u.urunID AND uk.kategoriID IN (" + string.Join(",", kategoriIDs) + ")) " : "") +
                 (urunEtiketParametreIDs.Count > 0 ? " AND u.urunEtiketiParametreID IN (" + string.Join(",", urunEtiketParametreIDs) + ") " : "") +
@@ -375,6 +400,36 @@ namespace sCommerce.Models
             }
 
             return uruns;
+        }
+
+        public int GetCount()
+        {
+            int count = 0;
+
+            count = Convert.ToInt32(SQL.get(
+                "SELECT " +
+                "    count = COUNT(*) " +
+                "FROM " +
+                "    urunler u " +
+                "    LEFT OUTER JOIN parametreler pUEtiket ON pUEtiket.parametreID = u.urunEtiketiParametreID " +
+                "    LEFT OUTER JOIN parametreler pVergi ON pVergi.parametreID = u.vergiParametreID " +
+                "    LEFT OUTER JOIN parametreler pSBitince ON pSBitince.parametreID = u.stokBitinceParametreID " +
+                "    LEFT OUTER JOIN parametreler pUDurumu ON pUDurumu.parametreID = u.urunDurumuParametreID " +
+                "    LEFT OUTER JOIN modelGrubu mg ON mg.modelGrubuID = u.modelGrubuID " +
+                "    LEFT OUTER JOIN markalar m ON m.markaID = u.markaID " +
+                "WHERE " +
+                "    u.silindi = 0 " +
+                "    AND u.urunDurumuParametreID != 9 " +
+                (urunAdi.Length > 0 ? " AND u.urunAdi LIKE '%" + urunAdi + "%' " : "") +
+                (oneCikanlar ? " AND u.oneCikanlar = 1 " : "") +
+                (kategoriIDs.Count > 0 ? " AND EXISTS (SELECT urunID FROM urunKategori uk WHERE uk.silindi = 0 AND uk.urunID = u.urunID AND uk.kategoriID IN (" + string.Join(",", kategoriIDs) + ")) " : "") +
+                (urunEtiketParametreIDs.Count > 0 ? " AND u.urunEtiketiParametreID IN (" + string.Join(",", urunEtiketParametreIDs) + ") " : "") +
+                (modelGrubuIDs.Count > 0 ? " AND u.modelGrubuID IN (" + string.Join(",", modelGrubuIDs) + ") " : "") +
+                (markaIDs.Count > 0 ? " AND u.markaID IN (" + string.Join(",", markaIDs) + ") " : "")).Rows[0]["count"]);
+
+
+
+            return count;
         }
     }
 }

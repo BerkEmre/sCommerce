@@ -2,8 +2,8 @@
 @{
     ViewBag.Title = Site.siteBilgileri.siteAdi;
 
-    List<Urun> yeniUrunler = new UrunFilter(new List<int>(), new List<int> { 20 }, new List<int>(), new List<int>(), 0, true, 1, 10).GetUruns();
-    List<Urun> cokSatanUrunler = new UrunFilter(new List<int>(), new List<int> { 18 }, new List<int>(), new List<int>(), 0, true, 1, 10).GetUruns();
+    List<Urun> yeniUrunler = new UrunFilter("", new List<int>(), new List<int> { 20 }, new List<int>(), new List<int>(), 0, true, 1, 10).GetUruns();
+    List<Urun> cokSatanUrunler = new UrunFilter("", new List<int>(), new List<int> { 18 }, new List<int>(), new List<int>(), 0, true, 1, 10).GetUruns();
 
     List<Favori> favoriler = Site.GetFavori();
 }

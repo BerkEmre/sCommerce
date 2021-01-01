@@ -8,7 +8,11 @@ namespace sCommerce.Helper
     public enum filtremeleTipleri { 
         onerilenSiralama = 0, 
         dusukFiyat = 1, 
-        yuksekFiyat = 2
+        yuksekFiyat = 2,
+        urunAdi = 3,
+        urunAdiTersten = 4,
+        urunID = 5,
+        urunIDTersten = 6
     }
 
     public enum odemeTipleri
