@@ -291,6 +291,7 @@ namespace sCommerce.Models
                 Int32.TryParse(dr["odemeTipi"].ToString(), out s.odemeTipi);
                 s.siparisNotu = dr["siparisNotu"].ToString();
                 s.kargoNo = dr["kargoNo"].ToString();
+                Decimal.TryParse(dr["kargoUcreti"].ToString(), out s.kargoUcreti);
                 s.siparisKalemleri = new SiparisKalem().GetSiparisKalem(s.siparisID);
 
                 this.siparisler.Add(s);

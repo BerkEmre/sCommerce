@@ -32,4 +32,38 @@ namespace sCommerce.Helper
         kargoda = 4,
         teslimEdildi = 5
     }
+
+    public enum urunEtiketleri
+    {
+        yok = 16,	 
+        indirim = 17,
+        cokSatan = 18,
+        stoklarda = 19,
+        yeni = 20
+    }
+
+    public enum kategoriTipleri
+    {
+        blog = 3,
+        urun = 4
+    }
+
+    public enum urunDurumu
+    {
+        pasif = 9,
+        aktif = 10
+    }
+
+    public enum stokBitince
+    {
+        satisaDevam = 11,
+        satisiBitir = 12
+    }
+
+    public enum vergi
+    {
+        Yuzde0 = 13,
+        Yuzde8 = 14,
+        Yuzde18 = 15
+    }
 }

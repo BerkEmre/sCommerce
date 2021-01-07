@@ -23,11 +23,14 @@
                     <div class="col-xs-12 col-md-12">
                         @if (siparis.odemeTipi == (int)odemeTipleri.havale)
                         {
-                            <div class="tt-item">
+                            <div>
+                                class="tt-item">
                                 <h2 class="tt-title">HAVALE</h2>
                                 <p>Aşağıda yer alan bilgiler ile ödemenizi gerçekleştirmenizin ardından siparişiniz işleme alınacaktır,<br />lüften havale açıklaması olarak sipariş numaranızı yazınız.</p>
                                 <br />
                                 <p><strong>Toplam Tutar: </strong>@toplam TL</p>
+                                <p><strong>Kargo Ücreti: </strong>@siparis.kargoUcreti TL</p>
+                                <p><strong>Genel Toplam: </strong>@siparis.GetToplamFiyat() TL</p>
                                 <br />
                                 <p><strong>IBAN: </strong>@Site.siteBilgileri.iban</p>
                                 <p><strong>Banka: </strong>@Site.siteBilgileri.banka</p>
@@ -45,9 +48,11 @@
                         {
                             <div class="tt-item">
                                 <h2 class="tt-title">KAPIDA ÖDEME</h2>
-                                <p>Sipariş verdiğiniz için teşekkürler, siparişinizi en kısa sürede hazırlayıp yollayacağız.</p>
+                                <p>Sipariş verdiğiniz için teşekkürler, siparişinizi en kısa sürede hazırlayıp kargoya vereceğiz.</p>
                                 <br />
                                 <p><strong>Toplam Tutar: </strong>@toplam TL</p>
+                                <p><strong>Kargo Ücreti: </strong>@siparis.kargoUcreti TL</p>
+                                <p><strong>Genel Toplam: </strong>@siparis.GetToplamFiyat() TL</p>
                                 <br />
                                 <p><strong>Sipariş No: </strong>#@siparis.siparisID</p>
                                 <br />
@@ -58,10 +63,34 @@
                         }
                         else if (siparis.odemeTipi == (int)odemeTipleri.krediBankaKarti)
                         {
-                            <div class="tt-item">
-                                <h2 class="tt-title">KREDİ KARTI</h2>
-                                <p>Kredi kartı ödeme ekranı.</p>
-                            </div>
+                            if (siparis.siparisDurum == (int)siparisDurum.odemeBekliyor || siparis.siparisDurum == (int)siparisDurum.odemeBasarisiz)
+                            {
+                                if (siparis.siparisDurum == (int)siparisDurum.odemeBasarisiz)
+                                {
+                                    <h5 class="text-danger">Ödeme başarısız oldu, lütfen tekrar deneyin...</h5>
+                                }
+                                @MvcHtmlString.Create(ViewBag.Iyzico)
+                                <div class="tt-item">
+                                    <div id="iyzipay-checkout-form" class="responsive"></div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="tt-item">
+                                    <h2 class="tt-title">KREDİ KARTI</h2>
+                                    <p>Sipariş verdiğiniz için teşekkürler, siparişinizi en kısa sürede hazırlayıp kargoya vereceğiz.</p>
+                                    <br />
+                                    <p><strong>Toplam Tutar: </strong>@toplam TL</p>
+                                    <p><strong>Kargo Ücreti: </strong>@siparis.kargoUcreti TL</p>
+                                    <p><strong>Genel Toplam: </strong>@siparis.GetToplamFiyat() TL</p>
+                                    <br />
+                                    <p><strong>Sipariş No: </strong>#@siparis.siparisID</p>
+                                    <br />
+                                    <p>Siparişinizin takibini <a href="@Url.Action("Customer")">Hesabım</a> ekranında siparişler bölümünden yapabilirsiniz.</p>
+                                    <a href="@Url.Action("Index")" class="btn">ANA SAYFA</a>
+                                    <a href="@Url.Action("Customer")" class="btn">HESABIM</a>
+                                </div>
+                            }
                         }
                         else if (siparis.odemeTipi == (int)odemeTipleri.magazadanTeslim)
                         {
@@ -70,6 +99,8 @@
                                 <p>Sipariş verdiğiniz için teşekkürler, siparişinizi en kısa sürede hazırlayıp sizi bilgilendireceğiz.</p>
                                 <br />
                                 <p><strong>Toplam Tutar: </strong>@toplam TL</p>
+                                <p><strong>Kargo Ücreti: </strong>@siparis.kargoUcreti TL</p>
+                                <p><strong>Genel Toplam: </strong>@siparis.GetToplamFiyat() TL</p>
                                 <br />
                                 <p><strong>Sipariş No: </strong>#@siparis.siparisID</p>
                                 <br />

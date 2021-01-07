@@ -5,7 +5,7 @@
     List<Favori> favoriler = Site.GetFavori();
 
 
-    List<Urun> modelGrubuUrunler = new UrunFilter("", new List<int>(), new List<int>(), new List<int> { urun.modelGrubuID }, new List<int>(), 0, false, 1, 100).GetUruns();
+    List<Urun> modelGrubuUrunler = new UrunFilter("", new List<int>(), new List<int>(), new List<int> { urun.modelGrubuID }, new List<int>(), 0, false, 1, 1000).GetUruns();
     List<Urun> onerilenUrunler = new UrunFilter("", new List<int>(), new List<int>(), new List<int>(), new List<int> { urun.markaID }, 0, true, 1, 8).GetUruns();
 }
 @section script {
@@ -46,7 +46,7 @@
                             <div class="tt-product-vertical-layout">
                                 <div class="tt-product-single-img">
                                     <div>
-                                        <button class="tt-btn-zomm tt-top-right"><i class="icon-h-06"></i></button>
+                                        <!--<button class="tt-btn-zomm tt-top-right"><i class="icon-h-06"></i></button>-->
                                         <img class="zoom-product" src='~/Content/icerik/urun/kucuk/@(urun.urunResimleri.Count > 0 ? urun.urunResimleri[0].resim : "yok.jpg")' data-zoom-image="/Content/icerik/urun/buyuk/@(urun.urunResimleri.Count > 0 ? urun.urunResimleri[0].resim : "yok.jpg")" alt="@urun.urunAdi">
                                     </div>
                                 </div>

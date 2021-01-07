@@ -6,6 +6,11 @@
 
     List<Sepet> sepet = Site.GetSepet(true);
     decimal toplam = sepet.Sum(x => x.urun.fiyat * x.miktar);
+    decimal kargoUcreti = 0;
+    if (Convert.ToDecimal(ConfigurationManager.AppSettings["ucretsiz_kargo"]) > toplam)
+    {
+        kargoUcreti = Convert.ToDecimal(ConfigurationManager.AppSettings["kargo_ucreti"]);
+    }
 }
 @if (sepet.Count <= 0)
 {
@@ -144,10 +149,20 @@ else
                                 </div>
                                 <div class="tt-shopcart-box tt-boredr-large">
                                     <table class="tt-shopcart-table01">
+                                        <tbody>
+                                            <tr>
+                                                <th>TOPLAM</th>
+                                                <td>@toplam TL</td>
+                                            </tr>
+                                            <tr>
+                                                <th>KARGO ÜCRETİ</th>
+                                                <td>@(kargoUcreti > 0 ? kargoUcreti.ToString("n2") + " TL" : "KARGO BEDAYA")</td>
+                                            </tr>
+                                        </tbody>
                                         <tfoot>
                                             <tr>
-                                                <th>TOPLAM TUTAR</th>
-                                                <td id="divToplamFiyat">@toplam TL</td>
+                                                <th>GENEL TUTAR</th>
+                                                <td id="divToplamFiyat">@(toplam + kargoUcreti) TL</td>
                                             </tr>
                                         </tfoot>
                                     </table>

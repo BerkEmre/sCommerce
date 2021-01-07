@@ -1,0 +1,153 @@
+﻿@using sCommerce.Models
+@using sCommerce.Helper
+@{
+    Siparis siparis = ViewBag.siparis;
+    Kullanici musteri = new Kullanici();
+    musteri.load(siparis.kullaniciID);
+    ViewBag.Title = "Sipariş Detay / " + siparis.siparisID;
+}
+
+<div class="row clearfix">
+    @{ if (Request.Params["hata"] != null)
+        {<div class="alert alert-danger col-md-12" role="alert">@Request.Params["hata"]</div>} }
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="header">
+            </div>
+            <div class="body">
+                <div class="table-responsive check-all-parent">
+                    <table class="table table-custom table-hover m-b-0 c_list">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Ürün</th>
+                                <th>Miktar</th>
+                                <th>B.Fiyat</th>
+                                <th>T.Fiyat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (SiparisKalem siparisKalem in siparis.siparisKalemleri)
+                            {
+                            <tr>
+                                <td>
+                                    @if (siparisKalem.urun.urunResimleri.Count > 0)
+                                    {<img src="~/Content/icerik/urun/kucuk/@siparisKalem.urun.urunResimleri[0].resim" class="rounded-circle avatar" style="max-height: 50px;">}
+                                </td>
+                                <td>#@siparisKalem.urunID <a target="_blank" href="@Url.Action("Product", "Home", new { id = siparisKalem.urunID })">@siparisKalem.urun.urunAdi</a></td>
+                                <td>@siparisKalem.miktar Adet</td>
+                                <td>@siparisKalem.fiyat TL</td>
+                                <td>@(siparisKalem.miktar * siparisKalem.fiyat) TL</td>
+                            </tr>
+                            }
+                        <tr>
+                            <td></td>
+                            <td>Kargo Ücreti</td>
+                            <td></td>
+                            <td></td>
+                            <td>@siparis.kargoUcreti TL</td>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th></th>
+                                <th>GENEL TOPLAM</th>
+                                <th>@siparis.GetToplamAdet() Adet</th>
+                                <th></th>
+                                <th>@siparis.GetToplamFiyat() TL</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Kullanıcı Bilgileri</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><strong>Ad Soyad: </strong>@musteri.adSoyad()</li>
+                    <li class="list-group-item"><strong>E-Mail: </strong>@musteri.eMail</li>
+                    <li class="list-group-item"><strong>Kayıt Tarihi: </strong>@musteri.kayitTarihi.ToString("dd.MM.yyyy")</li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Sipariş Notu</h5>
+                </div>
+                <div class="card-body">
+                    @siparis.siparisNotu
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <dic class="card">
+            <div class="card-header">
+                <h5>Adres Detayı</h5>
+            </div>
+            <div class="card-body">
+                <h6>Ad Soyad</h6>
+                <p>@siparis.ad @siparis.soyad</p>
+                <hr />
+                <h6>Telefon</h6>
+                <p>@siparis.telefon</p>
+                <hr />
+                <h6>Şehir/Semt/Mahalle</h6>
+                <p>@siparis.sehir/@siparis.semt/@siparis.mahalle</p>
+                <hr />
+                <h6>Posta Kodu</h6>
+                <p>@siparis.postaKodu</p>
+                <hr />
+                <h6>Adres</h6>
+                <p>@siparis.adresSatir1<br />@siparis.adresSatir2</p>
+            </div>
+        </dic>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Sipariş Bilgileri</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="/Admin/siparisDurumGuncelle">
+                    <input type="hidden" name="siparisID" value="@siparis.siparisID" />
+                    <h6>Sipariş Durumu</h6>
+                    <div class="input-group">
+                        <select class="custom-select" name="siparisDurum" @(siparis.siparisDurum == (int)siparisDurum.iptalEdildi ? "disabled" : "")>
+                            <option value="@((int)siparisDurum.odemeBekliyor)" @((int)siparisDurum.odemeBekliyor == siparis.siparisDurum ? "selected" : "")>Ödeme Bekliyor</option>
+                            <option value="@((int)siparisDurum.odemeBasarisiz)" @((int)siparisDurum.odemeBasarisiz == siparis.siparisDurum ? "selected" : "")>Ödeme Başarısız</option>
+                            <option value="@((int)siparisDurum.hazirlaniyor)" @((int)siparisDurum.hazirlaniyor == siparis.siparisDurum ? "selected" : "")>Hazırlanıyor</option>
+                            <option value="@((int)siparisDurum.iptalEdildi)" @((int)siparisDurum.iptalEdildi == siparis.siparisDurum ? "selected" : "") @(siparis.siparisDurum == (int)siparisDurum.iptalEdildi ? "" : "hidden")>İptal Edildi</option>
+                            <option value="@((int)siparisDurum.kargoda)" @((int)siparisDurum.kargoda == siparis.siparisDurum ? "selected" : "")>Kargoda</option>
+                            <option value="@((int)siparisDurum.teslimEdildi)" @((int)siparisDurum.teslimEdildi == siparis.siparisDurum ? "selected" : "")>Teslim Edildi</option>
+                        </select>
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="submit" @(siparis.siparisDurum == (int)siparisDurum.iptalEdildi ? "disabled" : "")>GÜNCELLE</button>
+                        </div>
+                    </div>
+                </form>
+                <hr />
+                <form method="POST" action="/Admin/siparisKargoGuncelle">
+                    <input type="hidden" name="siparisID" value="@siparis.siparisID"/>
+                    <h6>Kargo No</h6>
+                    <div class="input-group mb-3">
+                        <input type="text" name="kargoNo" class="form-control" placeholder="Kargo No" value="@siparis.kargoNo" @(siparis.siparisDurum == (int)siparisDurum.hazirlaniyor || siparis.siparisDurum == (int)siparisDurum.kargoda ? "" : "disabled")>
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="submit" @(siparis.siparisDurum == (int)siparisDurum.hazirlaniyor || siparis.siparisDurum == (int)siparisDurum.kargoda ? "" : "disabled")>GÜNCELLE</button>
+                        </div>
+                    </div>
+                </form>
+                <hr />
+                <h6>Ödeme Tipi</h6>
+                <p>@siparis.GetOdemeTipi()</p>
+            </div>
+        </div>
+    </div>
+</div>

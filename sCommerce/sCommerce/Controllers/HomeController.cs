@@ -1,5 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using Iyzipay;
+using Iyzipay.Model;
+using Iyzipay.Request;
+using Newtonsoft.Json;
+using sCommerce.Helper;
 using sCommerce.Models;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Net;
@@ -102,9 +107,119 @@ namespace sCommerce.Controllers
             Siparis siparis = new Siparis();
             siparis.Load(id);
             ViewBag.siparis = siparis;
+
+            Kullanici musteri = new Kullanici();
+            musteri.load(siparis.kullaniciID);
+
+            if(siparis.odemeTipi == (int)Helper.odemeTipleri.krediBankaKarti)
+            {
+                string siteUrl = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~"));
+
+                Options options = new Options();
+                options.ApiKey = ConfigurationManager.AppSettings["iyzico_apikey"];
+                options.SecretKey = ConfigurationManager.AppSettings["iyzico_secretkey"];
+                options.BaseUrl = ConfigurationManager.AppSettings["iyzico_baseurl"];
+
+                CreateCheckoutFormInitializeRequest request = new CreateCheckoutFormInitializeRequest();
+                request.Locale = Locale.TR.ToString();
+                request.ConversationId = id.ToString();
+                request.Price = (siparis.GetToplamFiyat() - siparis.kargoUcreti).ToString().Replace(',', '.');
+                request.PaidPrice = siparis.GetToplamFiyat().ToString().Replace(',', '.');
+                request.Currency = Currency.TRY.ToString();
+                request.BasketId = siparis.siparisID.ToString();
+                request.PaymentGroup = PaymentGroup.PRODUCT.ToString();
+                request.CallbackUrl = siteUrl + "/Home/PayOut";
+
+                List<int> enabledInstallments = new List<int>();
+                enabledInstallments.Add(2);
+                enabledInstallments.Add(3);
+                enabledInstallments.Add(6);
+                enabledInstallments.Add(9);
+                request.EnabledInstallments = enabledInstallments;
+
+                Buyer buyer = new Buyer();
+                buyer.Id = siparis.kullaniciID.ToString();
+                buyer.Name = musteri.ad;
+                buyer.Surname = musteri.soyad;
+                buyer.GsmNumber = siparis.telefon;
+                buyer.Email = musteri.eMail;
+                buyer.IdentityNumber = "74300864791";
+                //buyer.LastLoginDate = "2015-10-05 12:43:35";
+                //buyer.RegistrationDate = "2013-04-21 15:12:09";
+                buyer.RegistrationAddress = siparis.adresSatir1 + " " + siparis.adresSatir2;
+                buyer.Ip = SQL.GetIp();
+                buyer.City = siparis.sehir;
+                buyer.Country = "Turkey";
+                buyer.ZipCode = siparis.postaKodu;
+                request.Buyer = buyer;
+
+                Address shippingAddress = new Address();
+                shippingAddress.ContactName = siparis.ad + " " + siparis.soyad;
+                shippingAddress.City = siparis.sehir;
+                shippingAddress.Country = "Turkey";
+                shippingAddress.Description = siparis.adresSatir1 + " " + siparis.adresSatir2;
+                shippingAddress.ZipCode = siparis.postaKodu;
+                request.ShippingAddress = shippingAddress;
+
+                Address billingAddress = new Address();
+                billingAddress.ContactName = siparis.ad + " " + siparis.soyad;
+                billingAddress.City = siparis.sehir;
+                billingAddress.Country = "Turkey";
+                billingAddress.Description = siparis.adresSatir1 + " " + siparis.adresSatir2;
+                billingAddress.ZipCode = siparis.postaKodu;
+                request.BillingAddress = billingAddress;
+
+                List<BasketItem> basketItems = new List<BasketItem>();
+                foreach (SiparisKalem siparisKalem in siparis.siparisKalemleri)
+                {
+                    BasketItem firstBasketItem = new BasketItem();
+                    firstBasketItem.Id = siparisKalem.siparisKalemID.ToString();
+                    firstBasketItem.Name = siparisKalem.urun.urunAdi;
+                    firstBasketItem.Category1 = siparisKalem.urun.modelGrubu.modelGrubu;
+                    firstBasketItem.Category2 = siparisKalem.urun.marka.marka;
+                    firstBasketItem.ItemType = BasketItemType.PHYSICAL.ToString();
+                    firstBasketItem.Price = (siparisKalem.miktar * siparisKalem.fiyat).ToString().Replace(',', '.');
+                    basketItems.Add(firstBasketItem);
+                }
+                request.BasketItems = basketItems;
+
+                CheckoutFormInitialize checkoutFormInitialize = CheckoutFormInitialize.Create(request, options);
+                ViewBag.Iyzico = checkoutFormInitialize.CheckoutFormContent; //View Dönüş yapılan yer, Burada farklı yöntemler ile View gönderim yapabilirsiniz.
+            }
+
             return View();
         }
-        
+
+        public ActionResult PayOut(RetrieveCheckoutFormRequest model)
+        {
+            int siparisID = 0;
+
+            string data = "";
+            Options options = new Options();
+            options.ApiKey = ConfigurationManager.AppSettings["iyzico_apikey"];
+            options.SecretKey = ConfigurationManager.AppSettings["iyzico_secretkey"];
+            options.BaseUrl = ConfigurationManager.AppSettings["iyzico_baseurl"];
+            data = model.Token;
+            RetrieveCheckoutFormRequest request = new RetrieveCheckoutFormRequest();
+            request.Token = data;
+            CheckoutForm checkoutForm = CheckoutForm.Retrieve(request, options);
+
+            Int32.TryParse(checkoutForm.BasketId, out siparisID);
+            Siparis siparis = new Siparis();
+            siparis.Load(siparisID);
+
+            if (checkoutForm.PaymentStatus == "SUCCESS")
+            {
+                siparis.DurumGuncelle((int)siparisDurum.hazirlaniyor, 0);
+            }
+            else
+            {
+                siparis.DurumGuncelle((int)siparisDurum.odemeBasarisiz, 0);
+            }
+
+            return RedirectToAction("Pay", new { id = siparisID });
+        }
+
         public ActionResult Product(int id = 0)
         {
             if(id == 0)
@@ -172,7 +287,7 @@ namespace sCommerce.Controllers
                 return RedirectToAction("Login");
 
             new Adres().AdresEkleGuncelle(adresID, adres, ad, soyad, telefon, sehir, semt, mahalle, adresSatir1, adresSatir2, postaKodu, musteri.kullaniciID);
-
+            musteri.adresler = new Adres().GetKullaniciAdres(musteri.kullaniciID);
             return RedirectToAction("Adress", new { hata = "Adres düzenlenmiştir." });
         }
 

@@ -1,0 +1,52 @@
+﻿@using sCommerce.Models
+@{
+    ViewBag.Title = "Siparişler";
+    SiparisFilter siparisFilter = ViewBag.siparisFilter;
+    List<Siparis> siparisler = siparisFilter.GetSiparisler();
+}
+
+<div class="row clearfix">
+    @{ if (Request.Params["hata"] != null) {<div class="alert alert-danger col-md-12" role="alert">@Request.Params["hata"]</div>} }
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="header">
+            </div>
+            <div class="body">
+                <div class="table-responsive check-all-parent">
+                    <table class="table table-custom table-hover m-b-0 c_list">
+                        <thead>
+                            <tr>
+                                <th>Ad Soyad</th>
+                                <th>Sipariş No</th>
+                                <th>Tarih</th>
+                                <th>Durum</th>
+                                <th>Ödeme Tipi</th>
+                                <th>Toplam Adet</th>
+                                <th>Toplam Fiyat</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (Siparis siparis in siparisler)
+                            {
+                                <tr>
+                                    <td>@siparis.ad @siparis.soyad</td>
+                                    <td>#@siparis.siparisID</td>
+                                    <td>@siparis.kayitTarihi.ToString("dd.MM.yyyy")</td>
+                                    <td>@siparis.GetSiparisDurum()</td>
+                                    <td>@siparis.GetOdemeTipi()</td>
+                                    <td>@siparis.GetToplamAdet() Adet</td>
+                                    <td>@siparis.GetToplamFiyat() TL</td>
+                                    <td>
+                                        <a href="@Url.Action("SiparisDetay", new { id = siparis.siparisID })" class="btn btn-sm btn-default"><i class="fa fa-edit"></i></a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -89,6 +89,14 @@
                                 <tbody>
                                     <tr>
                                         <th>TOPLAM</th>
+                                        <td>@(siparis.GetToplamFiyat() - siparis.kargoUcreti) TL</td>
+                                    </tr>
+                                    <tr>
+                                        <th>KARGO ÜCRETİ</th>
+                                        <td>@siparis.kargoUcreti TL</td>
+                                    </tr>
+                                    <tr>
+                                        <th>GENEL TOPLAM</th>
                                         <td>@siparis.GetToplamFiyat() TL</td>
                                     </tr>
                                     <tr>

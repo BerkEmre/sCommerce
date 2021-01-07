@@ -1,11 +1,13 @@
 ﻿using sCommerce.Helper;
 using sCommerce.Models;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
+using System.Linq;
 
 namespace sCommerce.Controllers
 {
@@ -401,15 +403,111 @@ namespace sCommerce.Controllers
         }
         #endregion
         #region Ürün
-        public ActionResult Urun(int id = 1)
+        public ActionResult Urun(int id = 0)
         {
             if (Session["kullaniciID"] == null)
                 return RedirectToAction("Login");
-            if (id <= 0)
-                id = 1;
-            ViewBag.sayfa_no = id;
+
+            UrunFilter urunFilter;
+            if(Session["AdminUrunFilter"] == null)
+            {
+                urunFilter = new UrunFilter("", new List<int>(), new List<int>(), new List<int>(), new List<int>(), filtremeleTipleri.urunAdi, false, (id <= 0 ? 1 : id), 20);
+            }
+            else
+            {
+                urunFilter = (UrunFilter)Session["AdminUrunFilter"];
+                urunFilter.page = (id <= 0 ? urunFilter.page : id);
+                urunFilter.count = 20;
+            }
+            Session["AdminUrunFilter"] = urunFilter;
+
+            ViewBag.urunFilter = urunFilter;
 
             return View();
+        }
+
+        public ActionResult UrunTopluGuncelle(int kategoriIDEkle = -1, int kategoriIDCikar = -1, int oneCikan = -1, int markaID = -1, int urunEtiketiParametreID = -1, int urunDurumuParametreID = -1, int modelGrubuID = -1, 
+            string depoLokasyonu = "", int stokBitinceParametreID = -1, int miktar = -1, int minimumMiktar = -1, string fiyat = "", string eskiFiyat = "", int kargoSuresi = -1, string agirlik = "", int vergiParametreID = -1,
+            int vergiDahilSatis = -1)
+        {
+            if (Session["AdminUrunFilter"] == null)
+            {
+                return RedirectToAction("Urun", new { hata = "Toplu güncelleme yapmak için filtreleme yapmanız gerekmektedir." });
+            }
+            else
+            {
+                UrunFilter urunFilter = (UrunFilter)Session["AdminUrunFilter"];
+
+                if(urunFilter.urunAdi == "" && urunFilter.kategoriIDs.Count <= 0 && urunFilter.markaIDs.Count <= 0 && urunFilter.modelGrubuIDs.Count <= 0 && urunFilter.oneCikanlar == false && urunFilter.urunEtiketParametreIDs.Count <= 0)
+                    return RedirectToAction("Urun", new { hata = "Toplu güncelleme yapmak için filtreleme yapmanız gerekmektedir." });
+
+                urunFilter.page = 1;
+                urunFilter.count = 1000;
+                List<Urun> uruns = urunFilter.GetUruns();
+                string urunIDs = string.Join(",", uruns.Select(x => x.urunID));
+
+                if (oneCikan != -1 || markaID != -1 || urunEtiketiParametreID != -1 || urunDurumuParametreID != -1 || modelGrubuID != -1 || depoLokasyonu != "" || stokBitinceParametreID != -1 || miktar != -1 || fiyat != "" || eskiFiyat != "" 
+                    || kargoSuresi != -1 || agirlik != "" || vergiParametreID != -1 || vergiDahilSatis != -1)
+                {
+                    SQL.set("UPDATE urunler SET guncelleyenKullaniciID = " + Session["kullaniciID"] + ", guncellemeTarihi = GETDATE() " +
+                        (oneCikan != -1 ? ", oneCikanlar = " + oneCikan : "") +
+                        (markaID != -1 ? ", markaID = " + markaID : "") +
+                        (urunEtiketiParametreID != -1 ? ", urunEtiketiParametreID = " + urunEtiketiParametreID : "") +
+                        (urunDurumuParametreID != -1 ? ", urunDurumuParametreID = " + urunDurumuParametreID : "") +
+                        (modelGrubuID != -1 ? ", modelGrubuID = " + modelGrubuID : "") +
+                        (depoLokasyonu != "" ? ", depoLokasyonu = '" + depoLokasyonu + "'" : "") +
+                        (stokBitinceParametreID != -1 ? ", stokBitinceParametreID = " + stokBitinceParametreID : "") +
+                        (miktar != -1 ? ", miktar = " + miktar : "") +
+                        (minimumMiktar != -1 ? ", minimumMiktar = " + minimumMiktar : "") +
+                        (fiyat != "" ? ", fiyat = " + fiyat.ToString().Replace(',', '.') : "") +
+                        (eskiFiyat != "" ? ", eskiFiyat = " + eskiFiyat.ToString().Replace(',', '.') : "") +
+                        (kargoSuresi != -1 ? ", kargoSuresi = " + kargoSuresi : "") +
+                        (agirlik != "" ? ", agirlik = " + agirlik.ToString().Replace(',', '.') : "") +
+                        (vergiParametreID != -1 ? ", vergiParametreID = " + vergiParametreID : "") +
+                        (vergiDahilSatis != -1 ? ", vergiDahilSatis = " + vergiDahilSatis : "") +
+                        " WHERE urunID IN (" + urunIDs + ")");
+                }
+
+                if (kategoriIDCikar != -1)
+                {
+                    SQL.set("UPDATE urunKategori SET guncelleyenKullaniciID = " + Session["kullaniciID"] + ", guncellemeTarihi = GETDATE(), silindi = 1 WHERE kategoriID = " + kategoriIDCikar + " AND urunID IN (" + urunIDs + ")");
+                }
+
+                if (kategoriIDEkle != -1)
+                {
+                    SQL.set("INSERT INTO urunKategori (kaydedenKullaniciID, urunID, kategoriID) " +
+                        "SELECT kaydedenKullaniciID = " + Session["kullaniciID"] + ", u.urunID, kategoriID = " + kategoriIDEkle + " FROM urunler u LEFT OUTER JOIN urunKategori uk ON uk.silindi = 0 AND uk.urunID = u.urunID AND uk.kategoriID = " + kategoriIDEkle + " WHERE u.silindi = 0 AND u.urunID IN (" + urunIDs + ") AND uk.urunKategoriID IS NULL");
+                }
+                
+
+                return RedirectToAction("Urun", new { hata = "Toplu güncelleme başarılı." + uruns.Count + " adet ürün güncellendi." });
+            }
+        }
+
+        public ActionResult UrunFiltrele(string urunAdi = "", int kategoriID = 0, int markaID = 0, int urunEtiket = 0, int modelGrubuID = 0, int oneCikanlar = 0)
+        {
+            if (Session["kullaniciID"] == null)
+                return RedirectToAction("Login");
+
+            UrunFilter urunFilter;
+            if (Session["AdminUrunFilter"] == null)
+            {
+                urunFilter = new UrunFilter("", new List<int>(), new List<int>(), new List<int>(), new List<int>(), filtremeleTipleri.urunAdi, false, 1, 20);
+            }
+            else
+            {
+                urunFilter = (UrunFilter)Session["AdminUrunFilter"];
+            }
+            urunFilter.page = 1;
+            urunFilter.urunAdi = urunAdi;
+            urunFilter.kategoriIDs = (kategoriID == 0 ? new List<int>(): new List<int>() { kategoriID });
+            urunFilter.markaIDs = (markaID == 0 ? new List<int>() : new List<int>() { markaID });
+            urunFilter.urunEtiketParametreIDs = (urunEtiket == 0 ? new List<int>() : new List<int>() { urunEtiket });
+            urunFilter.modelGrubuIDs = (modelGrubuID == 0 ? new List<int>() : new List<int>() { modelGrubuID });
+            urunFilter.oneCikanlar = oneCikanlar == 1;
+            Session["AdminUrunFilter"] = urunFilter;
+
+            return RedirectToAction("Urun");
         }
 
         public ActionResult UrunBarkod(string barkod)
@@ -654,6 +752,63 @@ namespace sCommerce.Controllers
 
             SQL.set("UPDATE markalar SET guncelleyenKullaniciID = " + Session["kullaniciID"] + ", guncellemeTarihi = GETDATE(), silindi = 1 WHERE markaID = " + markaID);
             return RedirectToAction("Marka", new { tepki = 3 });
+        }
+        #endregion
+        #region Siparis
+        public ActionResult Siparis(int id = 0)
+        {
+            if (Session["kullaniciID"] == null)
+                return RedirectToAction("Login");
+
+            SiparisFilter siparisFilter;
+            if (Session["AdminSiparisFilter"] == null)
+            {
+                siparisFilter = new SiparisFilter(new List<int>(), new List<int>(), new List<int>(), new List<int>(), (id <= 0 ? 1 : id), 20);
+            }
+            else
+            {
+                siparisFilter = (SiparisFilter)Session["AdminSiparisFilter"];
+                siparisFilter.page = (id <= 0 ? siparisFilter.page : id);
+                siparisFilter.count = 20;
+            }
+            Session["AdminSiparisFilter"] = siparisFilter;
+
+            ViewBag.siparisFilter = siparisFilter;
+
+            return View();
+        }
+        public ActionResult SiparisDetay(int id)
+        {
+            if (Session["kullaniciID"] == null)
+                return RedirectToAction("Login");
+
+            Siparis s = new Siparis();
+            s.Load(id);
+            ViewBag.siparis = s;
+
+            return View();
+        }
+
+        public ActionResult siparisDurumGuncelle(int siparisID, int siparisDurum)
+        {
+            if (Session["kullaniciID"] == null)
+                return RedirectToAction("Login");
+
+            Siparis s = new Siparis();
+            s.Load(siparisID);
+            s.DurumGuncelle(siparisDurum, Convert.ToInt32(Session["kullaniciID"]));
+            return RedirectToAction("SiparisDetay", new { id = siparisID, hata = "Sipariş durumu güncellendi!" });
+        }
+
+        public ActionResult siparisKargoGuncelle(int siparisID, string kargoNo)
+        {
+            if (Session["kullaniciID"] == null)
+                return RedirectToAction("Login");
+
+            Siparis s = new Siparis();
+            s.Load(siparisID);
+            s.KargoNoGuncelle(kargoNo, Convert.ToInt32(Session["kullaniciID"]));
+            return RedirectToAction("SiparisDetay", new { id = siparisID, hata = "Kargo no güncellendi!" });
         }
         #endregion
     }

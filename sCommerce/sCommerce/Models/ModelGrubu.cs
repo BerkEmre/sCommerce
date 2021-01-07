@@ -52,5 +52,26 @@ namespace sCommerce.Models
 
             return modelGrubu;
         }
+
+        public List<ModelGrubu> GetModelGruplari()
+        {
+            List<ModelGrubu> modelGrubus = new List<ModelGrubu>();
+
+            DataTable dt = SQL.get("SELECT * FROM modelGrubu WHERE silindi = 0");
+            foreach (DataRow dataRow in dt.Rows)
+            {
+                ModelGrubu modelGrubu = new ModelGrubu();
+                Int32.TryParse(dataRow["modelGrubuID"].ToString(), out modelGrubu.modelGrubuID);
+                DateTime.TryParse(dataRow["kayitTarihi"].ToString(), out modelGrubu.kayitTarihi);
+                Int32.TryParse(dataRow["kaydedenKullaniciID"].ToString(), out modelGrubu.kaydedenKullaniciID);
+                DateTime.TryParse(dataRow["guncellemeTarihi"].ToString(), out modelGrubu.guncellemeTarihi);
+                Int32.TryParse(dataRow["guncelleyenKullaniciID"].ToString(), out modelGrubu.guncelleyenKullaniciID);
+                Int32.TryParse(dataRow["silindi"].ToString(), out modelGrubu.silindi);
+                modelGrubu.modelGrubu = dataRow["modelGrubu"].ToString();
+                modelGrubus.Add(modelGrubu);
+            }
+
+            return modelGrubus;
+        }
     }
 }

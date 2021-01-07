@@ -1,5 +1,7 @@
-﻿using System;
+﻿using sCommerce.Helper;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Web;
 
@@ -29,6 +31,27 @@ namespace sCommerce.Models
         public Marka()
         {
 
+        }
+
+        public List<Marka> GetMarkas()
+        {
+            List<Marka> markas = new List<Marka>();
+
+            DataTable dt = SQL.get("SELECT * FROM markalar WHERE silindi = 0");
+            foreach (DataRow dataRow in dt.Rows)
+            {
+                Marka m = new Marka();
+                Int32.TryParse(dataRow["markaID"].ToString(), out m.markaID);
+                DateTime.TryParse(dataRow["kayitTarihi"].ToString(), out m.kayitTarihi);
+                Int32.TryParse(dataRow["kaydedenKullaniciID"].ToString(), out m.kaydedenKullaniciID);
+                DateTime.TryParse(dataRow["guncellemeTarihi"].ToString(), out m.guncellemeTarihi);
+                Int32.TryParse(dataRow["guncelleyenKullaniciID"].ToString(), out m.guncelleyenKullaniciID);
+                Int32.TryParse(dataRow["silindi"].ToString(), out m.silindi);
+                m.marka = dataRow["marka"].ToString();
+                markas.Add(m);
+            }
+
+            return markas;
         }
     }
 }

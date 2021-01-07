@@ -143,5 +143,34 @@ namespace sCommerce.Models
 
             return kategoris;
         }
+    
+        public List<Kategori> GetKategoriler(int kategoriTipiParametreID)
+        {
+            List<Kategori> kategoriler = new List<Kategori>();
+
+            DataTable dt = SQL.get("SELECT * FROM kategoriler WHERE silindi = 0 AND kategoriTipiParametreID = " + kategoriTipiParametreID);
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                DataRow dr = dt.Rows[i];
+
+                Kategori k = new Kategori();
+                k.kategoriID = Convert.ToInt32(dr["kategoriID"]);
+                k.kayitTarihi = Convert.ToDateTime(dr["kayitTarihi"]);
+                k.kaydedenKullaniciID = Convert.ToInt32(dr["kaydedenKullaniciID"]);
+                Int32.TryParse(dr["guncelleyenKullaniciID"].ToString(), out k.guncelleyenKullaniciID);
+                DateTime.TryParse(dr["guncellemeTarihi"].ToString(), out k.guncellemeTarihi);
+                k.silindi = Convert.ToInt32(dr["silindi"]);
+                k.kategori = Convert.ToString(dr["kategori"]);
+                k.ustKategoriID = Convert.ToInt32(dr["ustKategoriID"]);
+                k.kategoriTipiParametreID = Convert.ToInt32(dr["kategoriTipiParametreID"]);
+                k.ikon = Convert.ToString(dr["ikon"]);
+                k.resim = Convert.ToString(dr["resim"]);
+                k.aciklama = Convert.ToString(dr["aciklama"]);
+
+                kategoriler.Add(k);
+            }
+
+            return kategoriler;
+        }
     }
 }

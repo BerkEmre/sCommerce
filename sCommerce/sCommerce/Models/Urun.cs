@@ -187,6 +187,8 @@ namespace sCommerce.Models
     
         public List<Urun> UrunAra(string searchText)
         {
+            searchText = searchText.Replace(' ', '%');
+
             List<Urun> uruns = new List<Urun>();
 
             DataTable dt = SQL.get(
