@@ -1,36 +1,30 @@
 ﻿@using System.Data
 @using sCommerce.Helper
-@using System.Configuration
+@using sCommerce.Models
+@using sCommerce.com.n11Category.api
+@using sCommerce.com.n11Shipment.api
+@using sCommerce.com.n11Product.api
 @{
     ViewBag.Title = "Ürün Ekle/Düzenle";
 
     int urunID = 0;
     int turet = 0;
 
-    try
-    {
-        urunID = Convert.ToInt32(ViewBag.urunID);
-        turet = ViewBag.turet;
-    }
-    catch
-    {
-        urunID = 0;
-    }
+    Int32.TryParse(Convert.ToString(ViewBag.urunID), out urunID);
+    Int32.TryParse(Convert.ToString(ViewBag.turet), out turet);
 
-    DataTable dt_urun = SQL.get("SELECT * FROM urunler WHERE urunID = " + urunID);
+    Urun urun = new Urun();
+    urun.LoadFromID(urunID, true);
+    urun.LoadEntegrasyonBilgi();
 
-    DataTable dt_kategoriler = SQL.get("SELECT * FROM kategoriler WHERE silindi = 0 AND kategoriTipiParametreID = 4");
-    DataTable dt_vergi = SQL.get("SELECT * FROM parametreler WHERE tip = 'vergi'");
-    DataTable dt_urunEtiket = SQL.get("SELECT * FROM parametreler WHERE tip = 'urunEtiket'");
-    DataTable dt_stokBitince = SQL.get("SELECT * FROM parametreler WHERE tip = 'stokBitince'");
-    DataTable dt_urunDurumu = SQL.get("SELECT * FROM parametreler WHERE tip = 'urunDurumu' ORDER by parametreID DESC");
-    DataTable dt_urun_kategorileri = SQL.get("SELECT * FROM urunKategori WHERE silindi = 0 AND urunID = " + urunID);
-    DataTable dt_urun_ozellikleri = SQL.get("SELECT * FROM ozellikler WHERE silindi = 0");
-    DataTable dt_model_grubu = SQL.get("SELECT * FROM modelGrubu WHERE silindi = 0");
-    DataTable dt_marka = SQL.get("SELECT * FROM markalar WHERE silindi = 0");
+    List<Kategori> urunKategorileri = new Kategori().GetKategoriler((int)kategoriTipleri.urun);
+    List<Ozellik> ozellikler = new Ozellik().GetOzellikler();
+    List<ModelGrubu> modelGruplari = new ModelGrubu().GetModelGruplari();
+    List<Marka> markalar = new Marka().GetMarkalar();
 
-    DataTable dt_urun_ozellik = SQL.get("SELECT uo.degerID, od.deger, o.ozellik, o.ozellikID FROM urunOzellik uo INNER JOIN ozellikDegerleri od ON od.silindi = 0 AND od.ozellikDegerID = uo.degerID INNER JOIN ozellikler o ON o.silindi = 0 AND o.ozellikID = od.ozellikID WHERE uo.silindi = 0 AND uo.urunID = " + urunID);
-    DataTable dt_urun_resimleri = SQL.get("SELECT * FROM urunResim WHERE silindi = 0 AND urunID = " + (turet == 0 ? urunID : 0));
+    N11 n11 = new N11();
+    SubCategory[] topCategories = n11.GetTopCategories();
+    ShipmentApiModel[] shipmentApiModels = n11.GetShipmentTemplateList();
 }
 
 @section style
@@ -46,14 +40,14 @@
 }
 @section script
 {
-    <script src="~/Content/vendor/bootstrap-colorpicker/js/bootstrap-colorpicker.js"></script><!-- Bootstrap Colorpicker Js -->
-    <script src="~/Content/vendor/jquery-inputmask/jquery.inputmask.bundle.js"></script><!-- Input Mask Plugin Js -->
+    <script src="~/Content/vendor/bootstrap-colorpicker/js/bootstrap-colorpicker.js"></script>
+    <script src="~/Content/vendor/jquery-inputmask/jquery.inputmask.bundle.js"></script>
     <script src="~/Content/vendor/jquery.maskedinput/jquery.maskedinput.min.js"></script>
-    <script src="~/Content/vendor/multi-select/js/jquery.multi-select.js"></script><!-- Multi Select Plugin Js -->
+    <script src="~/Content/vendor/multi-select/js/jquery.multi-select.js"></script>
     <script src="~/Content/vendor/bootstrap-multiselect/bootstrap-multiselect.js"></script>
     <script src="~/Content/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
-    <script src="~/Content/vendor/bootstrap-tagsinput/bootstrap-tagsinput.js"></script><!-- Bootstrap Tags Input Plugin Js -->
-    <script src="~/Content/vendor/nouislider/nouislider.js"></script><!-- noUISlider Plugin Js -->
+    <script src="~/Content/vendor/bootstrap-tagsinput/bootstrap-tagsinput.js"></script>
+    <script src="~/Content/vendor/nouislider/nouislider.js"></script>
     <script src="~/Content/assets/js/pages/forms/advanced-form-elements.js"></script>
 
     <script>
@@ -131,11 +125,43 @@
             var row = btn.parentNode;
             row.parentNode.removeChild(row);
         }
+
+        function getSubCategory(select, sira) {
+            var n11KategoriSecDiv = $('#n11KategoriSecDiv');
+
+            var n11KategoriID = $('#n11KategoriID');
+            var n11KategoriAdi = $('#n11KategoriAdi');
+            var n11KategoriName = $('#n11KategoriName');
+
+            var i = 0;
+            n11KategoriSecDiv.children('div').each(function () {
+                if (i > sira) {
+                    this.remove();
+                }
+
+                i++;
+            });
+
+            $.ajax({
+                url: '/Admin/getN11Child',
+                type: 'POST',
+                dataType: 'HTML',
+                data: { id: select.value, sira: sira },
+                success: function (data) {
+                    if (data.length < 5) {
+                        n11KategoriID.val(select.value);
+                        n11KategoriAdi.val($('option:selected', $(select)).text());
+                        n11KategoriName.val($('option:selected', $(select)).text());
+                        $('#n11KategoriSec').modal('hide');
+                    } else {
+                        $("#n11KategoriSecDiv").append(data);
+                    }
+                }
+            });
+        }
     </script>
 }
 <div class="row clearfix">
-    @{ if (Request.Params["hata"] != null)
-        {<div class="alert alert-danger col-md-12" role="alert">@Request.Params["hata"]</div>} }
     @{ if (Request.Params["tepki"] != null)
         {
             if (Request.Params["tepki"].ToString() == "1")
@@ -144,7 +170,6 @@
             { <div class="alert alert-success col-md-12" role="alert">Tebrikler, ürün güncellendi...</div> }
             if (Request.Params["tepki"].ToString() == "3")
             { <div class="alert alert-info col-md-12" role="alert">Ürün silindi...</div> }
-
         }
     }
     <div class="col-lg-12">
@@ -170,7 +195,7 @@
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label class="control-label">Ürün Adı</label>
-                                        <input type="text" name="urunAdi" class="form-control" placeholder="Ürün Adı" value="@(urunID == 0 ? "" : dt_urun.Rows[0]["urunAdi"])" autocomplete="off" required />
+                                        <input type="text" name="urunAdi" class="form-control" placeholder="Ürün Adı" value="@(urunID == 0 ? "" : urun.urunAdi)" autocomplete="off" required />
                                     </div>
                                 </div>
                                 <div class="col-6">
@@ -178,9 +203,9 @@
                                         <label class="control-label">Kategori</label>
                                         <div class="multiselect_div">
                                             <select id="multiselect1" name="kategoriID[]" class="multiselect" multiple="multiple" required>
-                                                @foreach (DataRow item in dt_kategoriler.Rows)
+                                                @foreach (Kategori kategori in urunKategorileri)
                                                 {
-                                                    <option value="@item["kategoriID"]" @(dt_urun_kategorileri.Select("kategoriID = " + item["kategoriID"]).Length > 0 ? "selected" : "")>@item["kategori"]</option>
+                                                    <option value="@kategori.kategoriID" @(urunID == 0 ? "" : urun.urunKategorileri.Where(x => x.kategoriID == kategori.kategoriID).Count() > 0 ? "selected" : "")>@kategori.kategori</option>
                                                 }
                                             </select>
                                         </div>
@@ -188,7 +213,7 @@
                                 </div>
                                 <div class="col-12">
                                     <label class="fancy-checkbox">
-                                        <input type="checkbox" @(urunID == 0 ? "" : (dt_urun.Rows[0]["oneCikanlar"].ToString() == "1" ? "checked" : "")) value="1" name="oneCikanlar">
+                                        <input type="checkbox" @(urunID == 0 ? "" : (urun.oneCikanlar == 1 ? "checked" : "")) value="1" name="oneCikanlar">
                                         <span>Öne Çıkan</span>
                                     </label>
                                 </div>
@@ -196,10 +221,8 @@
                                     <div class="form-group">
                                         <label class="control-label">Ürün Durumu</label>
                                         <select name="urunDurumuParametreID" class="form-control">
-                                            @foreach (DataRow item in dt_urunDurumu.Rows)
-                                            {
-                                                <option value="@item["parametreID"]" @(urunID == 0 ? "" : (@item["parametreID"].ToString() == dt_urun.Rows[0]["urunDurumuParametreID"].ToString() ? " selected " : ""))>@item["deger"]</option>
-                                            }
+                                            <option value="@((int)urunDurumu.aktif)" @(urunID == 0 ? "" : ((int)urunDurumu.aktif == urun.urunDurumuParametreID ? " selected " : ""))>Aktif</option>
+                                            <option value="@((int)urunDurumu.pasif)" @(urunID == 0 ? "" : ((int)urunDurumu.pasif == urun.urunDurumuParametreID ? " selected " : ""))>Pasif</option>
                                         </select>
                                     </div>
                                 </div>
@@ -208,9 +231,9 @@
                                         <label class="control-label">Marka</label>
                                         <select name="markaID" class="form-control">
                                             <option value="0">-</option>
-                                            @foreach (DataRow item in dt_marka.Rows)
+                                            @foreach (Marka marka in markalar)
                                             {
-                                                <option value="@item["markaID"]" @(urunID == 0 ? "" : (@item["markaID"].ToString() == dt_urun.Rows[0]["markaID"].ToString() ? " selected " : ""))>@item["marka"]</option>
+                                                <option value="@marka.markaID" @(urunID == 0 ? "" : (marka.markaID == urun.markaID ? " selected " : ""))>@marka.marka</option>
                                             }
                                         </select>
                                     </div>
@@ -219,30 +242,31 @@
                                     <div class="form-group">
                                         <label class="control-label">Ürün Etiketi</label>
                                         <select name="urunEtiketiParametreID" class="form-control">
-                                            @foreach (DataRow item in dt_urunEtiket.Rows)
-                                            {
-                                                <option value="@item["parametreID"]" @(urunID == 0 ? "" : (@item["parametreID"].ToString() == dt_urun.Rows[0]["urunEtiketiParametreID"].ToString() ? " selected " : ""))>@item["deger"]</option>
-                                            }
+                                            <option value="@((int)urunEtiketleri.yok)" @(urunID == 0 ? "" : ((int)urunEtiketleri.yok == urun.urunEtiketiParametreID ? " selected " : ""))>-</option>
+                                            <option value="@((int)urunEtiketleri.cokSatan)" @(urunID == 0 ? "" : ((int)urunEtiketleri.cokSatan == urun.urunEtiketiParametreID ? " selected " : ""))>Çok Satanlar</option>
+                                            <option value="@((int)urunEtiketleri.indirim)" @(urunID == 0 ? "" : ((int)urunEtiketleri.indirim == urun.urunEtiketiParametreID ? " selected " : ""))>İndirim</option>
+                                            <option value="@((int)urunEtiketleri.stoklarda)" @(urunID == 0 ? "" : ((int)urunEtiketleri.stoklarda == urun.urunEtiketiParametreID ? " selected " : ""))>Stoklarda</option>
+                                            <option value="@((int)urunEtiketleri.yeni)" @(urunID == 0 ? "" : ((int)urunEtiketleri.yeni == urun.urunEtiketiParametreID ? " selected " : ""))>Yeni</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label class="control-label">Açıklama</label>
-                                        <textarea name="urunAciklamasi" id="ckeditor_0">@(urunID == 0 ? "" : dt_urun.Rows[0]["urunAciklamasi"])</textarea>
+                                        <textarea name="urunAciklamasi" id="ckeditor_0">@(urunID == 0 ? "" : urun.urunAciklamasi)</textarea>
                                         <script>CKEDITOR.replace('ckeditor_0');</script>
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label class="control-label">Seo Açıklama</label>
-                                        <input type="text" name="seoAciklama" class="form-control" placeholder="Seo Açıklama" value="@(urunID == 0 ? "" : dt_urun.Rows[0]["seoAciklama"])" autocomplete="off" />
+                                        <input type="text" name="seoAciklama" class="form-control" placeholder="Seo Açıklama" value="@(urunID == 0 ? "" : urun.seoAciklama)" autocomplete="off" />
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label class="control-label">Seo Keywords</label>
-                                        <input type="text" name="seoKeywords" class="form-control" placeholder="Seo Keywords" value="@(urunID == 0 ? "" : dt_urun.Rows[0]["seoKeywords"])" autocomplete="off" />
+                                        <input type="text" name="seoKeywords" class="form-control" placeholder="Seo Keywords" value="@(urunID == 0 ? "" : urun.seoKeywords)" autocomplete="off" />
                                     </div>
                                 </div>
                             </div>
@@ -253,7 +277,7 @@
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label class="control-label">Stok Kodu</label>
-                                        <input type="text" name="stokKodu" class="form-control" placeholder="Stok Kodu" value="@(urunID == 0 ? "" : dt_urun.Rows[0]["stokKodu"])" autocomplete="off" />
+                                        <input type="text" name="stokKodu" class="form-control" placeholder="Stok Kodu" value="@(urunID == 0 ? "" : urun.stokKodu)" autocomplete="off" />
                                     </div>
                                 </div>
                                 <div class="col-12">
@@ -261,9 +285,9 @@
                                         <label class="control-label">Model Grubu</label>
                                         <select name="modelGrubuID" class="form-control">
                                             <option value="0">-</option>
-                                            @foreach (DataRow item in dt_model_grubu.Rows)
+                                            @foreach (ModelGrubu modelGrubu in modelGruplari)
                                             {
-                                                <option value="@item["modelGrubuID"]" @(urunID == 0 ? "" : (@item["modelGrubuID"].ToString() == dt_urun.Rows[0]["modelGrubuID"].ToString() ? " selected " : ""))>@item["modelGrubu"]</option>
+                                                <option value="@modelGrubu.modelGrubuID" @(urunID == 0 ? "" : (modelGrubu.modelGrubuID == urun.modelGrubuID ? " selected " : ""))>@modelGrubu.modelGrubu</option>
                                             }
                                         </select>
                                     </div>
@@ -271,76 +295,73 @@
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label class="control-label">Depo Lokasyonu</label>
-                                        <input type="text" name="depoLokasyonu" class="form-control" placeholder="Depo Lokasyonu" value="@(urunID == 0 ? "" : dt_urun.Rows[0]["depoLokasyonu"])" autocomplete="off" />
+                                        <input type="text" name="depoLokasyonu" class="form-control" placeholder="Depo Lokasyonu" value="@(urunID == 0 ? "" : urun.depoLokasyonu)" autocomplete="off" />
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label class="control-label">Barkod</label>
-                                        <input type="text" name="barkod" class="form-control" placeholder="Barkod" value="@(urunID == 0 ? "" : dt_urun.Rows[0]["barkod"])" autocomplete="off" />
+                                        <input type="text" name="barkod" class="form-control" placeholder="Barkod" value="@(urunID == 0 ? "" : urun.barkod)" autocomplete="off" />
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label class="control-label">Stok Bitince</label>
                                         <select name="stokBitinceParametreID" class="form-control">
-                                            @foreach (DataRow item in dt_stokBitince.Rows)
-                                            {
-                                                <option value="@item["parametreID"]" @(urunID == 0 ? "" : (@item["parametreID"].ToString() == dt_urun.Rows[0]["stokBitinceParametreID"].ToString() ? " selected " : ""))>@item["deger"]</option>
-                                            }
+                                            <option value="@((int)stokBitince.satisaDevam)" @(urunID == 0 ? "" : ((int)stokBitince.satisaDevam == urun.stokBitinceParametreID ? " selected " : ""))>Satışa Devam</option>
+                                            <option value="@((int)stokBitince.satisiBitir)" @(urunID == 0 ? "" : ((int)stokBitince.satisiBitir == urun.stokBitinceParametreID ? " selected " : ""))>Satışı Bitir</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label class="control-label">Stok Miktar</label>
-                                        <input type="number" step="1" name="miktar" class="form-control" placeholder="Stok Miktar" value="@(urunID == 0 ? "0" : dt_urun.Rows[0]["miktar"].ToString().Replace(',', '.'))" autocomplete="off" required />
+                                        <input type="number" step="1" name="miktar" class="form-control" placeholder="Stok Miktar" value="@(urunID == 0 ? "0" : urun.miktar.ToString().Replace(',', '.'))" autocomplete="off" required />
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label class="control-label">Minimum Miktar</label>
-                                        <input type="number" step="1" name="minimumMiktar" class="form-control" placeholder="Minimum Miktar" value="@(urunID == 0 ? "0" : dt_urun.Rows[0]["minimumMiktar"].ToString().Replace(',', '.'))" autocomplete="off" required />
+                                        <input type="number" step="1" name="minimumMiktar" class="form-control" placeholder="Minimum Miktar" value="@(urunID == 0 ? "0" : urun.minimumMiktar.ToString().Replace(',', '.'))" autocomplete="off" required />
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label class="control-label">Fiyat</label>
-                                        <input type="number" step="0.01" name="fiyat" class="form-control" placeholder="Fiyat" value="@(urunID == 0 ? "0" : dt_urun.Rows[0]["fiyat"].ToString().Replace(',', '.'))" autocomplete="off" required />
+                                        <input type="number" step="0.01" name="fiyat" class="form-control" placeholder="Fiyat" value="@(urunID == 0 ? "0" : urun.fiyat.ToString().Replace(',', '.'))" autocomplete="off" required />
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label class="control-label">Eski Fiyat</label>
-                                        <input type="number" step="0.01" name="eskiFiyat" class="form-control" placeholder="Eski Fiyat" value="@(urunID == 0 ? "0" : dt_urun.Rows[0]["eskiFiyat"].ToString().Replace(',', '.'))" autocomplete="off" required />
+                                        <input type="number" step="0.01" name="eskiFiyat" class="form-control" placeholder="Eski Fiyat" value="@(urunID == 0 ? "0" : urun.eskiFiyat.ToString().Replace(',', '.'))" autocomplete="off" required />
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label class="control-label">Kargo Süresi</label>
-                                        <input type="number" step="1" name="kargoSuresi" class="form-control" placeholder="Kargo Süresi" value="@(urunID == 0 ? "0" : dt_urun.Rows[0]["kargoSuresi"].ToString().Replace(',', '.'))" autocomplete="off" required />
+                                        <input type="number" step="1" name="kargoSuresi" class="form-control" placeholder="Kargo Süresi" value="@(urunID == 0 ? "0" : urun.kargoSuresi.ToString().Replace(',', '.'))" autocomplete="off" required />
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label class="control-label">Ağırlık</label>
-                                        <input type="number" step="0.01" name="agirlik" class="form-control" placeholder="Ağırlık" value="@(urunID == 0 ? "0" : dt_urun.Rows[0]["agirlik"].ToString().Replace(',', '.'))" autocomplete="off" required />
+                                        <input type="number" step="0.01" name="agirlik" class="form-control" placeholder="Ağırlık" value="@(urunID == 0 ? "0" : urun.agirlik.ToString().Replace(',', '.'))" autocomplete="off" required />
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label class="control-label">Vergi</label>
                                         <select name="vergiParametreID" class="form-control">
-                                            @foreach (DataRow item in dt_vergi.Rows)
-                                            {
-                                                <option value="@item["parametreID"]" @(urunID == 0 ? "" : (@item["parametreID"].ToString() == dt_urun.Rows[0]["vergiParametreID"].ToString() ? " selected " : ""))>@item["deger"]</option>
-                                            }
+                                            <option value="@((int)vergi.Yuzde0)" @(urunID == 0 ? "" : ((int)vergi.Yuzde0 == urun.vergiParametreID ? " selected " : ""))>%0</option>
+                                            <option value="@((int)vergi.Yuzde8)" @(urunID == 0 ? "" : ((int)vergi.Yuzde8 == urun.vergiParametreID ? " selected " : ""))>%8</option>
+                                            <option value="@((int)vergi.Yuzde18)" @(urunID == 0 ? "" : ((int)vergi.Yuzde18 == urun.vergiParametreID ? " selected " : ""))>%18</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <label class="fancy-checkbox">
-                                        <input type="checkbox" @(urunID == 0 ? "" : (dt_urun.Rows[0]["vergiDahilSatis"].ToString() == "1" ? "checked" : "")) value="1" name="vergiDahilSatis">
+                                        <input type="checkbox" @(urunID == 0 ? "" : (urun.vergiDahilSatis == 1 ? "checked" : "")) value="1" name="vergiDahilSatis">
                                         <span>Vergi Dahil Satış</span>
                                     </label>
                                 </div>
@@ -359,29 +380,32 @@
                                             </tr>
                                         </thead>
                                         <tbody id="ozellik_rows">
-                                            @foreach (DataRow item in dt_urun_ozellik.Rows)
+                                            @if (urunID != 0 && urun.urunOzellikleri != null)
                                             {
-                                                <tr>
-                                                    <td>@item["ozellik"]</td>
-                                                    <td>
-                                                        <select class='form-control' name='ozellikID[]'>
-                                                            @foreach (DataRow dr in SQL.get("SELECT * FROM ozellikDegerleri WHERE silindi = 0 AND ozellikID = " + item["ozellikID"]).Rows)
-                                                            {
-                                                                <option value="@dr["ozellikDegerID"]" @(dr["ozellikDegerID"].ToString() == item["degerID"].ToString() ? "selected" : "")>@dr["deger"]</option>
-                                                            }
-                                                        </select>
-                                                    </td>
-                                                    <td><button onclick='ozellik_sil(this)' class='btn btn-danger' type='button' value='@item["ozellikID"]'><i class='fa fa-trash-o'></i></button></td>
-                                                </tr>
+                                                foreach (UrunOzellik urunOzellik in urun.urunOzellikleri)
+                                                {
+                                                    <tr>
+                                                        <td>@urunOzellik.ozellikDeger.ozellik.ozellik</td>
+                                                        <td>
+                                                            <select class='form-control' name='ozellikID[]'>
+                                                                @foreach (DataRow dr in SQL.get("SELECT * FROM ozellikDegerleri WHERE silindi = 0 AND ozellikID = " + urunOzellik.ozellikDeger.ozellikID).Rows)
+                                                                {
+                                                                    <option value="@dr["ozellikDegerID"]" @(dr["ozellikDegerID"].ToString() == urunOzellik.ozellikDeger.ozellikDegerID.ToString() ? "selected" : "")>@dr["deger"]</option>
+                                                                }
+                                                            </select>
+                                                        </td>
+                                                        <td><button onclick='ozellik_sil(this)' class='btn btn-danger' type='button' value='@urunOzellik.ozellikDeger.ozellikID'><i class='fa fa-trash-o'></i></button></td>
+                                                    </tr>
+                                                }
                                             }
                                         </tbody>
                                         <tfoot>
                                             <tr>
                                                 <td>
                                                     <select id="cmb_ozellik" class="form-control">
-                                                        @foreach (DataRow item in dt_urun_ozellikleri.Rows)
+                                                        @foreach (Ozellik ozellik in ozellikler)
                                                         {
-                                                            <option value="@item["ozellikID"]">@item["ozellik"]</option>
+                                                            <option value="@ozellik.ozellikID">@ozellik.ozellik</option>
                                                         }
                                                     </select>
                                                 </td>
@@ -400,15 +424,21 @@
                                 <input type="file" name="resimler" id="urun_resimleri" class="form-control" accept="image/x-png,image/jpeg" multiple />
                                 <hr />
                                 <div id="gallery" class="row clearfix">
-                                    @foreach (DataRow item in dt_urun_resimleri.Rows)
+                                    @if (urunID != 0 && urun.urunResimleri != null)
                                     {
-                                        <div class="col-3">
-                                            <input type='hidden' name='resimPath[]' value='~/Content/icerik/urun/orjinal/@item["resim"]' />
-                                            <input type='hidden' name='resimID[]' value='@item["urunResimID"]' />
-                                            <img src='~/Content/icerik/urun/orjinal/@item["resim"]' class='gallery-item img-fluid' />
-                                            <input name='resimSira[]' type='number' class='form-control' value='@item["sira"]' autocomplete='off' required />
-                                            <button onclick='resim_sil(this)' type='button' class='btn btn-danger btn-block'><i class='fa fa-trash-o'></i></button>
-                                        </div>
+                                        if (turet == 0)
+                                        {
+                                            foreach (UrunResim urunResim in urun.urunResimleri)
+                                            {
+                                                <div class="col-3">
+                                                    <input type='hidden' name='resimPath[]' value='~/Content/icerik/urun/orjinal/@urunResim.resim' />
+                                                    <input type='hidden' name='resimID[]' value='@urunResim.urunResimID' />
+                                                    <img src='~/Content/icerik/urun/orjinal/@urunResim.resim' class='gallery-item img-fluid' />
+                                                    <input name='resimSira[]' type='number' class='form-control' value='@urunResim.sira' autocomplete='off' required />
+                                                    <button onclick='resim_sil(this)' type='button' class='btn btn-danger btn-block'><i class='fa fa-trash-o'></i></button>
+                                                </div>
+                                            }
+                                        }
                                     }
                                 </div>
                             </div>
@@ -416,6 +446,120 @@
                     </div>
                 </div>
             </form>
+        </div>
+    </div>
+    @if (urunID != 0 && turet == 0)
+    {
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Pazaryeri Entegrasyon</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item"><a class="nav-link active show" data-toggle="tab" href="#n11">N11</a></li>
+                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#gittigidiyor">Gitti Gidiyor</a></li>
+                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#hepsiburada">Hepsi Burada</a></li>
+                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#trendyol">Trendyol</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane show active" id="n11">
+                            <h5>n11.com</h5>
+                            <form method="POST" action="/Admin/N11KaydetGuncelle">
+                                <input type="hidden" name="urunID" value="@urunID" />
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">n11 Ürün ID</label>
+                                            <input type="text" name="n11UrunID" class="form-control" placeholder="n11 Ürün ID" value="@(urun.entegrasyonBilgi == null ? 0 : urun.entegrasyonBilgi.n11UrunID)" autocomplete="off" disabled />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">n11 Kategorisi</label>
+                                            <div class="input-group mb-3">
+                                                <input type="hidden" id="n11KategoriID" name="n11KategoriID" value="@(urun.entegrasyonBilgi == null ? 0 : urun.entegrasyonBilgi.n11KategoriID)" />
+                                                <input type="hidden" id="n11KategoriAdi" name="n11KategoriAdi" value="@(urun.entegrasyonBilgi == null ? "" : urun.entegrasyonBilgi.n11KategoriAdi)" />
+                                                <input type="text" id="n11KategoriName" class="form-control" placeholder="n11 Kategorisi" value="@(urun.entegrasyonBilgi == null ? "" : urun.entegrasyonBilgi.n11KategoriAdi)" disabled />
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#n11KategoriSec">SEÇ</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">n11 Fiyat(%)</label>
+                                            <input type="number" step="0.01" name="n11FiyatYuzde" class="form-control" placeholder="n11 Ürün ID" value="@(urun.entegrasyonBilgi == null ? "0.00" : urun.entegrasyonBilgi.n11FiyatYuzde.ToString().Replace(',', '.'))" autocomplete="off" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">n11 Fiyat(+)</label>
+                                            <input type="number" step="0.01" name="n11FiyatArti" class="form-control" placeholder="n11 Ürün ID" value="@(urun.entegrasyonBilgi == null ? "0.00" : urun.entegrasyonBilgi.n11FiyatArti.ToString().Replace(',', '.'))" autocomplete="off" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">n11 Teslimat Şablonu <small>N11>Hesabım>Teslimat Bilgileri ekranından oluşturabilirsiniz</small></label>
+                                            <select name="n11TemplateName" class="form-control">
+                                                <option value="">-</option>
+                                                @foreach (ShipmentApiModel shipmentApiModel in shipmentApiModels)
+                                                {
+                                                    <option value="@shipmentApiModel.templateName" @(urun.entegrasyonBilgi == null ? "" : (shipmentApiModel.templateName == urun.entegrasyonBilgi.n11TemplateName ? " selected " : ""))>@shipmentApiModel.templateName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <button type="submit" class="btn btn-primary btn-block">KAYDET</button>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <a href="/Admin/N11Yayinla?urunID=@urunID" class="btn btn-danger btn-block">N11 YAYINLA</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="tab-pane" id="genel_bilgiler">
+                            <h5>gittigidiyor.com</h5>
+                        </div>
+                        <div class="tab-pane" id="veri">
+                            <h5>hepsiburada.com</h5>
+                        </div>
+                        <div class="tab-pane" id="ozellikler">
+                            <h5>trendyol.com</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="modal fade" id="n11KategoriSec" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="title" id="defaultModalLabel">Kategori Seç</h6>
+            </div>
+            <div class="modal-body">
+                <div class="row clearfix" id="n11KategoriSecDiv">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <select name="kategoriID" class="form-control" onchange="getSubCategory(this, 0)">
+                                <option value="">SEÇİNİZ</option>
+                                @foreach (SubCategory subCategory in topCategories)
+                                {
+                                    <option value="@subCategory.id">@subCategory.name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal</button>
+            </div>
         </div>
     </div>
 </div>

@@ -4,9 +4,20 @@
     int siralama = ViewBag.siralama;
     int count = ViewBag.count;
     int markaID = ViewBag.markaID;
+    int modelGrubuID = ViewBag.modelGrubuID;
     filtremeleTipleri filtremele = (filtremeleTipleri)siralama;
     Kategori kategori = ViewBag.kategori;
-    UrunFilter urunFilter = new UrunFilter("", kategori.kategoriID == 0 ? new List<int>() : new List<int> { kategori.kategoriID }, new List<int>(), new List<int>(), markaID == 0 ? new List<int>(): new List<int> { markaID }, filtremele, false, 1, count);
+    UrunFilter urunFilter = new UrunFilter(
+        "",
+        kategori.kategoriID == 0 ? new List<int>() : new List<int> { kategori.kategoriID },
+        new List<int>(),
+        modelGrubuID == 0 ? new List<int>() : new List<int> { modelGrubuID },
+        markaID == 0 ? new List<int>() : new List<int> { markaID },
+        filtremele,
+        false,
+        1,
+        count
+    );
     Session["urunFilter"] = urunFilter;
     ViewBag.Title = kategori.kategori;
 }

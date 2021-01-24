@@ -142,6 +142,12 @@ namespace sCommerce.Models
             return true;
         }
 
+        public bool IptalEt(int kullaniciID)
+        {
+            SQL.set("UPDATE siparisler SET guncelleyenKullaniciID = " + kullaniciID + ", guncellemeTarihi = GETDATE(), siparisDurum = " + (int)Helper.siparisDurum.iptalEdildi + " WHERE siparisID = " + this.siparisID);
+            return true;
+        }
+
         public int Kaydet(int adresID, int odemeTipi, string siparisNotu)
         {
             Kullanici musteri = Site.GetMusteri();
@@ -277,16 +283,20 @@ namespace sCommerce.Models
         public List<int> kullaniciIDs;
         public List<int> siparisDurums;
         public List<int> odemeTipis;
+        public bool iptalGoster;
+        public bool teslimGoster;
 
         public int page;
         public int count;
 
-        public SiparisFilter(List<int> siparisIDs, List<int> kullaniciIDs, List<int> siparisDurums, List<int> odemeTipis, int page, int count)
+        public SiparisFilter(List<int> siparisIDs, List<int> kullaniciIDs, List<int> siparisDurums, List<int> odemeTipis, bool iptalGoster, bool teslimGoster, int page, int count)
         {
             this.siparisIDs = siparisIDs;
             this.kullaniciIDs = kullaniciIDs;
             this.siparisDurums = siparisDurums;
             this.odemeTipis = odemeTipis;
+            this.iptalGoster = iptalGoster;
+            this.teslimGoster = teslimGoster;
             this.page = page;
             this.count = count;
         }
@@ -302,6 +312,8 @@ namespace sCommerce.Models
                 "   siparisler " +
                 "WHERE " +
                 "   silindi = 0 " +
+                (iptalGoster ? " " : " AND siparisDurum != " + (int)Helper.siparisDurum.iptalEdildi) +
+                (teslimGoster ? " " : " AND siparisDurum != " + (int)Helper.siparisDurum.teslimEdildi) +
                 (siparisIDs.Count > 0 ? " AND siparisID IN (" + string.Join(",", siparisIDs) + ") " : "") +
                 (kullaniciIDs.Count > 0 ? " AND kullaniciID IN (" + string.Join(",", kullaniciIDs) + ") " : "") +
                 (siparisDurums.Count > 0 ? " AND siparisDurum IN (" + string.Join(",", siparisDurums) + ") " : "") +
@@ -338,6 +350,25 @@ namespace sCommerce.Models
             }
 
             return siparisler;
+        }
+
+        public int GetCount()
+        {
+            DataTable dt = SQL.get(
+                "SELECT " +
+                "   cnt = COUNT(*) " +
+                "FROM " +
+                "   siparisler " +
+                "WHERE " +
+                "   silindi = 0 " +
+                (iptalGoster ? " " : " AND siparisDurum != " + (int)Helper.siparisDurum.iptalEdildi) +
+                (teslimGoster ? " " : " AND siparisDurum != " + (int)Helper.siparisDurum.teslimEdildi) +
+                (siparisIDs.Count > 0 ? " AND siparisID IN (" + string.Join(",", siparisIDs) + ") " : "") +
+                (kullaniciIDs.Count > 0 ? " AND kullaniciID IN (" + string.Join(",", kullaniciIDs) + ") " : "") +
+                (siparisDurums.Count > 0 ? " AND siparisDurum IN (" + string.Join(",", siparisDurums) + ") " : "") +
+                (odemeTipis.Count > 0 ? " AND odemeTipi IN (" + string.Join(",", odemeTipis) + ") " : ""));
+
+            return Convert.ToInt32(dt.Rows[0]["cnt"]);
         }
     }
 }

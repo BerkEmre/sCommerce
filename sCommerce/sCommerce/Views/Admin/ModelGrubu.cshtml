@@ -34,8 +34,6 @@
 }
 
 <div class="row clearfix">
-    @{ if (Request.Params["hata"] != null)
-        {<div class="alert alert-danger col-md-12" role="alert">@Request.Params["hata"]</div>} }
     @{ if (Request.Params["tepki"] != null)
         {
             if (Request.Params["tepki"].ToString() == "1")

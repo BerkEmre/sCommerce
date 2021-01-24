@@ -16,7 +16,7 @@ namespace sCommerce.Models
         public static SiteBilgileri siteBilgileri;
         public static List<Kategori> urunKategorileri;
         public static List<Kategori> blogKategorileri;
-
+        
         public static void load()
         {
             siteBilgileri = new SiteBilgileri();

@@ -79,8 +79,8 @@
                                 </div>
                                 <div class="tt-add-info">
                                     <ul>
-                                        <li><span>Marka:</span> @urun.marka.marka</li>
-                                        <li><span>Model Grubu:</span> @urun.modelGrubu.modelGrubu</li>
+                                        <li><span>Marka:</span> <a href="@Url.Action("Category", new { markaID = urun.markaID })">@urun.marka.marka</a></li>
+                                        <li><span>Model Grubu:</span> <a href="@Url.Action("Category", new { modelGrubuID = urun.modelGrubuID })">@urun.modelGrubu.modelGrubu</a></li>
                                         <li><span>Stok:</span> @urun.miktar Adet</li>
                                     </ul>
                                 </div>
@@ -198,6 +198,11 @@
                 @(MvcHtmlString.Create(Site.siteBilgileri.linkedin.ToString().Length <= 0 ? "" : "<li><a class='icon-g-68' target='_blank' href='" + Site.siteBilgileri.linkedin + "'></a></li>"))
                 @(MvcHtmlString.Create(Site.siteBilgileri.pinterest.ToString().Length <= 0 ? "" : "<li><a class='icon-g-68' target='_blank' href='" + Site.siteBilgileri.pinterest + "'></a></li>"))
             </ul>
+        </div>
+    </div>
+    <div class="container-indent">
+        <div class="container">
+            <!--YORUM-->
         </div>
     </div>
     <div class="container-indent">

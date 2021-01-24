@@ -46,6 +46,8 @@ namespace sCommerce.Models
         public List<UrunResim> urunResimleri;
         public List<UrunOzellik> urunOzellikleri;
 
+        public EntegrasyonBilgi entegrasyonBilgi;
+
         public List<Urun> GetUrunFromUrunEtiketi(int urunEtiketiParametreID)
         {
             List<Urun> u = new List<Urun>();
@@ -85,7 +87,7 @@ namespace sCommerce.Models
                 urun.urunAdi = dataRow["urunAdi"].ToString();
                 urun.urunAciklamasi = dataRow["urunAciklamasi"].ToString();
                 urun.seoAciklama = dataRow["seoAciklama"].ToString();
-                urun.seoKeywords = dataRow["urunEtiketiParametreID"].ToString();
+                urun.seoKeywords = dataRow["seoKeywords"].ToString();
                 Int32.TryParse(dataRow["urunEtiketiParametreID"].ToString(), out urun.urunEtiketiParametreID);
                 urun.barkod = dataRow["barkod"].ToString();
                 urun.stokKodu = dataRow["stokKodu"].ToString();
@@ -118,7 +120,7 @@ namespace sCommerce.Models
             return u;
         }
 
-        public bool LoadFromID(int urunID)
+        public bool LoadFromID(int urunID, bool kategoriYukle = false)
         {
             DataTable dt = SQL.get(
                 "SELECT " +
@@ -154,7 +156,7 @@ namespace sCommerce.Models
             this.urunAdi = dataRow["urunAdi"].ToString();
             this.urunAciklamasi = dataRow["urunAciklamasi"].ToString();
             this.seoAciklama = dataRow["seoAciklama"].ToString();
-            this.seoKeywords = dataRow["urunEtiketiParametreID"].ToString();
+            this.seoKeywords = dataRow["seoKeywords"].ToString();
             Int32.TryParse(dataRow["urunEtiketiParametreID"].ToString(), out this.urunEtiketiParametreID);
             this.barkod = dataRow["barkod"].ToString();
             this.stokKodu = dataRow["stokKodu"].ToString();
@@ -178,7 +180,8 @@ namespace sCommerce.Models
             this.urunDurumu = new Parametre(this.urunEtiketiParametreID, dataRow["urunDurumu"].ToString());
             this.modelGrubu = new ModelGrubu(this.modelGrubuID, DateTime.Now, 0, DateTime.Now, 0, 0, dataRow["modelGrubu"].ToString());
             this.marka = new Marka(this.markaID, DateTime.Now, 0, DateTime.Now, 0, 0, dataRow["marka"].ToString());
-            //this.urunKategorileri = new Kategori().GetUrunKategorileri(this.urunID);
+            if(kategoriYukle)
+                this.urunKategorileri = new Kategori().GetUrunKategorileri(this.urunID);
             this.urunResimleri = new UrunResim().GetUrunResimleri(this.urunID);
             this.urunOzellikleri = new UrunOzellik().GetUrunOzellik(this.urunID);
 
@@ -227,7 +230,7 @@ namespace sCommerce.Models
                 urun.urunAdi = dataRow["urunAdi"].ToString();
                 urun.urunAciklamasi = dataRow["urunAciklamasi"].ToString();
                 urun.seoAciklama = dataRow["seoAciklama"].ToString();
-                urun.seoKeywords = dataRow["urunEtiketiParametreID"].ToString();
+                urun.seoKeywords = dataRow["seoKeywords"].ToString();
                 Int32.TryParse(dataRow["urunEtiketiParametreID"].ToString(), out urun.urunEtiketiParametreID);
                 urun.barkod = dataRow["barkod"].ToString();
                 urun.stokKodu = dataRow["stokKodu"].ToString();
@@ -272,6 +275,33 @@ namespace sCommerce.Models
             urunID = Convert.ToInt32(dt.Rows[0]["urunID"]);
             return urunID;
         } 
+    
+        public bool LoadEntegrasyonBilgi()
+        {
+            DataTable dt = SQL.get("SELECT TOP 1 * FROM entegrasyonBilgileri WHERE silindi = 0 AND urunID = " + urunID);
+
+            if (dt.Rows.Count <= 0)
+                return false;
+
+            DataRow dataRow = dt.Rows[0];
+
+            this.entegrasyonBilgi = new EntegrasyonBilgi();
+            Int32.TryParse(dataRow["entegrasyonBilgiID"].ToString(), out this.entegrasyonBilgi.entegrasyonBilgiID);
+            DateTime.TryParse(dataRow["kayitTarihi"].ToString(), out this.entegrasyonBilgi.kayitTarihi);
+            Int32.TryParse(dataRow["kaydedenKullaniciID"].ToString(), out this.entegrasyonBilgi.kaydedenKullaniciID);
+            DateTime.TryParse(dataRow["guncellemeTarihi"].ToString(), out this.entegrasyonBilgi.guncellemeTarihi);
+            Int32.TryParse(dataRow["guncelleyenKullaniciID"].ToString(), out this.entegrasyonBilgi.guncelleyenKullaniciID);
+            Int32.TryParse(dataRow["silindi"].ToString(), out this.entegrasyonBilgi.silindi);
+            Int32.TryParse(dataRow["urunID"].ToString(), out this.entegrasyonBilgi.urunID);
+            Int64.TryParse(dataRow["n11UrunID"].ToString(), out this.entegrasyonBilgi.n11UrunID);
+            Int64.TryParse(dataRow["n11KategoriID"].ToString(), out this.entegrasyonBilgi.n11KategoriID);
+            this.entegrasyonBilgi.n11KategoriAdi = dataRow["n11KategoriAdi"].ToString();
+            Decimal.TryParse(dataRow["n11FiyatYuzde"].ToString(), out this.entegrasyonBilgi.n11FiyatYuzde);
+            Decimal.TryParse(dataRow["n11FiyatArti"].ToString(), out this.entegrasyonBilgi.n11FiyatArti);
+            this.entegrasyonBilgi.n11TemplateName = dataRow["n11TemplateName"].ToString();
+
+            return true;
+        }
     }
 
     public class UrunFilter
@@ -283,6 +313,9 @@ namespace sCommerce.Models
         public List<int> markaIDs;
         public filtremeleTipleri ft;
         public bool oneCikanlar;
+
+        public bool stoguBitenler = false;
+
         public int page;
         public int count;
 
@@ -350,6 +383,7 @@ namespace sCommerce.Models
                 "WHERE " +
                 "    u.silindi = 0 " +
                 "    AND u.urunDurumuParametreID != 9 " +
+                (stoguBitenler ? " AND u.miktar <= u.minimumMiktar " : "") +
                 (urunAdi.Length > 0 ? " AND u.urunAdi LIKE '%" + urunAdi + "%' " : "") +
                 (oneCikanlar ? " AND u.oneCikanlar = 1 " : "") +
                 (kategoriIDs.Count > 0 ? " AND EXISTS (SELECT urunID FROM urunKategori uk WHERE uk.silindi = 0 AND uk.urunID = u.urunID AND uk.kategoriID IN (" + string.Join(",", kategoriIDs) + ")) " : "") +
@@ -370,7 +404,7 @@ namespace sCommerce.Models
                 urun.urunAdi = dataRow["urunAdi"].ToString();
                 urun.urunAciklamasi = dataRow["urunAciklamasi"].ToString();
                 urun.seoAciklama = dataRow["seoAciklama"].ToString();
-                urun.seoKeywords = dataRow["urunEtiketiParametreID"].ToString();
+                urun.seoKeywords = dataRow["seoKeywords"].ToString();
                 Int32.TryParse(dataRow["urunEtiketiParametreID"].ToString(), out urun.urunEtiketiParametreID);
                 urun.barkod = dataRow["barkod"].ToString();
                 urun.stokKodu = dataRow["stokKodu"].ToString();
@@ -422,6 +456,7 @@ namespace sCommerce.Models
                 "WHERE " +
                 "    u.silindi = 0 " +
                 "    AND u.urunDurumuParametreID != 9 " +
+                (stoguBitenler ? " AND u.miktar <= u.minimumMiktar " : "") +
                 (urunAdi.Length > 0 ? " AND u.urunAdi LIKE '%" + urunAdi + "%' " : "") +
                 (oneCikanlar ? " AND u.oneCikanlar = 1 " : "") +
                 (kategoriIDs.Count > 0 ? " AND EXISTS (SELECT urunID FROM urunKategori uk WHERE uk.silindi = 0 AND uk.urunID = u.urunID AND uk.kategoriID IN (" + string.Join(",", kategoriIDs) + ")) " : "") +

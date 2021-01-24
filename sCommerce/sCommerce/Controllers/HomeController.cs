@@ -50,7 +50,7 @@ namespace sCommerce.Controllers
                 return RedirectToAction("Index");
         }
 
-        public ActionResult Category(int id = 0, int markaID = 0, int siralama = 0, int count = 18)
+        public ActionResult Category(int id = 0, int markaID = 0, int modelGrubuID = 0, int siralama = 0, int count = 18)
         {
             Kategori k = new Kategori();
 
@@ -72,6 +72,7 @@ namespace sCommerce.Controllers
             ViewBag.siralama = siralama;
             ViewBag.count = count;
             ViewBag.markaID = markaID;
+            ViewBag.modelGrubuID = modelGrubuID;
 
             return View();
         }

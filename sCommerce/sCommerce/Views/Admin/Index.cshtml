@@ -1,4 +1,143 @@
-﻿
+﻿@using sCommerce.Models
+@using sCommerce.Helper
 @{
     ViewBag.Title = "Genel Bakış";
+
+    UrunFilter urunFilter = new UrunFilter("", new List<int>(), new List<int>(), new List<int>(), new List<int>(), filtremeleTipleri.urunID, false, 1, 15);
+    urunFilter.stoguBitenler = true;
+    List<Urun> stoguBitenler = urunFilter.GetUruns();
+
+    SiparisFilter siparisFilter = new SiparisFilter(new List<int>(), new List<int>(), new List<int>(), new List<int>(), false, false, 1, 1);
+    siparisFilter.siparisDurums = new List<int>() { (int)siparisDurum.odemeBekliyor };
+    int odemeBekliyor = siparisFilter.GetCount();
+    siparisFilter.siparisDurums = new List<int>() { (int)siparisDurum.hazirlaniyor };
+    int hazirlaniyor = siparisFilter.GetCount();
+    siparisFilter.siparisDurums = new List<int>() { (int)siparisDurum.kargoda };
+    int kargoda = siparisFilter.GetCount();
+    siparisFilter.siparisDurums = new List<int>() { (int)siparisDurum.teslimEdildi };
+    int teslimEdildi = siparisFilter.GetCount();
 }
+@section style{
+    <link rel="stylesheet" href="~/Content/vendor/jvectormap/jquery-jvectormap-2.0.3.min.css" />
+    <link rel="stylesheet" href="~/Content/vendor/chartist/css/chartist.min.css">
+    <link rel="stylesheet" href="~/Content/vendor/chartist-plugin-tooltip/chartist-plugin-tooltip.css">
+    <link rel="stylesheet" href="~/Content/vendor/morrisjs/morris.css" />
+}
+@section script{
+    <script src="~/Content/assets/bundles/morrisscripts.bundle.js"></script>
+    <script src="~/Content/assets/bundles/chartist.bundle.js"></script>
+    <script src="~/Content/assets/bundles/jvectormap.bundle.js"></script>
+    <script src="~/Content/assets/js/widgets/infobox/infobox-1.js"></script>
+    <script src="~/Content/assets/js/pages/blog.js"></script>
+}
+<div class="row clearfix">
+    <div class="col-lg-3 col-md-6">
+        <div class="card top_counter">
+            <div class="body">
+                <div class="icon text-info"><i class="fa fa-money"></i> </div>
+                <div class="content">
+                    <div class="text">Ödeme Bekliyor</div>
+                    <h5 class="number">@odemeBekliyor</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card top_counter">
+            <div class="body">
+                <div class="icon text-warning"><i class="fa fa-flag-checkered"></i> </div>
+                <div class="content">
+                    <div class="text">Hazırlanıyor</div>
+                    <h5 class="number">@hazirlaniyor</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card top_counter">
+            <div class="body">
+                <div class="icon"><i class="fa fa-truck"></i> </div>
+                <div class="content">
+                    <div class="text">Kargoda</div>
+                    <h5 class="number">@kargoda</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card top_counter">
+            <div class="body">
+                <div class="icon text-danger"><i class="fa fa-fire"></i> </div>
+                <div class="content">
+                    <div class="text">Teslim Edildi</div>
+                    <h5 class="number">@teslimEdildi</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row clearfix">
+    <div class="col-xl-12 col-lg-12 col-md-12">
+        <div class="card">
+            <div class="header">
+                <h2>Stoğu Azalanlar</h2>
+                <ul class="header-dropdown dropdown dropdown-animated scale-left">
+                    <li><a href="javascript:void(0);" class="full-screen"><i class="icon-size-fullscreen"></i></a></li>
+                </ul>
+            </div>
+            <div class="body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Resim</th>
+                                <th>Ürün Adı</th>
+                                <th>Marka/Model Grubu</th>
+                                <th>Stok</th>
+                                <th>Min.Stok</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (Urun urun in stoguBitenler)
+                            {
+                                <tr>
+                                    <td>
+                                        @if (urun.urunResimleri.Count > 0)
+                                        {
+                                            <img src="~/Content/icerik/urun/kucuk/@urun.urunResimleri[0].resim" class="rounded-circle avatar" style="max-height: 50px;">
+                                        }
+                                    </td>
+                                    <td>
+                                        <h6 class="text-info">
+                                            @urun.urunAdi
+                                            @if (urun.urunEtiketi.deger.Length > 1)
+                                            {
+                                                <span class="badge badge-success">@urun.urunEtiketi.deger</span>
+                                            }
+                                        </h6>
+                                        <span>@urun.barkod</span>
+                                    </td>
+                                    <td>
+                                        <h6 class="mb-0">@urun.marka.marka</h6>
+                                        <span>@urun.modelGrubu.modelGrubu</span>
+                                    </td>
+                                    <td><span class="@(urun.miktar <= urun.minimumMiktar ? "text-danger" : "")">@urun.miktar</span></td>
+                                    <td><span>@urun.minimumMiktar</span></td>
+                                    <td><a href="@Url.Action("UrunDetay", "Admin", new { id = urun.urunID, turet = 0 })" class="btn btn-sm btn-default"><i class="fa fa-edit"></i></a></td>
+                                </tr>
+                            }
+                            @if(stoguBitenler.Count <= 0)
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center"><h5>Bütün Stoklar Tam <i class="fa fa-check"></i></h5></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

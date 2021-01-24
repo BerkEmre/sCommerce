@@ -1,7 +1,11 @@
 ﻿@using sCommerce.Models;
+@using sCommerce.Helper;
 @{ 
     Kullanici kullanici = new Kullanici();
     kullanici.load(Convert.ToInt32(Session["kullaniciID"]));
+
+    SiparisFilter siparisFilter = new SiparisFilter(new List<int>(), new List<int>(), new List<int>() { (int)siparisDurum.odemeBekliyor, (int)siparisDurum.hazirlaniyor }, new List<int>(), false, false, 1, 5);
+    List<Siparis> siparisler = siparisFilter.GetSiparisler();
 }
 <!doctype html>
 <html lang="en">
@@ -51,21 +55,22 @@
                             <a href="javascript:void(0);" class="dropdown-toggle icon-menu" data-toggle="dropdown"><i class="icon-grid"></i></a>
                             <ul class="dropdown-menu menu-icon app_menu">
                                 <li>
+                                    <a href="@Url.Action("SiteBilgi")">
+                                        <i class="icon-settings"></i>
+                                        <span>Site Bilgileri</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Kullanici")">
+                                        <i class="icon-user"></i>
+                                        <span>Kullanıcılar</span>
+                                    </a>
+                                </li>
+                                <!--
+                                <li>
                                     <a href="@Url.Action("Mesaj")">
                                         <i class="icon-envelope"></i>
                                         <span>Mesajlar</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("Siparis")">
-                                        <i class="icon-basket"></i>
-                                        <span>Siparişler</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("Urun")">
-                                        <i class="icon-diamond"></i>
-                                        <span>Ürünler</span>
                                     </a>
                                 </li>
                                 <li>
@@ -74,6 +79,7 @@
                                         <span>Blog</span>
                                     </a>
                                 </li>
+                                -->
                             </ul>
                         </li>
                         <!--<li><a href="app-calendar.html" class="icon-menu d-none d-sm-block d-md-none d-lg-block"><i class="icon-calendar"></i></a></li>-->
@@ -92,20 +98,26 @@
                             <li class="dropdown dropdown-animated scale-left">
                                 <a href="javascript:void(0);" class="dropdown-toggle icon-menu" data-toggle="dropdown">
                                     <i class="icon-basket"></i>
-                                    <span class="notification-dot"></span>
+                                    @if (siparisler.Count > 0)
+                                    {
+                                        <span class="notification-dot"></span>
+                                    }
                                 </a>
                                 <ul class="dropdown-menu right_chat email">
-                                    <li>
-                                        <a href="javascript:void(0);">
-                                            <div class="media">
-                                                <img class="media-object " src="~/Content/images/xs/avatar4.jpg" alt="">
-                                                <div class="media-body">
-                                                    <span class="name">James Wert <small class="float-right">Just now</small></span>
-                                                    <span class="message">Lorem ipsum Veniam aliquip culpa laboris minim tempor</span>
+                                    @foreach (Siparis siparis in siparisler)
+                                    {
+                                        <li>
+                                            <a href="@Url.Action("SiparisDetay", new { id = siparis.siparisID })">
+                                                <div class="media">
+                                                    <div class="media-body">
+                                                        <span class="name">@siparis.ad @siparis.soyad <small class="float-right">@siparis.GetSiparisDurum()</small></span>
+                                                        <span class="message">@siparis.GetToplamAdet() Adet | @siparis.GetToplamFiyat() TL</span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </a>
-                                    </li>
+                                            </a>
+                                        </li>
+                                    }
+                                    <li><a class="float-right" href="@Url.Action("Siparis")">Tüm Siparişler</a></li>
                                 </ul>
                             </li>
                             <!--<li><a href="javascript:void(0);" class="right_toggle icon-menu" title="Right Menu"><i class="icon-settings"></i></a></li>-->
@@ -295,7 +307,14 @@
                 <nav id="left-sidebar-nav" class="sidebar-nav">
                     <ul id="main-menu" class="metismenu">
                         <li><a href="@Url.Action("Index")"><i class="icon-home"></i><span>Genel Bakış</span></a></li>
-                        <li><a href="@Url.Action("Siparis")"><i class="icon-basket"></i><span>Siparişler</span></a></li>
+
+                        <li>
+                            <a href="#eticaret" class="has-arrow"><i class="icon-basket"></i><span>Satış</span></a>
+                            <ul>
+                                <li><a href="@Url.Action("Siparis")">Siparişler</a></li>
+                                <li><a href="@Url.Action("HediyeCeki")">Hediye Çeki</a></li>
+                            </ul>
+                        </li>
                         <li>
                             <a href="#urunler" class="has-arrow"><i class="icon-diamond"></i><span>Ürünler</span></a>
                             <ul>
@@ -313,13 +332,10 @@
                                 <li><a href="@Url.Action("Blog")">Blog</a></li>
                             </ul>
                         </li>
-                        <li><a href="@Url.Action("Kullanici")"><i class="icon-user"></i><span>Kullanıcılar</span></a></li>
-                        <li hidden><a href="@Url.Action("Mesaj")"><i class="icon-envelope"></i><span>Mesajlar</span></a></li>
-                        <li><a href="@Url.Action("SiteBilgi")"><i class="icon-settings"></i><span>Site Bilgileri</span></a></li>
-                        <li hidden><a href="@Url.Action("Menu")"><i class="icon-book-open"></i><span>Menü</span></a></li>
                         <li hidden>
                             <a href="#ana_sayfa_tasarimi" class="has-arrow"><i class="icon-puzzle"></i><span>Ana Sayfa Tasarımı</span></a>
                             <ul>
+                                <li><a href="@Url.Action("Menu")">Menü</a></li>
                                 <li><a href="@Url.Action("SolMenu")">Sol Menü</a></li>
                                 <li><a href="@Url.Action("IkiliResim")">2'li Resim</a></li>
                                 <li><a href="@Url.Action("ResimliBaslik")">Resimli Başlıklar</a></li>
@@ -348,6 +364,13 @@
             </div>
 
             <div class="container-fluid">
+                @if (Request.Params["hata"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        &nbsp;@Request.Params["hata"]
+                    </div>
+                }
                 @RenderBody()
             </div>
         </div>

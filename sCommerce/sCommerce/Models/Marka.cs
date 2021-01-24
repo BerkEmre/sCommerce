@@ -33,7 +33,7 @@ namespace sCommerce.Models
 
         }
 
-        public List<Marka> GetMarkas()
+        public List<Marka> GetMarkalar()
         {
             List<Marka> markas = new List<Marka>();
 

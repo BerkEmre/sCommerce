@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Linq;
+using sCommerce.com.n11Product.api;
 
 namespace sCommerce.Controllers
 {
@@ -670,6 +671,57 @@ namespace sCommerce.Controllers
             return View();
         }
         #endregion
+        #region Entegrasyon
+        [HttpPost]
+        public ActionResult getN11Child(long id, int sira)
+        {
+            ViewBag.id = id;
+            ViewBag.sira = sira;
+            return PartialView("~/Views/Shared/_N11CategoryItem.cshtml");
+        }
+
+        public ActionResult N11KaydetGuncelle(int urunID, string n11UrunID, long n11KategoriID, string n11KategoriAdi, string n11FiyatYuzde, string n11FiyatArti, string n11TemplateName)
+        {
+            if (Session["kullaniciID"] == null)
+                return RedirectToAction("Login");
+
+            new EntegrasyonBilgi().N11KaydetGuncelle(urunID, Convert.ToInt32(Session["kullaniciID"]), Convert.ToInt64(n11UrunID), n11KategoriID, n11KategoriAdi, Convert.ToDecimal(n11FiyatYuzde.ToString().Replace('.', ',')), Convert.ToDecimal(n11FiyatArti.ToString().Replace('.', ',')), n11TemplateName);
+
+            return RedirectToAction("UrunDetay", new { id = urunID, hata = "N11 Bilgileri Güncellendi" });
+        }
+
+        public ActionResult N11Yayinla(int urunID)
+        {
+            if (Session["kullaniciID"] == null)
+                return RedirectToAction("Login");
+
+            string mesaj = "Ürün N11'de Yayınlanmış/Güncellenmiştir...";
+
+            N11 n11 = new N11(); 
+
+            Urun urun = new Urun();
+            urun.LoadFromID(urunID);
+            urun.LoadEntegrasyonBilgi();
+
+            long n11UrunID = 0;
+            Int64.TryParse(urun.entegrasyonBilgi.n11UrunID.ToString(), out n11UrunID);
+
+            if(n11UrunID == 0)
+            {
+                SaveProductResponse saveProductResponse = n11.SaveProduct(urun);
+                if(saveProductResponse.result.status != "success")
+                    mesaj = saveProductResponse.result.errorMessage;
+            }
+            else
+            {
+                UpdateProductBasicResponse updateProductBasicResponse = n11.UpdateProductBasic(urun);
+                if (updateProductBasicResponse.result.status != "success")
+                    mesaj = updateProductBasicResponse.result.errorMessage;
+            }
+
+            return RedirectToAction("UrunDetay", new { id = urunID, hata = mesaj });
+        }
+        #endregion
         #region Model Grubu
         public ActionResult ModelGrubu()
         {
@@ -763,7 +815,7 @@ namespace sCommerce.Controllers
             SiparisFilter siparisFilter;
             if (Session["AdminSiparisFilter"] == null)
             {
-                siparisFilter = new SiparisFilter(new List<int>(), new List<int>(), new List<int>(), new List<int>(), (id <= 0 ? 1 : id), 20);
+                siparisFilter = new SiparisFilter(new List<int>(), new List<int>(), new List<int>(), new List<int>(), false, false, (id <= 0 ? 1 : id), 20);
             }
             else
             {
@@ -777,6 +829,30 @@ namespace sCommerce.Controllers
 
             return View();
         }
+
+        public ActionResult SiparisFiltrele(int siparisDurum = -1, int iptalGoster = 0, int teslimGoster = 0)
+        {
+            if (Session["kullaniciID"] == null)
+                return RedirectToAction("Login");
+
+            SiparisFilter siparisFilter;
+            if (Session["AdminSiparisFilter"] == null)
+            {
+                siparisFilter = new SiparisFilter(new List<int>(), new List<int>(), new List<int>(), new List<int>(), false, false, 1, 20);
+            }
+            else
+            {
+                siparisFilter = (SiparisFilter)Session["AdminSiparisFilter"];
+            }
+            siparisFilter.page = 1;
+            siparisFilter.siparisDurums = (siparisDurum == -1 ? new List<int>() : new List<int>() { siparisDurum });
+            siparisFilter.iptalGoster = iptalGoster == 1;
+            siparisFilter.teslimGoster = teslimGoster == 1;
+            Session["AdminSiparisFilter"] = siparisFilter;
+
+            return RedirectToAction("Siparis");
+        }
+
         public ActionResult SiparisDetay(int id)
         {
             if (Session["kullaniciID"] == null)
@@ -809,6 +885,30 @@ namespace sCommerce.Controllers
             s.Load(siparisID);
             s.KargoNoGuncelle(kargoNo, Convert.ToInt32(Session["kullaniciID"]));
             return RedirectToAction("SiparisDetay", new { id = siparisID, hata = "Kargo no güncellendi!" });
+        }
+
+        public ActionResult siparisIptalEt(int siparisID)
+        {
+            if (Session["kullaniciID"] == null)
+                return RedirectToAction("Login");
+
+            Siparis s = new Siparis();
+            s.Load(siparisID);
+            s.IptalEt(Convert.ToInt32(Session["kullaniciID"]));
+            return RedirectToAction("SiparisDetay", new { id = siparisID, hata = "Sipariş iptal edildi!" });
+        }
+        #endregion
+        #region HediyeÇeki
+        public ActionResult HediyeCeki()
+        {
+            if (Session["kullaniciID"] == null)
+                return RedirectToAction("Login");
+            return View();
+        }
+
+        public ActionResult hediyeCekiEkleDuzenle(int hediyeCekiID)
+        {
+            return RedirectToAction("HediyeCeki", new { hata = "" });
         }
         #endregion
     }

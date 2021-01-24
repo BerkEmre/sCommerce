@@ -66,4 +66,10 @@ namespace sCommerce.Helper
         Yuzde8 = 14,
         Yuzde18 = 15
     }
+
+    public enum hediyeCekiDurum
+    {
+        aktif = 1,
+        pasif = 0
+    }
 }

@@ -4,12 +4,16 @@
 @{
     ViewBag.Title = "Ürün";
 
-    int sayfa_no = ViewBag.sayfa_no;
-
-    UrunFilter urunFilter = new UrunFilter("", new List<int>(), new List<int>(), new List<int>(), new List<int>(), filtremeleTipleri.urunAdi, false, sayfa_no, 20);
+    UrunFilter urunFilter = ViewBag.urunFilter;
     List<Urun> uruns = urunFilter.GetUruns();
-    int cnt_blog = urunFilter.GetCount();
-    int sayfa_sayisi = Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(cnt_blog) / 20));
+    List<Kategori> urunKategorileri = new Kategori().GetKategoriler((int)kategoriTipleri.urun);
+    List<Marka> markalar = new Marka().GetMarkalar();
+    List<ModelGrubu> modelGruplari = new ModelGrubu().GetModelGruplari();
+
+    int sayfa_sayisi = Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(urunFilter.GetCount()) / urunFilter.count));
+
+    int minSayfa = (urunFilter.page < 2 ? 1 : urunFilter.page - 1);
+    int maxSayfa = (urunFilter.page + 4 > sayfa_sayisi ? sayfa_sayisi : urunFilter.page + 4);
 }
 @section style
 {
@@ -55,23 +59,87 @@
     }
     <div class="col-lg-12">
         <div class="card">
-            <div class="header">
-                <h5>Filteleme</h5>
-            </div>
-            <div class="body">
-
-            </div>
+            <form method="POST" action="/Admin/UrunFiltrele">
+                <div class="card-header">
+                    <h5>ÜRÜNLERİ FİLTRELE</h5>
+                    <a href="/Admin/UrunFiltrele">Filtreleri Kaldır</a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="tax-id" class="control-label">Ürün Adı</label>
+                                <input type="text" name="urunAdi" class="form-control" value="@urunFilter.urunAdi">
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="tax-id" class="control-label">Kategori</label>
+                                <select name="kategoriID" class="form-control">
+                                    <option>HEPSİ</option>
+                                    @foreach (Kategori kategori in urunKategorileri)
+                                    {
+                                        <option value="@kategori.kategoriID" @(urunFilter.kategoriIDs.Where(x => x == kategori.kategoriID).Count() > 0 ? "selected" : "")>@kategori.kategori</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="tax-id" class="control-label">Marka</label>
+                                <select name="markaID" class="form-control">
+                                    <option>HEPSİ</option>
+                                    @foreach (Marka marka in markalar)
+                                    {
+                                        <option value="@marka.markaID" @(urunFilter.markaIDs.Where(x => x == marka.markaID).Count() > 0 ? "selected" : "")>@marka.marka</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="tax-id" class="control-label">Etiket</label>
+                                <select name="urunEtiket" class="form-control">
+                                    <option>HEPSİ</option>
+                                    <option value="@((int)urunEtiketleri.yok)" @(urunFilter.urunEtiketParametreIDs.Where(x => x == (int)urunEtiketleri.yok).Count() > 0 ? "selected" : "")>-</option>
+                                    <option value="@((int)urunEtiketleri.cokSatan)" @(urunFilter.urunEtiketParametreIDs.Where(x => x == (int)urunEtiketleri.cokSatan).Count() > 0 ? "selected" : "")>Çok Satan</option>
+                                    <option value="@((int)urunEtiketleri.indirim)" @(urunFilter.urunEtiketParametreIDs.Where(x => x == (int)urunEtiketleri.indirim).Count() > 0 ? "selected" : "")>İndirim</option>
+                                    <option value="@((int)urunEtiketleri.stoklarda)" @(urunFilter.urunEtiketParametreIDs.Where(x => x == (int)urunEtiketleri.stoklarda).Count() > 0 ? "selected" : "")>Stoklarda</option>
+                                    <option value="@((int)urunEtiketleri.yeni)" @(urunFilter.urunEtiketParametreIDs.Where(x => x == (int)urunEtiketleri.yeni).Count() > 0 ? "selected" : "")>Yeni</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="tax-id" class="control-label">Model Grubu</label>
+                                <select name="modelGrubuID" class="form-control">
+                                    <option>HEPSİ</option>
+                                    @foreach (ModelGrubu modelGrubu in modelGruplari)
+                                    {
+                                        <option value="@modelGrubu.modelGrubuID" @(urunFilter.modelGrubuIDs.Where(x => x == modelGrubu.modelGrubuID).Count() > 0 ? "selected" : "")>@modelGrubu.modelGrubu</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <label class="fancy-checkbox">
+                                <input type="checkbox" @(urunFilter.oneCikanlar ? "checked" : "") value="1" name="oneCikanlar">
+                                <span>Öne Çıkan</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-primary btn-block">FİLTRELE</button>
+                </div>
+            </form>
         </div>
     </div>
     <div class="col-lg-12">
         <div class="card">
             <div class="header">
-                <ul class="pagination">
-                    @for (int i = 1; i <= sayfa_sayisi; i++)
-                    {
-                        <li class="page-item @(i == sayfa_no ? "active" : "")"><a class="page-link" href="@Url.Action("Urun", new { id = i })">@i</a></li>
-                    }
-                </ul>
                 <ul class="header-dropdown dropdown dropdown-animated scale-left">
                     <li><a href="javascript:void(0);" class="full-screen"><i class="icon-size-fullscreen"></i></a></li>
                     <li><a href="@Url.Action("UrunDetay", "Admin", new { id = 0 })" class="btn btn-sm btn-primary text-light"><i class="fa fa-plus"></i> Yeni Ürün</a></li>
@@ -79,10 +147,26 @@
             </div>
             <div class="body">
                 <div class="row">
+                    <div class="col-md-9">
+                        <ul class="pagination">
+                            @if (minSayfa > 1)
+                            {
+                                <li class="page-item"><a class="page-link" href="@Url.Action("Urun", new { id = minSayfa - 1 })">...</a></li>
+                            }
+                            @for (int i = minSayfa; i <= maxSayfa; i++)
+                            {
+                                <li class="page-item @(i == urunFilter.page ? "active" : "")"><a class="page-link" href="@Url.Action("Urun", new { id = i })">@i</a></li>
+                            }
+                            @if (maxSayfa < sayfa_sayisi)
+                            {
+                                <li class="page-item"><a class="page-link" href="@Url.Action("Urun", new { id = maxSayfa + 1 })">...</a></li>
+                            }
+                        </ul>
+                    </div>
                     <div class="col-md-3">
                         <form method="POST" action="/Admin/UrunBarkod">
                             <div class="input-group mb-3">
-                                <input type="text" name="barkod" class="form-control" placeholder="Barkod" aria-label="Barkod" aria-describedby="basic-addon2">
+                                <input type="text" name="barkod" class="form-control" placeholder="Barkod" aria-label="Barkod" aria-describedby="basic-addon2" autocomplete="off">
                                 <div class="input-group-append">
                                     <button class="btn btn-outline-secondary" type="submit">Ara</button>
                                 </div>
@@ -105,7 +189,6 @@
                                         <th>Resim</th>
                                         <th>Ürün Adı</th>
                                         <th>Öne Çıkan?</th>
-                                        <th>Etiket</th>
                                         <th>Marka/Model Grubu</th>
                                         <th>Stok</th>
                                         <th>Fiyat</th>
@@ -127,14 +210,17 @@
                                                 {<img src="~/Content/icerik/urun/kucuk/@urun.urunResimleri[0].resim" class="rounded-circle avatar" style="max-height: 50px;">}
                                             </td>
                                             <td>
-                                                <h6 class="text-info">@urun.urunAdi</h6>
+                                                <h6 class="text-info">
+                                                    @urun.urunAdi
+                                                    @if (urun.urunEtiketi.deger.Length > 1)
+                                                    {
+                                                        <span class="badge badge-success">@urun.urunEtiketi.deger</span>
+                                                    }
+                                                </h6>
                                                 <span>@urun.barkod</span>
+
                                             </td>
                                             <td><i class="fa fa-@(urun.oneCikanlar == 1 ? "check-" : "")square-o"></i></td>
-                                            <td>
-                                                @if (urun.urunEtiketi.deger.Length > 1)
-                                                {<span class="badge badge-success">@urun.urunEtiketi.deger</span>}
-                                            </td>
                                             <td>
                                                 <h6 class="mb-0">@urun.marka.marka</h6>
                                                 <span>@urun.modelGrubu.modelGrubu</span>
@@ -156,14 +242,194 @@
                             </table>
                         </div>
                         <ul class="pagination">
-                            @for (int i = 1; i <= sayfa_sayisi; i++)
+                            @if (minSayfa > 1)
                             {
-                                <li class="page-item @(i == sayfa_no ? "active" : "")"><a class="page-link" href="@Url.Action("Urun", new { id = i })">@i</a></li>
+                                <li class="page-item"><a class="page-link" href="@Url.Action("Urun", new { id = minSayfa - 1 })">...</a></li>
+                            }
+                            @for (int i = minSayfa; i <= maxSayfa; i++)
+                            {
+                                <li class="page-item @(i == urunFilter.page ? "active" : "")"><a class="page-link" href="@Url.Action("Urun", new { id = i })">@i</a></li>
+                            }
+                            @if (maxSayfa < sayfa_sayisi)
+                            {
+                                <li class="page-item"><a class="page-link" href="@Url.Action("Urun", new { id = maxSayfa + 1 })">...</a></li>
                             }
                         </ul>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="card">
+            <form method="POST" action="/Admin/UrunTopluGuncelle">
+                <div class="card-header">
+                    <h5>ÜRÜNLERİ TOPLU GÜNCELLE</h5>
+                    <p>Dikkat! Bu alan listelenen bütün ürünlerin toplu şekilde güncellenmesini sağlar, kullanmadan önce alanı kontrol ediniz.</p>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="tax-id" class="control-label">Kategori Ekle</label>
+                                <select name="kategoriIDEkle" class="form-control">
+                                    <option> </option>
+                                    @foreach (Kategori kategori in urunKategorileri)
+                                    {
+                                        <option value="@kategori.kategoriID">@kategori.kategori</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="tax-id" class="control-label">Kategori Çıkar</label>
+                                <select name="kategoriIDCikar" class="form-control">
+                                    <option> </option>
+                                    @foreach (Kategori kategori in urunKategorileri)
+                                    {
+                                        <option value="@kategori.kategoriID">@kategori.kategori</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="tax-id" class="control-label">Öne Çıkan</label>
+                                <select name="oneCikan" class="form-control">
+                                    <option> </option>
+                                    <option value="0">Kaldır</option>
+                                    <option value="1">Ekle</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="tax-id" class="control-label">Marka</label>
+                                <select name="markaID" class="form-control">
+                                    <option> </option>
+                                    @foreach (Marka marka in markalar)
+                                    {
+                                        <option value="@marka.markaID">@marka.marka</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="tax-id" class="control-label">Etiket</label>
+                                <select name="urunEtiketiParametreID" class="form-control">
+                                    <option> </option>
+                                    <option value="@((int)urunEtiketleri.yok)">-</option>
+                                    <option value="@((int)urunEtiketleri.cokSatan)">Çok Satan</option>
+                                    <option value="@((int)urunEtiketleri.indirim)">İndirim</option>
+                                    <option value="@((int)urunEtiketleri.stoklarda)">Stoklarda</option>
+                                    <option value="@((int)urunEtiketleri.yeni)">Yeni</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="tax-id" class="control-label">Durum</label>
+                                <select name="urunDurumuParametreID" class="form-control">
+                                    <option> </option>
+                                    <option value="@((int)urunDurumu.aktif)">Aktif</option>
+                                    <option value="@((int)urunDurumu.pasif)">Pasif</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="tax-id" class="control-label">Model Grubu</label>
+                                <select name="modelGrubuID" class="form-control">
+                                    <option> </option>
+                                    @foreach (ModelGrubu modelGrubu in modelGruplari)
+                                    {
+                                        <option value="@modelGrubu.modelGrubuID">@modelGrubu.modelGrubu</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="tax-id" class="control-label">Depo Lokasyonu</label>
+                                <input type="text" name="depoLokasyonu" class="form-control" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="tax-id" class="control-label">Stok Bitince</label>
+                                <select name="stokBitinceParametreID" class="form-control">
+                                    <option> </option>
+                                    <option value="@((int)stokBitince.satisaDevam)">Satışa Devam</option>
+                                    <option value="@((int)stokBitince.satisiBitir)">Satışı Bitir</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="tax-id" class="control-label">Stok</label>
+                                <input type="number" step="1" name="miktar" class="form-control" autocomplete="off">
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label class="control-label">Minimum Miktar</label>
+                                <input type="number" step="1" name="minimumMiktar" class="form-control" autocomplete="off" />
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label class="control-label">Fiyat</label>
+                                <input type="number" step="0.01" name="fiyat" class="form-control" autocomplete="off" />
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label class="control-label">Eski Fiyat</label>
+                                <input type="number" step="0.01" name="eskiFiyat" class="form-control" autocomplete="off" />
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label class="control-label">Kargo Süresi</label>
+                                <input type="number" step="1" name="kargoSuresi" class="form-control" autocomplete="off" />
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label class="control-label">Ağırlık</label>
+                                <input type="number" step="0.01" name="agirlik" class="form-control" autocomplete="off" />
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="tax-id" class="control-label">Vergi</label>
+                                <select name="vergiParametreID" class="form-control">
+                                    <option> </option>
+                                    <option value="@((int)vergi.Yuzde0)">%0</option>
+                                    <option value="@((int)vergi.Yuzde8)">%8</option>
+                                    <option value="@((int)vergi.Yuzde18)">%18</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="tax-id" class="control-label">Vergi Dahil</label>
+                                <select name="vergiDahilSatis" class="form-control">
+                                    <option> </option>
+                                    <option value="0">Hayır</option>
+                                    <option value="1">Evet</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-primary btn-block">TOPLU GÜNCELLE</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

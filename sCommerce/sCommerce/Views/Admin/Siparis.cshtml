@@ -1,12 +1,59 @@
 ﻿@using sCommerce.Models
+@using sCommerce.Helper
 @{
     ViewBag.Title = "Siparişler";
     SiparisFilter siparisFilter = ViewBag.siparisFilter;
-    List<Siparis> siparisler = siparisFilter.GetSiparisler();
+    List<Siparis> siparisler = siparisFilter.GetSiparisler(); 
+    
+    int sayfa_sayisi = Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(siparisFilter.GetCount()) / siparisFilter.count));
+
+    int minSayfa = (siparisFilter.page < 2 ? 1 : siparisFilter.page - 1);
+    int maxSayfa = (siparisFilter.page + 4 > sayfa_sayisi ? sayfa_sayisi : siparisFilter.page + 4);
 }
 
 <div class="row clearfix">
-    @{ if (Request.Params["hata"] != null) {<div class="alert alert-danger col-md-12" role="alert">@Request.Params["hata"]</div>} }
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Sipariş Filtreleri</h5>
+            </div>
+            <form method="POST" action="/Admin/SiparisFiltrele">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="tax-id" class="control-label">Sipariş Durumu</label>
+                                <select name="siparisDurum" class="form-control">
+                                    <option>HEPSİ</option>
+                                    <option value="@((int)siparisDurum.odemeBekliyor)" @(siparisFilter.siparisDurums.Where(x => x == (int)siparisDurum.odemeBekliyor).Count() > 0 ? "selected" : "")>Ödeme Bekliyor</option>
+                                    <option value="@((int)siparisDurum.hazirlaniyor)" @(siparisFilter.siparisDurums.Where(x => x == (int)siparisDurum.hazirlaniyor).Count() > 0 ? "selected" : "")>Hazırlanıyor</option>
+                                    <option value="@((int)siparisDurum.kargoda)" @(siparisFilter.siparisDurums.Where(x => x == (int)siparisDurum.kargoda).Count() > 0 ? "selected" : "")>Kargoda</option>
+                                    <option value="@((int)siparisDurum.odemeBasarisiz)" @(siparisFilter.siparisDurums.Where(x => x == (int)siparisDurum.odemeBasarisiz).Count() > 0 ? "selected" : "")>Ödeme Başarısız</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <label class="fancy-checkbox">
+                                <input type="checkbox" @(siparisFilter.teslimGoster ? "checked" : "") value="1" name="teslimGoster">
+                                <span>Teslim Edilenleri Göster</span>
+                            </label>
+                        </div>
+                        <div class="col-4">
+                            <label class="fancy-checkbox">
+                                <input type="checkbox" @(siparisFilter.iptalGoster ? "checked" : "") value="1" name="iptalGoster">
+                                <span>İptal Edilenleri Göster</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-primary btn-block">FİLTRELE</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <div class="col-lg-12">
         <div class="card">
             <div class="header">
@@ -45,6 +92,21 @@
                         </tbody>
                     </table>
                 </div>
+
+                <ul class="pagination">
+                    @if (minSayfa > 1)
+                    {
+                        <li class="page-item"><a class="page-link" href="@Url.Action("Siparis", new { id = minSayfa - 1 })">...</a></li>
+                    }
+                    @for (int i = minSayfa; i <= maxSayfa; i++)
+                    {
+                        <li class="page-item @(i == siparisFilter.page ? "active" : "")"><a class="page-link" href="@Url.Action("Siparis", new { id = i })">@i</a></li>
+                    }
+                    @if (maxSayfa < sayfa_sayisi)
+                    {
+                        <li class="page-item"><a class="page-link" href="@Url.Action("Siparis", new { id = maxSayfa + 1 })">...</a></li>
+                    }
+                </ul>
             </div>
         </div>
     </div>

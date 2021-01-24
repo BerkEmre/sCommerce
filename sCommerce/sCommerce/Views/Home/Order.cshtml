@@ -1,4 +1,5 @@
 ﻿@using sCommerce.Models
+@using sCommerce.Helper
 @{
     Kullanici musteri = Site.GetMusteri();
     musteri.LoadSiparisler();
@@ -112,6 +113,12 @@
                                     <tr>
                                         <th>SİPARİŞ DURUMU</th>
                                         <td>@siparis.GetSiparisDurum()</td>
+                                    </tr>
+                                    <tr>
+                                        @if (siparis.siparisDurum == (int)siparisDurum.odemeBekliyor || siparis.siparisDurum == (int)siparisDurum.odemeBasarisiz)
+                                        {
+                                            <td colspan="2"><a href="@Url.Action("Pay", new { id = siparis.siparisID })">Ödemeyi Tekrar Dene</a></td>
+                                        }
                                     </tr>
                                 </tfoot>
                             </table>
