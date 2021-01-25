@@ -20,7 +20,7 @@
             <form method="POST" action="/Admin/SiparisFiltrele">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-4">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="tax-id" class="control-label">Sipariş Durumu</label>
                                 <select name="siparisDurum" class="form-control">
@@ -34,13 +34,13 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-4">
+                        <div class="col-md-4">
                             <label class="fancy-checkbox">
                                 <input type="checkbox" @(siparisFilter.teslimGoster ? "checked" : "") value="1" name="teslimGoster">
                                 <span>Teslim Edilenleri Göster</span>
                             </label>
                         </div>
-                        <div class="col-4">
+                        <div class="col-md-4">
                             <label class="fancy-checkbox">
                                 <input type="checkbox" @(siparisFilter.iptalGoster ? "checked" : "") value="1" name="iptalGoster">
                                 <span>İptal Edilenleri Göster</span>

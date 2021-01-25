@@ -100,7 +100,7 @@
 
                         reader.onload = function (event) {
                             var div = document.createElement("div");
-                            div.className = "col-3";
+                            div.className = "col-md-3";
                             div.innerHTML = "<input type='hidden' name='resimPath[]' value='" + event.target.result + "' /><input type='hidden' name='resimID[]' value='0' /><img src='" + event.target.result + "' class='gallery-item img-fluid' /><input name='resimSira[]' type='number' class='form-control' value='0' autocomplete='off' /><button onclick='resim_sil(this)' type='button' class='btn btn-danger btn-block'><i class='fa fa-trash-o'></i></button>";
                             var gallery = document.getElementById("gallery");
                             gallery.appendChild(div);
@@ -192,13 +192,13 @@
                         <div class="tab-pane show active" id="genel_bilgiler">
                             <h6>Genel Bilgiler</h6>
                             <div class="row clearfix">
-                                <div class="col-6">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="control-label">Ürün Adı</label>
                                         <input type="text" name="urunAdi" class="form-control" placeholder="Ürün Adı" value="@(urunID == 0 ? "" : urun.urunAdi)" autocomplete="off" required />
                                     </div>
                                 </div>
-                                <div class="col-6">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="control-label">Kategori</label>
                                         <div class="multiselect_div">
@@ -211,13 +211,13 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-md-12">
                                     <label class="fancy-checkbox">
                                         <input type="checkbox" @(urunID == 0 ? "" : (urun.oneCikanlar == 1 ? "checked" : "")) value="1" name="oneCikanlar">
                                         <span>Öne Çıkan</span>
                                     </label>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="control-label">Ürün Durumu</label>
                                         <select name="urunDurumuParametreID" class="form-control">
@@ -226,7 +226,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="control-label">Marka</label>
                                         <select name="markaID" class="form-control">
@@ -238,7 +238,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="control-label">Ürün Etiketi</label>
                                         <select name="urunEtiketiParametreID" class="form-control">
@@ -250,20 +250,20 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="control-label">Açıklama</label>
                                         <textarea name="urunAciklamasi" id="ckeditor_0">@(urunID == 0 ? "" : urun.urunAciklamasi)</textarea>
                                         <script>CKEDITOR.replace('ckeditor_0');</script>
                                     </div>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="control-label">Seo Açıklama</label>
                                         <input type="text" name="seoAciklama" class="form-control" placeholder="Seo Açıklama" value="@(urunID == 0 ? "" : urun.seoAciklama)" autocomplete="off" />
                                     </div>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="control-label">Seo Keywords</label>
                                         <input type="text" name="seoKeywords" class="form-control" placeholder="Seo Keywords" value="@(urunID == 0 ? "" : urun.seoKeywords)" autocomplete="off" />
@@ -274,13 +274,13 @@
                         <div class="tab-pane" id="veri">
                             <h6>Veri</h6>
                             <div class="row clearfix">
-                                <div class="col-12">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="control-label">Stok Kodu</label>
                                         <input type="text" name="stokKodu" class="form-control" placeholder="Stok Kodu" value="@(urunID == 0 ? "" : urun.stokKodu)" autocomplete="off" />
                                     </div>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="control-label">Model Grubu</label>
                                         <select name="modelGrubuID" class="form-control">
@@ -292,19 +292,19 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="control-label">Depo Lokasyonu</label>
                                         <input type="text" name="depoLokasyonu" class="form-control" placeholder="Depo Lokasyonu" value="@(urunID == 0 ? "" : urun.depoLokasyonu)" autocomplete="off" />
                                     </div>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="control-label">Barkod</label>
                                         <input type="text" name="barkod" class="form-control" placeholder="Barkod" value="@(urunID == 0 ? "" : urun.barkod)" autocomplete="off" />
                                     </div>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="control-label">Stok Bitince</label>
                                         <select name="stokBitinceParametreID" class="form-control">
@@ -313,43 +313,43 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="control-label">Stok Miktar</label>
                                         <input type="number" step="1" name="miktar" class="form-control" placeholder="Stok Miktar" value="@(urunID == 0 ? "0" : urun.miktar.ToString().Replace(',', '.'))" autocomplete="off" required />
                                     </div>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="control-label">Minimum Miktar</label>
                                         <input type="number" step="1" name="minimumMiktar" class="form-control" placeholder="Minimum Miktar" value="@(urunID == 0 ? "0" : urun.minimumMiktar.ToString().Replace(',', '.'))" autocomplete="off" required />
                                     </div>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="control-label">Fiyat</label>
                                         <input type="number" step="0.01" name="fiyat" class="form-control" placeholder="Fiyat" value="@(urunID == 0 ? "0" : urun.fiyat.ToString().Replace(',', '.'))" autocomplete="off" required />
                                     </div>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="control-label">Eski Fiyat</label>
                                         <input type="number" step="0.01" name="eskiFiyat" class="form-control" placeholder="Eski Fiyat" value="@(urunID == 0 ? "0" : urun.eskiFiyat.ToString().Replace(',', '.'))" autocomplete="off" required />
                                     </div>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="control-label">Kargo Süresi</label>
                                         <input type="number" step="1" name="kargoSuresi" class="form-control" placeholder="Kargo Süresi" value="@(urunID == 0 ? "0" : urun.kargoSuresi.ToString().Replace(',', '.'))" autocomplete="off" required />
                                     </div>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="control-label">Ağırlık</label>
                                         <input type="number" step="0.01" name="agirlik" class="form-control" placeholder="Ağırlık" value="@(urunID == 0 ? "0" : urun.agirlik.ToString().Replace(',', '.'))" autocomplete="off" required />
                                     </div>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="control-label">Vergi</label>
                                         <select name="vergiParametreID" class="form-control">
@@ -359,7 +359,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-md-12">
                                     <label class="fancy-checkbox">
                                         <input type="checkbox" @(urunID == 0 ? "" : (urun.vergiDahilSatis == 1 ? "checked" : "")) value="1" name="vergiDahilSatis">
                                         <span>Vergi Dahil Satış</span>
@@ -430,7 +430,7 @@
                                         {
                                             foreach (UrunResim urunResim in urun.urunResimleri)
                                             {
-                                                <div class="col-3">
+                                                <div class="col-md-3">
                                                     <input type='hidden' name='resimPath[]' value='~/Content/icerik/urun/orjinal/@urunResim.resim' />
                                                     <input type='hidden' name='resimID[]' value='@urunResim.urunResimID' />
                                                     <img src='~/Content/icerik/urun/orjinal/@urunResim.resim' class='gallery-item img-fluid' />
@@ -544,7 +544,7 @@
             </div>
             <div class="modal-body">
                 <div class="row clearfix" id="n11KategoriSecDiv">
-                    <div class="col-12">
+                    <div class="col-md-12">
                         <div class="form-group">
                             <select name="kategoriID" class="form-control" onchange="getSubCategory(this, 0)">
                                 <option value="">SEÇİNİZ</option>

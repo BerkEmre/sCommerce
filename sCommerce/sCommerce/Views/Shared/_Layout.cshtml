@@ -997,6 +997,11 @@
                 type: 'POST',
                 dataType: 'html',
                 success: function (data) {
+                    if (data.length <= 10) {
+                        $('#btnDevaminiYukle').hide();
+                        $('#btnDevaminiYukleme').show();
+                    }
+
                     $("#itemList").append(data);
                 }
             });

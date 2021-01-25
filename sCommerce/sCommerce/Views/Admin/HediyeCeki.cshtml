@@ -84,19 +84,19 @@
                                             <div class="modal-body">
                                                 <div class="row clearfix">
                                                     @Html.HiddenFor(m => m.hediyeCekiID, new { @value = hediyeCeki.hediyeCekiID })
-                                                    <div class="col-12">
+                                                    <div class="col-md-12">
                                                         <div class="form-group">
                                                             <label class="control-label">Kod</label>
                                                             @Html.TextBoxFor(m => m.kod, "", new { @type = "text", @class = "form-control", @placeholder = "Kod", @autocomplete="off", @value = hediyeCeki.kod })
                                                         </div>
                                                     </div>
-                                                    <div class="col-12">
+                                                    <div class="col-md-12">
                                                         <div class="form-group">
                                                             <label class="control-label">Son Kullanma Tarihi</label>
                                                             @Html.TextBoxFor(m => m.kod, "", new { @type = "date", @class = "form-control", @placeholder = "Son Kullanma Tarihi", @autocomplete = "off", @value = @hediyeCeki.sonKullanmaTarihi.ToString("yyyy-MM-dd") })
                                                         </div>
                                                     </div>
-                                                    <div class="col-12">
+                                                    <div class="col-md-12">
                                                         <div class="form-group">
                                                             <label class="fancy-checkbox">
                                                                 <input type="checkbox" @(hediyeCeki.kargoBedava ? "checked" : "") value="1" name="kargoBedava">
@@ -104,19 +104,19 @@
                                                             </label>
                                                         </div>
                                                     </div>
-                                                    <div class="col-12">
+                                                    <div class="col-md-12">
                                                         <div class="form-group">
                                                             <label class="control-label">Sipariş İndirimi %</label>
                                                             <input type="number" name="siparisIndirimi" class="form-control" placeholder="Sipariş İndirimi %" autocomplete="off" value="@hediyeCeki.siparisIndirimi" />
                                                         </div>
                                                     </div>
-                                                    <div class="col-12">
+                                                    <div class="col-md-12">
                                                         <div class="form-group">
                                                             <label class="control-label">Limit</label>
                                                             <input type="number" name="limit" class="form-control" placeholder="Limit" autocomplete="off" value="@hediyeCeki.limit" />
                                                         </div>
                                                     </div>
-                                                    <div class="col-12">
+                                                    <div class="col-md-12">
                                                         <div class="form-group">
                                                             <label class="fancy-checkbox">
                                                                 <input type="checkbox" @(hediyeCeki.tekKullanim ? "checked" : "") value="1" name="tekKullanim">
@@ -124,7 +124,7 @@
                                                             </label>
                                                         </div>
                                                     </div>
-                                                    <div class="col-12">
+                                                    <div class="col-md-12">
                                                         <div class="form-group">
                                                             <label class="control-label">Durum</label>
                                                             <select name="durum" class="form-control">
@@ -133,7 +133,7 @@
                                                             </select>
                                                         </div>
                                                     </div>
-                                                    <div class="col-12">
+                                                    <div class="col-md-12">
                                                         <div class="form-group">
                                                             <label class="control-label">Kullanıcı ID</label>
                                                             <input type="number" name="kullaniciID" class="form-control" placeholder="Limit" autocomplete="off" value="@hediyeCeki.kullaniciID" />
@@ -188,19 +188,19 @@
                 <div class="modal-body">
                     <div class="row clearfix">
                         <input name="hediyeCekiID" type="hidden" value="0" />
-                        <div class="col-12">
+                        <div class="col-md-12">
                             <div class="form-group">
                                 <label class="control-label">Kod</label>
                                 <input type="text" name="kod" class="form-control" placeholder="Kod" autocomplete="off" value="" />
                             </div>
                         </div>
-                        <div class="col-12">
+                        <div class="col-md-12">
                             <div class="form-group">
                                 <label class="control-label">Son Kullanma Tarihi</label>
                                 <input type="date" name="sonKullanmaTarihi" class="form-control" placeholder="Son Kullanma Tarihi" autocomplete="off" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
                             </div>
                         </div>
-                        <div class="col-12">
+                        <div class="col-md-12">
                             <div class="form-group">
                                 <label class="fancy-checkbox">
                                     <input type="checkbox" value="1" name="kargoBedava">
@@ -208,19 +208,19 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="col-12">
+                        <div class="col-md-12">
                             <div class="form-group">
                                 <label class="control-label">Sipariş İndirimi %</label>
                                 <input type="number" name="siparisIndirimi" class="form-control" placeholder="Sipariş İndirimi %" autocomplete="off" value="0" />
                             </div>
                         </div>
-                        <div class="col-12">
+                        <div class="col-md-12">
                             <div class="form-group">
                                 <label class="control-label">Limit</label>
                                 <input type="number" name="limit" class="form-control" placeholder="Limit" autocomplete="off" value="1000" />
                             </div>
                         </div>
-                        <div class="col-12">
+                        <div class="col-md-12">
                             <div class="form-group">
                                 <label class="fancy-checkbox">
                                     <input type="checkbox" value="1" name="tekKullanim">
@@ -228,7 +228,7 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="col-12">
+                        <div class="col-md-12">
                             <div class="form-group">
                                 <label class="control-label">Durum</label>
                                 <select name="durum" class="form-control">
@@ -237,7 +237,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-12">
+                        <div class="col-md-12">
                             <div class="form-group">
                                 <label class="control-label">Kullanıcı ID</label>
                                 <input type="number" name="kullaniciID" class="form-control" placeholder="Limit" autocomplete="off" value="0" />

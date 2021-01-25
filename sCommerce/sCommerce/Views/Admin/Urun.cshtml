@@ -66,13 +66,13 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-4">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="tax-id" class="control-label">Ürün Adı</label>
                                 <input type="text" name="urunAdi" class="form-control" value="@urunFilter.urunAdi">
                             </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="tax-id" class="control-label">Kategori</label>
                                 <select name="kategoriID" class="form-control">
@@ -84,7 +84,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="tax-id" class="control-label">Marka</label>
                                 <select name="markaID" class="form-control">
@@ -96,7 +96,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="tax-id" class="control-label">Etiket</label>
                                 <select name="urunEtiket" class="form-control">
@@ -109,7 +109,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="tax-id" class="control-label">Model Grubu</label>
                                 <select name="modelGrubuID" class="form-control">
@@ -123,7 +123,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-4">
+                        <div class="col-md-4">
                             <label class="fancy-checkbox">
                                 <input type="checkbox" @(urunFilter.oneCikanlar ? "checked" : "") value="1" name="oneCikanlar">
                                 <span>Öne Çıkan</span>
@@ -269,7 +269,7 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-4">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="tax-id" class="control-label">Kategori Ekle</label>
                                 <select name="kategoriIDEkle" class="form-control">
@@ -281,7 +281,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="tax-id" class="control-label">Kategori Çıkar</label>
                                 <select name="kategoriIDCikar" class="form-control">
@@ -293,7 +293,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="tax-id" class="control-label">Öne Çıkan</label>
                                 <select name="oneCikan" class="form-control">
@@ -303,7 +303,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="tax-id" class="control-label">Marka</label>
                                 <select name="markaID" class="form-control">
@@ -315,7 +315,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="tax-id" class="control-label">Etiket</label>
                                 <select name="urunEtiketiParametreID" class="form-control">
@@ -328,7 +328,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="tax-id" class="control-label">Durum</label>
                                 <select name="urunDurumuParametreID" class="form-control">
@@ -338,7 +338,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="tax-id" class="control-label">Model Grubu</label>
                                 <select name="modelGrubuID" class="form-control">
@@ -350,13 +350,13 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="tax-id" class="control-label">Depo Lokasyonu</label>
                                 <input type="text" name="depoLokasyonu" class="form-control" autocomplete="off">
                             </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="tax-id" class="control-label">Stok Bitince</label>
                                 <select name="stokBitinceParametreID" class="form-control">
@@ -366,44 +366,44 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="tax-id" class="control-label">Stok</label>
                                 <input type="number" step="1" name="miktar" class="form-control" autocomplete="off">
                             </div>
                         </div>
 
-                        <div class="col-4">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label class="control-label">Minimum Miktar</label>
                                 <input type="number" step="1" name="minimumMiktar" class="form-control" autocomplete="off" />
                             </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label class="control-label">Fiyat</label>
                                 <input type="number" step="0.01" name="fiyat" class="form-control" autocomplete="off" />
                             </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label class="control-label">Eski Fiyat</label>
                                 <input type="number" step="0.01" name="eskiFiyat" class="form-control" autocomplete="off" />
                             </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label class="control-label">Kargo Süresi</label>
                                 <input type="number" step="1" name="kargoSuresi" class="form-control" autocomplete="off" />
                             </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label class="control-label">Ağırlık</label>
                                 <input type="number" step="0.01" name="agirlik" class="form-control" autocomplete="off" />
                             </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="tax-id" class="control-label">Vergi</label>
                                 <select name="vergiParametreID" class="form-control">
@@ -414,7 +414,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="tax-id" class="control-label">Vergi Dahil</label>
                                 <select name="vergiDahilSatis" class="form-control">

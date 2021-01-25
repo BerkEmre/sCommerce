@@ -118,7 +118,14 @@
                                                 </div>
                                             </div>
                                             <div class="col-item">
-                                                <button type="submit" class="btn btn-lg"><i class="icon-g-46"></i>SEPETE EKLE</button>
+                                                @if (urun.miktar <= 0 && urun.stokBitinceParametreID == 12)
+                                                {
+                                                    <button class="btn btn-lg" disabled><i class="icon-g-12"></i>STOKTA YOK</button>
+                                                }
+                                                else
+                                                {
+                                                    <button type="submit" class="btn btn-lg"><i class="icon-g-46"></i>SEPETE EKLE</button>
+                                                }
                                             </div>
                                         </div>
                                     </form>
