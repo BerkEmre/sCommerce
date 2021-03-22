@@ -418,7 +418,6 @@ namespace sCommerce.Controllers
             {
                 return Json(new { resim = "yok.jpg", durum = "false", login = false }, JsonRequestBehavior.AllowGet);
             }
-
         }
 
         [ValidateInput(false)]
